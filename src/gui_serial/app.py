@@ -10,6 +10,7 @@ import serialworker
 
 import os.path
 import sys
+import multiprocessing
 
 from gui_constants import *
 
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     sp.start()
     tornado.options.parse_command_line()
 
-    httpServer = tornado.httpserver.HTTPServer(app)
+    httpServer = tornado.httpserver.HTTPServer(application)
     httpServer.listen(options.port)
     print("Listening on port:", options.port)
     print('Server Running...')
