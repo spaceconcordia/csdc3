@@ -34,13 +34,13 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor(sensorId):
-        SensorManager.mux_select(sensorId)
+        #SensorManager.mux_select(sensorId)
 
-		# Start data conversion
+        # Start data conversion
         SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
         SensorEntropy.reg(TEMP)[START], 0x01)
 
-		# Enable continuous mode
+        # Enable continuous mode
         SensorManager.bus.write_byte_data(0x48, \
         SensorEntropy.reg(TEMP)[CONFIG], 0x00)
 
@@ -186,25 +186,25 @@ class SensorManager:
     def read_rtc(sensorId):
         SensorManager.mux_select(sensorId)
 
-	    # Set up registers
-	    seconds_reg = SensorEntropy.reg(RTC)['sec']
-	    minute_reg = SensorEntropy.reg(RTC)['min']
-	    hour_reg = SensorEntropy.reg(RTC)['hr']
-	    day_reg = SensorEntropy.reg(RTC)['day']
-	    date_reg = SensorEntropy.reg(RTC)['date']
-	    month_reg = SensorEntropy.reg(RTC)['month']
-	    year_reg = SensorEntropy.reg(RTC)['year']
+        # Set up registers
+        seconds_reg = SensorEntropy.reg(RTC)['sec']
+        minute_reg = SensorEntropy.reg(RTC)['min']
+        hour_reg = SensorEntropy.reg(RTC)['hr']
+        day_reg = SensorEntropy.reg(RTC)['day']
+        date_reg = SensorEntropy.reg(RTC)['date']
+        month_reg = SensorEntropy.reg(RTC)['month']
+        year_reg = SensorEntropy.reg(RTC)['year']
 
-        # Retrieve time values
-	    second = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), seconds_reg)
-	    minute = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), minute_reg)
-	    hour = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), hour_reg)
-	    day = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), day_reg)
-	    date = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), date_reg)
-	    month = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), month_reg)
-	    year = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), year_reg)
+          # Retrieve time values
+        second = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), seconds_reg)
+        minute = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), minute_reg)
+        hour = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), hour_reg)
+        day = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), day_reg)
+        date = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), date_reg)
+        month = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), month_reg)
+        year = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), year_reg)
 
-	    return (second, minute, hour, day, date, month, year)
+        return (second, minute, hour, day, date, month, year)
 
     @staticmethod
     def read_temp_sensor(sensorId):
@@ -284,19 +284,19 @@ class SensorManager:
     def mux_select(sensorId):
         channel = None
         if sensorId in TEMP_IDENTIFIER_DICT:
-            channel = TEMP_IDENTIFIER_DICT[id][MUX]
+            channel = TEMP_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in RTC_IDENTIFIER_DICT:
-            channel = RTC_IDENTIFIER_DICT[id][MUX]
+            channel = RTC_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in GYRO_IDENTIFIER_DICT:
-            channel = GYRO_IDENTIFIER_DICT[id][MUX]
+            channel = GYRO_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in MAG_IDENTIFIER_DICT:
-            channel = MAG_IDENTIFIER_DICT[id][MUX]
+            channel = MAG_IDENTIFIER_DICT[sensorId][CH]
 
-		if channel < 0 or channel > 7 or (not channel):
-		    return False
+        if channel < 0 or channel > 7 or (not channel):
+            return False
 
-		mux_address = SensorEntropy.addr(MUX)
-		SensorManager.bus.write_byte(mux_address, 1 << channel)
+        mux_address = SensorEntropy.addr(MUX)
+        SensorManager.bus.write_byte(mux_address, 1 << channel)
 
     @staticmethod
     def twos_to_int(val, len):
