@@ -37,6 +37,7 @@
     margin-bottom: 2%;
     box-shadow: 8px 5px 2.5px #888888;
     height: 100%;
+    width: 100%;
 }
 
 .systembox .sysheader img {
@@ -53,8 +54,18 @@
 .systembox .sysbody {
     margin-top: 5%;
     height: 100%;
-    max-height: 250px;
+    width: 100%;
     overflow: auto;
+}
+
+.short {
+    min-height: 268px;
+    max-height: 268px;
+}
+
+.long {
+    min-height: 279px;
+    max-height: 279px;
 }
 
 .middle {

@@ -1,8 +1,10 @@
+
 function updateDiskPartitionTable() {
     $.ajax({
         url: '/sysdata',
         type: 'get',
-        data: {'table_name': 'diskPart'},
+        cache: false,
+        data: {'data_name': 'diskPart'},
         error: function() {
             $( '#error-dialog' ).dialog( "open" );
         },
@@ -17,7 +19,8 @@ function updateMemIntensiveProcesses() {
     $.ajax({
         url: '/sysdata',
         type: 'get',
-        data: {'table_name': 'cpuIntensProc'},
+        cache: false,
+        data: {'data_name': 'cpuIntensProc'},
         error: function() {
             $( '#error-dialog' ).dialog( "open" );
         },
@@ -32,7 +35,8 @@ function updateCpuIntensiveProcesses() {
     $.ajax({
         url: '/sysdata',
         type: 'get',
-        data: {'table_name': 'ramIntensProc'},
+        cache: false,
+        data: {'data_name': 'ramIntensProc'},
         error: function() {
             $( '#error-dialog' ).dialog( "open" );
         },
@@ -43,10 +47,101 @@ function updateCpuIntensiveProcesses() {
     });
 }
 
+var smoothieRamUsage =       new SmoothieChart({maxValue:100,minValue:0});
+var smoothieCpuAvgLoad =     new SmoothieChart({maxValueScale:1.06});
+var smoothieCpuUtilization = new SmoothieChart({maxValue:100,minValue:0});
+
+var ramUsageLine =           new TimeSeries();
+var cpuUtilizationLine =     new TimeSeries();
+var cpuAvgLoadLine1mins =    new TimeSeries();
+var cpuAvgLoadLine5mins =    new TimeSeries();
+var cpuAvgLoadLine15mins =   new TimeSeries();
+
+function updateRamUsageCharts() {
+    $.ajax({
+        url: '/sysdata',
+        type: 'get',
+        cache: false,
+        data: {'data_name': 'ramUsageCharts'},
+        error: function() {},
+        success: function(data) {
+            console.log(data["request_time"])
+            $( '#ram-usage-date' ).text(data["request_time"]);
+            var ram_usage_perc = data["timeseries_data"];
+            ramUsageLine.append(new Date().getTime(), ram_usage_perc);
+            $( '#ram-usage-used' ).text(data["free_ram"] + ' MB (' + ram_usage_perc.toFixed(1) + '%)');
+            $( '#ram-usage-free' ).text(data["used_ram"] + ' MB of ' + data["total_ram"] + ' MB');
+        }
+    });
+}
+
+function updateCpuAvgLoadCharts() {
+    $.ajax({
+        url: '/sysdata',
+        type: 'get',
+        cache: false,
+        data: {'data_name': 'cpuAvgLoadCharts'},
+        error: function() {},
+        success: function(data) {
+            $( '#cpu-avg-load-date' ).text(data["request_time"]);
+
+            cpuAvgLoadLine1mins.append(new Date().getTime(), data["timeseries_data1"]);
+            $( '#avg-load-1-min' ).text(data["timeseries_data1"]);
+
+            cpuAvgLoadLine5mins.append(new Date().getTime(), data["timeseries_data5"]);
+            $( '#avg-load-5-min' ).text(data["timeseries_data5"]);
+
+            cpuAvgLoadLine15mins.append(new Date().getTime(), data["timeseries_data15"]);
+            $( '#avg-load-15-min' ).text(data["timeseries_data15"]);
+        }
+    });
+}
+
+function updateCpuUtilizationCharts() {
+    $.ajax({
+        url: '/sysdata',
+        cache: false,
+        type: 'get',
+        data: {'data_name': 'cpuUtilizationCharts'},
+        error: function() {},
+        success: function(data) {
+            $( '#cpu-utilization-date' ).text(data["request_time"]);
+            var cpu_util_perc = data["timeseries_data"];
+            cpuUtilizationLine.append(new Date().getTime(), cpu_util_perc);
+            $( '#cpu-utilization-percentage' ).text(cpu_util_perc.toFixed(2) + "%")
+        }
+    });
+}
+
 $( document ).ready(function() {
     updateDiskPartitionTable();
     updateCpuIntensiveProcesses();
     updateMemIntensiveProcesses();
+
+    smoothieRamUsage.streamTo(document.getElementById("ram-usage-canvas"));
+    smoothieCpuAvgLoad.streamTo(document.getElementById("cpu-avg-load-canvas"));
+    smoothieCpuUtilization.streamTo(document.getElementById("cpu-util-canvas"));
+
+    setInterval(function() {
+        updateCpuAvgLoadCharts();
+    }, 1200);
+    setInterval(function() {
+        updateRamUsageCharts();
+    }, 1200);
+    setInterval(function() {
+        updateCpuUtilizationCharts();
+    }, 1200);
+
+    smoothieRamUsage.addTimeSeries(ramUsageLine,
+        {lineWidth:2,strokeStyle:'#0000ff',fillStyle:'rgba(0,128,255,0.30)'});
+    smoothieCpuUtilization.addTimeSeries(cpuUtilizationLine,
+        {lineWidth:2,strokeStyle:'#0000ff',fillStyle:'rgba(0,128,255,0.30)'});
+    smoothieCpuAvgLoad.addTimeSeries(cpuAvgLoadLine1mins,
+        {lineWidth:2,strokeStyle:'#C7002C'});
+    smoothieCpuAvgLoad.addTimeSeries(cpuAvgLoadLine5mins,
+        {lineWidth:2,strokeStyle:'#08876B'});
+    smoothieCpuAvgLoad.addTimeSeries(cpuAvgLoadLine15mins,
+        {lineWidth:2,strokeStyle:'#147AE0'});
 
     var sourceSwap = function () {
         var $this = $(this);
