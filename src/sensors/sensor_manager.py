@@ -35,14 +35,22 @@ class SensorManager:
     @staticmethod
     def init_temp_sensor(sensorId):
         #SensorManager.mux_select(sensorId)
+        
+        try:
+            # Start data conversion
+            SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
+            SensorEntropy.reg(TEMP)[START], 0x01)
+        except IOError:
+            print('Error writing to temperature sensor at address ' + \
+                str(SensorEntropy.reg(TEMP)[START]))
 
-        # Start data conversion
-        SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
-        SensorEntropy.reg(TEMP)[START], 0x01)
-
-        # Enable continuous mode
-        SensorManager.bus.write_byte_data(0x48, \
-        SensorEntropy.reg(TEMP)[CONFIG], 0x00)
+        try:
+            # Enable continuous mode
+            SensorManager.bus.write_byte_data(0x48, \
+            SensorEntropy.reg(TEMP)[CONFIG], 0x00)
+        except IOError:
+            print('Error writing to temperature sensor at address ' + \
+                str(SensorEntropy.reg(TEMP)[CONFIG]))
 
         time.sleep(0.1)
 
@@ -122,15 +130,20 @@ class SensorManager:
         reg_y_l = SensorEntropy.reg(GYRO)['Y-L']
         reg_z_h = SensorEntropy.reg(GYRO)['Z-H']
         reg_z_l = SensorEntropy.reg(GYRO)['Z-L']
-        valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
+        
+        try:
+            valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_x_l)
-        sleep(0.1)
-        valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
+            sleep(0.1)
+            valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_y_l)
-        sleep(0.1)
-        valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
+            sleep(0.1)
+            valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_z_l)
-        sleep(0.1)
+            sleep(0.1)
+        except IOError:
+            print('Read error from Gyroscope')
+            return -1
 
         # Apply two's complement
         valX = twos_to_int(valX)
@@ -209,10 +222,20 @@ class SensorManager:
     @staticmethod
     def read_temp_sensor(sensorId):
         SensorManager.mux_select(sensorId)
-        SensorManager.bus.write_byte(SensorEntropy.addr(TEMP), SensorEntropy.reg(TEMP)[VAL])
-        decValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
-        fractValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
-        sleep(0.1)
+        
+        try:
+            SensorManager.bus.write_byte(SensorEntropy.addr(TEMP), SensorEntropy.reg(TEMP)[VAL])
+        except IOError:
+            print()
+            return -1
+        try:
+            decValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
+            fractValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
+            sleep(0.1)
+        except IOError:
+            print('Error reading temperature sensor')
+            return -1
+
         return SensorManager.conv_bin_to_int(decValue, fractValue)
 
     @staticmethod
