@@ -1,6 +1,13 @@
 import tornado.ioloop
 import tornado.web
 
+import tornado.httpserver
+import tornado.websocket
+import tornado.gen
+from tornado.options import define, options
+
+import serialworker
+
 import os.path
 import sys
 
@@ -53,20 +60,20 @@ application = tornado.web.Application([
 
 if __name__ == "__main__":
 	## start the serial worker in background (as a deamon)
-	sp = serialworker.SerialProcess(input_queue, output_queue)
-	sp.daemon = True
-	sp.start()
-	tornado.options.parse_command_line()
+    sp = serialworker.SerialProcess(input_queue, output_queue)
+    sp.daemon = True
+    sp.start()
+    tornado.options.parse_command_line()
 
-	httpServer = tornado.httpserver.HTTPServer(app)
-	httpServer.listen(options.port)
-	print("Listening on port:", options.port)
+    httpServer = tornado.httpserver.HTTPServer(app)
+    httpServer.listen(options.port)
+    print("Listening on port:", options.port)
     print('Server Running...')
     print('Press ctrl + c to close')
 
-	mainLoop = tornado.ioloop.IOLoop.instance()
+    mainLoop = tornado.ioloop.IOLoop.instance()
 	## adjust the scheduler_interval according to the frames sent by the serial port
-	scheduler_interval = 100
-	scheduler = tornado.ioloop.PeriodicCallback(checkQueue, scheduler_interval, io_loop = mainLoop)
-	scheduler.start()
-	mainLoop.start()
+    scheduler_interval = 100
+    scheduler = tornado.ioloop.PeriodicCallback(checkQueue, scheduler_interval, io_loop = mainLoop)
+    scheduler.start()
+    mainLoop.start()

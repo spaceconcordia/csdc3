@@ -25,8 +25,7 @@ class SerialProcess(multiprocessing.Process):
         return self.sp.readline().replace("\n", "")
 
     def run(self):
-    	self.sp.flushInput()
-
+        self.sp.flushInput()
         while True:
             # look for incoming tornado request
             if not self.input_queue.empty():
@@ -36,7 +35,7 @@ class SerialProcess(multiprocessing.Process):
                 print("writing to serial: " + data)
             # look for incoming serial data
             if (self.sp.inWaiting() > 0):
-            	data = self.readSerial()
-                print "reading from serial: " + data
+                data = self.readSerial()
+                print("reading from serial: " + data)
                 # send it back to tornado
-            	self.output_queue.put(data)
+                self.output_queue.put(data)
