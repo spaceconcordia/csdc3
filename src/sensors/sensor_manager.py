@@ -1,6 +1,7 @@
 import sys
 sys.path.append('/root/csdc3/lib/ablib')
 sys.path.append('/root/csdc3/src/logs')
+sys.path.append('/root/csdc3/src/logs/config_setup')
 from ablib_python3 import Pin
 from chomsky import *
 from time import sleep
@@ -313,6 +314,7 @@ class SensorManager:
         # Log temperature sensor data
         value = SensorManager.conv_bin_to_int(decValue, fractValue)
         insertTelemetryLog(sensorId, value, PAYLOAD, int(time.time()))
+        return value
 
     @staticmethod
     def read_adc(experiment, sensorId):
@@ -416,7 +418,7 @@ class SensorManager:
         or (not newChannel):
             return False
 
-        if newChannel ~= SensorManager.channel:
+        if newChannel != SensorManager.channel:
             SensorManager.channel = newChannel
             mux_address = SensorEntropy.addr(MUX)
             SensorManager.bus.write_byte(mux_address, 1 << newChannel)
@@ -447,9 +449,9 @@ class SensorManager:
         return result
 
 def main():
-    SensorManager.init_temp_sensor(TEMP_4)
-    temp_value = SensorManager.read_temp_sensor(TEMP_4)
-    SensorManager.stop_temp_sensor(TEMP_4)
+    SensorManager.init_temp_sensor(TEMP_0)
+    temp_value = SensorManager.read_temp_sensor(TEMP_0)
+    SensorManager.stop_temp_sensor(TEMP_0)
     print(temp_value)
 
 if __name__ == "__main__":
