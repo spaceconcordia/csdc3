@@ -41,6 +41,7 @@ I2C_DEVICES_LOOKUP_TABLE = {
         'name': 'HMC5883L',
         'addr': 0x1e,
         'reg': {
+            'INIT': 0x02,
             'X-H': 0x03,
             'X-L': 0x04,
             'Y-H': 0x05,

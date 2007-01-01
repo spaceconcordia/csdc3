@@ -16,7 +16,7 @@ class SensorEntropy:
         if sensor_type in I2C_DEVICES_LIST:
             return I2C_DEVICES_LOOKUP_TABLE[sensor_type]["addr"]
         return None
-    
+
     def reg(sensor_type):
         if sensor_type in I2C_DEVICES_LIST:
             return I2C_DEVICES_LOOKUP_TABLE[sensor_type]["reg"]

@@ -1,7 +1,7 @@
 import smbus
 import time
 import math
-import
+from sensor_entropy import *
 
 class SensorManager:
 
@@ -19,7 +19,9 @@ class SensorManager:
 
     @staticmethod
     def init_magnetometer():
-        SensorManager.bus.write_byte_data(0x1e, 0x02, 0x01)
+        # SensorManager.bus.write_byte_data(0x1e, 0x02, 0x01)
+        SensorManager.bus.write_byte_data(SensorEntropy.addr(MAG), \
+        SensorEntropy.reg(MAG)['INIT'], 0x01)
         time.sleep(0.01)
 
     @staticmethod
@@ -47,15 +49,21 @@ class SensorManager:
     @staticmethod
     def read_magnetometer():
 
-        address = 0x1e
+        address = SensorEntropy.addr(MAG)
 
         # Get the values from the sensor
-        valX = (SensorManager.bus.read_byte_data(address, 0x03) << 8) \
-            | SensorManager.bus.read_byte_data(address, 0x04)
-        valY = (SensorManager.bus.read_byte_data(address, 0x05) << 8) \
-            | SensorManager.bus.read_byte_data(address, 0x06)
-        valZ = (SensorManager.bus.read_byte_data(address, 0x07) << 8) \
-            | SensorManager.bus.read_byte_data(address, 0x08)
+        reg_x_h = SensorEntropy.reg(MAG)['X-H']
+        reg_x_l = SensorEntropy.reg(MAG)['X-L']
+        reg_y_h = SensorEntropy.reg(MAG)['Y-H']
+        reg_y_l = SensorEntropy.reg(MAG)['Y-L']
+        reg_z_h = SensorEntropy.reg(MAG)['Z-H']
+        reg_z_l = SensorEntropy.reg(MAG)['Z-L']
+        valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_x_l)
+        valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_y_l)
+        valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_z_l)
 
         # Update the values to be of two compliment
         valX = SensorManager.twosToInt(valX, 16);
@@ -76,7 +84,7 @@ class SensorManager:
         degrees = math.floor(radians * 180 / math.pi)
 
         # Print the value to the output
-        print "{0:-3f}".format(radians), "{0:-3f}".format(degrees)
+        print(str(radians) + " " + str(degrees))
 
     @staticmethod
     def read_real_time_clock():
