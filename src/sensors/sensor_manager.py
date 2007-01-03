@@ -1,11 +1,16 @@
+import sys
+sys.path.append('/root/csdc3/lib/ablib')
+from ablib_python3 import Pin
+from time import sleep
+from sensor_entropy import *
 import smbus
 import time
 import math
-from sensor_entropy import *
 
 class SensorManager:
 
     bus = smbus.SMBus(0)
+    active_gpio_pins = {}
 
     """ -------------------- Initialization --------------------- """
 
@@ -66,9 +71,9 @@ class SensorManager:
             | SensorManager.bus.read_byte_data(address, reg_z_l)
 
         # Update the values to be of two compliment
-        valX = SensorManager.twosToInt(valX, 16);
-        valY = SensorManager.twosToInt(valY, 16);
-        valZ = SensorManager.twosToInt(valZ, 16);
+        valX = SensorManager.twos_to_int(valX, 16);
+        valY = SensorManager.twos_to_int(valY, 16);
+        valZ = SensorManager.twos_to_int(valZ, 16);
 
         # Change valX and valY to radians
         radians = math.atan2(valY, valX)
@@ -102,17 +107,54 @@ class SensorManager:
     def read_power_sensor():
         pass
 
-    """ ------------- Other ------------- """
+    """ -------------------- GPIO --------------------- """
+
+    def gpio_output(pinId, onTime, offTime):
+
+        if not (pinId in SensorManager.active_gpio_pins):
+            SensorManager.active_gpio_pins[pinId] = 'off'
+
+        led = Pin(pinId,'OUTPUT')
+
+        if onTime == 0 and offTime == 0:
+            return
+        elif onTime == 0:
+            if SensorManager.active_gpio_pins[pinId] == 'on':
+                led.off()
+                SensorManager.active_gpio_pins[pinId] == 'off'
+            else:
+                led.off()
+        elif offTime == 0:
+            if SensorManager.active_gpio_pins[pinId] == 'off':
+                led.on()
+                SensorManager.active_gpio_pins[pinId] = 'on'
+            else:
+                led.on()
+        else:
+            led.on()
+            SensorManager.active_gpio_pins[pinId] = 'on'
+            sleep(onTime)
+            led.off()
+            SensorManager.active_gpio_pins[pinId] = 'off'
+            sleep(offTime)
+
+    def gpio_input(pinId, inputTime):
+        pass
+
+    """ -------------------- Reading --------------------- """
 
     @staticmethod
-    def twosToInt(val, len):
+    def twos_to_int(val, len):
         if val & (1 << len - 1):
           val = val - (1 << len)
         return val
 
 def main():
-    SensorManager.init_magnetometer()
-    SensorManager.read_magnetometer()
+    # SensorManager.init_magnetometer()
+    # SensorManager.read_magnetometer()
+
+    while 1:
+        SensorManager.gpio_output('J4.7', 1, 0)
 
 if __name__ == "__main__":
     main()
