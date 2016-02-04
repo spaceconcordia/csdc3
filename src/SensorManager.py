@@ -80,7 +80,8 @@ class SensorManager:
 
 def main():
     sensorManager = SensorManager()
-    print sensorManager
+    SensorManager.init()
+    SensorManager.read_magnetometer()
 
 if __name__ == "__main__":
     main()
