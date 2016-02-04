@@ -31,7 +31,7 @@ address = 0x1e
 
 # Set up the program to continious mode, and give it time to do this by sleeping
 # the program
-bus.write_byte_data(address, 0x02, 0x00)
+bus.write_byte_data(address, 0x02, 0x01)
 time.sleep(0.01)
 
 # For every 0.02 of a second read the updated buffer and convert it into
