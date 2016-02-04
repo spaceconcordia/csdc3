@@ -15,7 +15,7 @@ class SensorManager:
         pass
 
     def init_magnetometer(self):
-        bus.write_byte_data(0x1e, 0x02, 0x00)
+        self.bus.write_byte_data(0x1e, 0x02, 0x00)
         time.sleep(0.01)
 
     def init_real_time_clock(self):
@@ -36,13 +36,16 @@ class SensorManager:
         pass
 
     def read_magnetometer(self):
+
+        address = 0x1e
+
         # Get the values from the sensor
-        valX = (bus.read_byte_data(address, 0x03) << 8) \
-            | bus.read_byte_data(address, 0x04)
-        valY = (bus.read_byte_data(address, 0x05) << 8) \
-            | bus.read_byte_data(address, 0x06)
-        valZ = (bus.read_byte_data(address, 0x07) << 8) \
-            | bus.read_byte_data(address, 0x08)
+        valX = (self.bus.read_byte_data(address, 0x03) << 8) \
+            | self.bus.read_byte_data(address, 0x04)
+        valY = (self.bus.read_byte_data(address, 0x05) << 8) \
+            | self.bus.read_byte_data(address, 0x06)
+        valZ = (self.bus.read_byte_data(address, 0x07) << 8) \
+            | self.bus.read_byte_data(address, 0x08)
 
         # Update the values to be of two compliment
         valX = twosToInt(valX, 16);
@@ -77,11 +80,18 @@ class SensorManager:
     def read_power_sensor(self):
         pass
 
+    """ ------------- Other ------------- """
+
+    def twosToInt(self, val, len):
+        if val & (1 << len - 1):
+          val = val - (1 << len)
+
+        return val
 
 def main():
     sensorManager = SensorManager()
-    SensorManager.init()
-    SensorManager.read_magnetometer()
+    sensorManager.init_magnetometer()
+    sensorManager.read_magnetometer()
 
 if __name__ == "__main__":
     main()
