@@ -7,9 +7,14 @@ I2C =        0x00
 GPIO =       0x01
 ONE_WIRE =   0x02
 
-# I/O const
+# i/o, i2c devices literals
 INPUT =      'INPUT'
 OUTPUT =     'OUTPUT'
+NAME =       'NAME'
+ADDR =       'BASE_ADDR'
+REG =        'REGISTERS'
+CH =         'CHANNELS'
+VAL =        'VALUE'
 
 # i2c devices
 
@@ -25,9 +30,9 @@ I2C_DEVICES_LIST = [GYRO, MAG, RTC, TEMP, MUX, ADC, POWER]
 
 I2C_DEVICES_LOOKUP_TABLE = {
     GYRO: {
-        'name': 'ITG3205',
-        'addr': 0x68,
-        'reg': {
+        NAME: 'ITG3205',
+        ADDR: 0x68,
+        REG: {
             'X-H': 0x1D,
             'X-L': 0x1E,
             'Y-H': 0x1F,
@@ -35,12 +40,12 @@ I2C_DEVICES_LOOKUP_TABLE = {
             'Z-H': 0x21,
             'Z-L': 0x22
         },
-        'ch': [0, 1, 2]
+        CH: [0, 1, 2]
     },
     MAG: {
-        'name': 'HMC5883L',
-        'addr': 0x1e,
-        'reg': {
+        NAME: 'HMC5883L',
+        ADDR: 0x1E,
+        REG: {
             'X-H': 0x03,
             'X-L': 0x04,
             'Y-H': 0x05,
@@ -48,12 +53,12 @@ I2C_DEVICES_LOOKUP_TABLE = {
             'Z-H': 0x07,
             'Z-L': 0x08
         },
-        'ch': [0, 1, 2]
+        CH: [0, 1, 2]
     },
     RTC: {
-        'name': 'DS3231',
-        'addr': 0x68,
-        'reg': {
+        NAME: 'DS3231',
+        ADDR: 0x68,
+        REG: {
             'sec':   0x00,
             'min':   0x01,
             'hr':    0x02,
@@ -62,30 +67,32 @@ I2C_DEVICES_LOOKUP_TABLE = {
             'month': 0x05,
             'year':  0x07
         },
-        'ch': [3, 4]
+        CH: [3, 4]
     },
     TEMP: {
-        'name': "DS1624",
-        'addr': 0x48,
-        'reg': 0xAA,
-        'ch': [0, 1, 2, 3, 4, 5, 6]
+        NAME: "DS1624",
+        ADDR: 0x48,
+        REG: {
+            VAL: 0xAA
+        },
+        CH: [0, 1, 2, 3, 4, 5, 6]
     },
     MUX: {
-        'name': 'TCA9548A',
-        'addr': 0x70,
-        'reg': {},
-        'ch': [0]
+        NAME: 'TCA9548A',
+        ADDR: 0x70,
+        REG: {},
+        CH: [0]
     },
     ADC: {
-        'name': 'AD128d818',
-        'addr': 0x1D,
-        'reg': {},
-        'ch': []
+        NAME: 'AD128d818',
+        ADDR: 0x1D,
+        REG: {},
+        CH: []
     },
     POWER: {
-        'name': 'N/A',
-        'addr': -1,
-        'reg': {},
-        'ch': []
+        NAME: 'N/A',
+        ADDR: -1,
+        REG: {},
+        CH: []
     }
 }

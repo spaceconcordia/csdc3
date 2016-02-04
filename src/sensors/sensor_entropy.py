@@ -1,34 +1,53 @@
 from sensor_constants import *
+import pprint
 
 class SensorEntropy:
     @staticmethod
     def name (sensor_type):
         """
-        returns the actual device name if sensor_type passed is valid,
+        returns the actual device name if the sensor_type passed is valid,
         else, return 'None'
         """
         if sensor_type in I2C_DEVICES_LIST:
-            return I2C_DEVICES_LOOKUP_TABLE[sensor_type]["name"]
+            return I2C_DEVICES_LOOKUP_TABLE[sensor_type][NAME]
         # else
         return None
 
+    @staticmethod
     def addr(sensor_type):
+        """
+        returns the i2c base address if the sensor_type passed is valid,
+        else, return 'None'
+        """
         if sensor_type in I2C_DEVICES_LIST:
-            return I2C_DEVICES_LOOKUP_TABLE[sensor_type]["addr"]
-        return None
-    
-    def reg(sensor_type):
-        if sensor_type in I2C_DEVICES_LIST:
-            return I2C_DEVICES_LOOKUP_TABLE[sensor_type]["reg"]
+            return format(I2C_DEVICES_LOOKUP_TABLE[sensor_type][ADDR],'#04x')
         return None
 
-    def ch(sensor_type):
+    @staticmethod
+    def reg(sensor_type):
+        """
+        returns the registers if the sensor_type passed is valid,
+        else, return 'None'
+        """
         if sensor_type in I2C_DEVICES_LIST:
-            return I2C_DEVICES_LOOKUP_TABLE[sensor_type]["ch"]
+            return I2C_DEVICES_LOOKUP_TABLE[sensor_type][REG]
+        return None
+
+    @staticmethod
+    def ch(sensor_type):
+        """
+        returns the channels if the sensor_type passed is valid,
+        else, return 'None'
+        """
+        if sensor_type in I2C_DEVICES_LIST:
+            return I2C_DEVICES_LOOKUP_TABLE[sensor_type][CH]
         return None
 
 if __name__ == "__main__":
-    print(SensorEntropy.name(GYRO))
-    print(SensorEntropy.addr(GYRO))
-    print(SensorEntropy.reg(GYRO))
-    print(SensorEntropy.ch(GYRO))
+    for sensor in I2C_DEVICES_LIST:
+        print("~~~~~~~~~~~~~~~~~~~~~~~~")
+        print("name: " + SensorEntropy.name(sensor))
+        print("addr:" + str(SensorEntropy.addr(sensor)))
+        print("reg:" + str(SensorEntropy.reg(sensor)))
+        print("ch: " + str(SensorEntropy.ch(sensor)))
+        print("~~~~~~~~~~~~~~~~~~~~~~~~")
