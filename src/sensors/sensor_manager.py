@@ -48,7 +48,30 @@ class SensorManager:
 
     @staticmethod
     def init_adc():
-        pass
+        addr = SensorEntropy.addr(ADC)
+        adc_reg = SensorEntropy.reg(ADC)
+        bus = SensorManager.bus
+        busy_reg = SensorManager.bus.read_byte_data(addr, adc_reg['BUSY_STATUS_REG'])
+        # Use internal Vref
+        bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x04)
+        # Set continuous mode
+        bus.write_byte_data(addr, adc_reg['CONV_RATE_REG'], 0x01)
+        # Enable all channels
+        bus.write_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG'], 0x0)
+        # Set high limits
+        bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE'], 0x05)
+        bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE2'], 0x05)
+        # Start conversion without interrupts
+        bus.write_byte_data(addr, adc_reg['CONFIG_REG'], 0x01)
+
+        print('*' * 50)
+        print("Config:", format(bus.read_byte_data(addr, adc_reg['CONFIG_REG']), '#04x'))
+        print("Mode:", format(bus.read_byte_data(addr, adc_reg['ADV_CONFIG_REG']), '#04x'))
+        print("Conversion:", format(bus.read_byte_data(addr, adc_reg['CONV_RATE_REG']), '#04x'))
+        print("Channels:", format(bus.read_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG']), '#04x'))
+        print("Limits:", format(bus.read_byte_data(addr, adc_reg['LIMIT_REG_BASE']), '#04x'))
+        print("Interrupts:", format(bus.read_byte_data(addr, 0x1), '#04x'))
+        sleep(0.01)
 
     @staticmethod
     def init_power_sensor():
@@ -115,8 +138,29 @@ class SensorManager:
         return SensorManager.conv_bin_to_int(decValue, fractValue)
 
     @staticmethod
-    def read_adc():
-        pass
+    def read_adc(experiment):
+        addr = SensorEntropy.addr(ADC)
+        adc_reg = SensorEntropy.reg(ADC)
+        bus = SensorManager.bus
+
+        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment)
+        strain = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
+        strain = strain >> 4
+
+        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment + 1)
+        force = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
+        force = force >> 4
+
+        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + 7)
+        temp = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFF80
+        temp = temp >> 7
+        if temp & 0x100 == 0:
+            temp /= 2.
+        else:
+            temp = -((512 - temp) / 2.)
+
+        sleep(0.01)
+        return (strain, force, temp)
 
     @staticmethod
     def read_power_sensor():

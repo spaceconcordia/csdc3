@@ -92,8 +92,18 @@ I2C_DEVICES_LOOKUP_TABLE = {
     ADC: {
         NAME: 'AD128d818',
         ADDR: 0x1D,
-        REG: {},
-        CH: []
+        REG: {
+            'CONFIG_REG'          : 0x00,
+            'CONV_RATE_REG'       : 0x07,
+            'CHANNEL_DISABLE_REG' : 0x08,
+            'ADV_CONFIG_REG'      : 0x0B,
+            'BUSY_STATUS_REG'     : 0x0C,
+            'READ_REG_BASE'       : 0x20,
+            'LIMIT_REG_BASE'      : 0x2A,
+            'LIMIT_REG_BASE2'     : 0x2C,
+            'TEMP_REGISTER'       : 0x27
+        },
+        CH: [0]
     },
     POWER: {
         NAME: 'N/A',
