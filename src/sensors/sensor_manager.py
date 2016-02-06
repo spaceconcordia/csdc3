@@ -20,7 +20,8 @@ class SensorManager:
 
     @staticmethod
     def init_gyroscope():
-        pass
+        SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x00)
+        time.sleep(0.1)
 
     @staticmethod
     def init_magnetometer():
@@ -30,7 +31,7 @@ class SensorManager:
         time.sleep(0.1)
 
     @staticmethod
-    def init_real_time_clock():
+    def init_rtc():
         pass
 
     @staticmethod
@@ -80,14 +81,53 @@ class SensorManager:
     """ -------------------- Reading --------------------- """
 
     @staticmethod
-    def read_gyroscope():
+    def init_i2c_mux():
         pass
 
     @staticmethod
+    def stop_gyroscope():
+        pass
+
+    @staticmethod
+    def stop_temp_sensor():
+        pass
+
+    @staticmethod
+    def stop_rtc():
+        pass
+
+    @staticmethod
+    def stop_adc_sensor():
+        pass
+
+    @staticmethod
+    def stop_power_sensor():
+        pass
+
+    """ -------------------- Reading --------------------- """
+
+    @staticmethod
+    def read_gyroscope():
+        address = SensorEntropy.addr(GYRO)
+        # Get the values from the sensor
+        reg_x_h = SensorEntropy.reg(GYRO)['X-H']
+        reg_x_l = SensorEntropy.reg(GYRO)['X-L']
+        reg_y_h = SensorEntropy.reg(GYRO)['Y-H']
+        reg_y_l = SensorEntropy.reg(GYRO)['Y-L']
+        reg_z_h = SensorEntropy.reg(GYRO)['Z-H']
+        reg_z_l = SensorEntropy.reg(GYRO)['Z-L']
+        valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_x_l)
+        valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_y_l)
+        valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_z_l)
+
+        print(valX, valY, valZ)
+
+    @staticmethod
     def read_magnetometer():
-
         address = SensorEntropy.addr(MAG)
-
         # Get the values from the sensor
         reg_x_h = SensorEntropy.reg(MAG)['X-H']
         reg_x_l = SensorEntropy.reg(MAG)['X-L']
@@ -125,7 +165,7 @@ class SensorManager:
         return (radians, degrees)
 
     @staticmethod
-    def read_real_time_clock():
+    def read_rtc():
         pass
 
     @staticmethod
@@ -228,13 +268,10 @@ class SensorManager:
         return result
 
 def main():
-    SensorManager.init_magnetometer()
-    rad, deg = SensorManager.read_magnetometer()
-    print(str(rad) + ' ' + str(deg))
-    SensorManager.init_temp_sensor()
+    SensorManager.init_gyroscope()
     while 1:
-        print(SensorManager.read_temp_sensor())
-    # print(SensorManager.twos_to_int(5, 8))
+        SensorManager.read_gyroscope()
+        sleep(0.1)
 
 if __name__ == "__main__":
     main()
