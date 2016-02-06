@@ -86,7 +86,8 @@ class SensorManager:
 
     @staticmethod
     def stop_gyroscope():
-        pass
+        SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x01)
+        time.sleep(0.1)
 
     @staticmethod
     def stop_temp_sensor():
@@ -118,10 +119,18 @@ class SensorManager:
         reg_z_l = SensorEntropy.reg(GYRO)['Z-L']
         valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_x_l)
+        sleep(0.1)
         valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_y_l)
+        sleep(0.1)
         valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_z_l)
+        sleep(0.1)
+
+        # Apply two's complement
+        valX = twos_to_int(valX)
+        valY = twos_to_int(valY)
+        valZ = twos_to_int(valZ)
 
         print(valX, valY, valZ)
 
@@ -137,10 +146,13 @@ class SensorManager:
         reg_z_l = SensorEntropy.reg(MAG)['Z-L']
         valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_x_l)
+        sleep(0.1)
         valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_y_l)
+        sleep(0.1)
         valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_z_l)
+        sleep(0.1)
 
         # Update the values to be of two compliment
         valX = SensorManager.twos_to_int(valX, 16);
