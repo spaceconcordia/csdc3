@@ -25,7 +25,7 @@ LOG =                 "log"
 SENSORID =            "sensoridentifier"
 VALUE =               "val"
 TIMESTAMP =           "timestamp"
-LEVEL =               "LEVEL"
+LEVEL =               "level"
 
 SYSCALL =             "systemcall"
 STDIN =               "stdin"
@@ -38,32 +38,32 @@ INTEGER =             "INTEGER"
 REAL =                "REAL"
 BLOB =                "BLOB"
 
-TELEMETRY_COLS = (
-    SENSORID,  TEXT
-,   VALUE,     REAL
-,   SUBSYSTEM, TEXT
-,   TIMESTAMP, INTEGER
-)
+TELEMETRY_COLS = [
+    (SENSORID,  TEXT)
+,   (VALUE,     REAL)
+,   (SUBSYSTEM, TEXT)
+,   (TIMESTAMP, INTEGER)
+]
 
-SYSTEM_CALLS_COLS = (
-    LEVEL,     TEXT
-,   SYSCALL,   TEXT
-,   SUBSYSTEM, TEXT
-,   TIMESTAMP, INTEGER
-,   STDIN,     TEXT
-,   STDOUT,    TEXT
-,   STDERR,    TEXT
-)
+SYSTEM_CALLS_COLS = [
+    (LEVEL,     TEXT)
+,   (SYSCALL,   TEXT)
+,   (SUBSYSTEM, TEXT)
+,   (TIMESTAMP, INTEGER)
+,   (STDIN,     TEXT)
+,   (STDOUT,    TEXT)
+,   (STDERR,    TEXT)
+]
 
-DEBUG_LOGS_COLS = (
-    LEVEL,     TEXT
-,   LOG,       TEXT
-,   SUBSYSTEM, TEXT
-,   TIMESTAMP, INTEGER
-)
+DEBUG_LOGS_COLS = [
+    (LEVEL,     TEXT)
+,   (LOG,       TEXT)
+,   (SUBSYSTEM, TEXT)
+,   (TIMESTAMP, INTEGER)
+]
 
 DB_TABLES_LIST = [
-    (SYSTEM_CALLS_DB, SYSTEM_CALLS_COLS)
-,   (DEBUG_LOGS_DB, DEBUG_LOGS_COLS)
-,   (TELEMETRY_DB, TELEMETRY_COLS)
+    (SYSTEM_CALLS_DB, SYSTEM_CALLS_COLS, SYSTEM_LOGS_PATH)
+,   (DEBUG_LOGS_DB, DEBUG_LOGS_COLS, SYSTEM_LOGS_PATH)
+,   (TELEMETRY_DB, TELEMETRY_COLS, DATA_LOGS_PATH)
 ]
