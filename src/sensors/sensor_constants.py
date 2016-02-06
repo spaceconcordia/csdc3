@@ -1,5 +1,5 @@
 """
-File contains the constants used by the different parts of the project.
+File contains the constants used by the sensor modules.
 """
 
 # different sensor classes (Range: 0x00 - 0x02)
