@@ -20,7 +20,7 @@ class SensorEntropy:
         else, return 'None'
         """
         if sensor_type in I2C_DEVICES_LIST:
-            return format(I2C_DEVICES_LOOKUP_TABLE[sensor_type][ADDR],'#04x')
+            return I2C_DEVICES_LOOKUP_TABLE[sensor_type][ADDR]
         return None
 
     @staticmethod
