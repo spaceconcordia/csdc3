@@ -45,7 +45,8 @@ I2C_DEVICES_LOOKUP_TABLE = {
     MAG: {
         NAME: 'HMC5883L',
         ADDR: 0x1E,
-        REG: {
+        REG:
+            'INIT': 0x02,
             'X-H': 0x03,
             'X-L': 0x04,
             'Y-H': 0x05,
