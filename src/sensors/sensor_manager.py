@@ -35,10 +35,15 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor():
+        # SensorManager.bus.write_byte_data(0x48, \
+        # 0xEE, 0x01)
+        # SensorManager.bus.write_byte_data(0x48, \
+        # 0xAC, 0x00)
+        SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
+        SensorEntropy.reg(TEMP)[START], 0x01)
         SensorManager.bus.write_byte_data(0x48, \
-        0xEE, 0x01)
-        SensorManager.bus.write_byte_data(0x48, \
-        0xAC, 0x00)
+        SensorEntropy.reg(TEMP)[CONFIG], 0x00)
+
         time.sleep(0.1)
 
     @staticmethod
@@ -81,7 +86,7 @@ class SensorManager:
 
         # Change valX and valY to radians
         radians = math.atan2(valY, valX)
-        radians += -0.0197
+        # radians += -0.0197
 
         # Compensate for errors
         if radians < 0:
@@ -93,7 +98,8 @@ class SensorManager:
         degrees = math.floor(radians * 180 / math.pi)
 
         # Print the value to the output
-        print(str(radians) + " " + str(degrees))
+        # print(str(radians) + " " + str(degrees))
+        return (radians, degrees)
 
     @staticmethod
     def read_real_time_clock():
@@ -101,9 +107,10 @@ class SensorManager:
 
     @staticmethod
     def read_temp_sensor():
-        SensorManager.bus.write_byte(0x48, 0xAA)
-        decValue = SensorManager.bus.read_byte(0x48)
-        fractValue = SensorManager.bus.read_byte(0x48)
+        # SensorManager.bus.write_byte(0x48, 0xAA)
+        SensorManager.bus.write_byte(SensorEntropy.addr(TEMP), SensorEntropy.reg(TEMP)[VAL])
+        decValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
+        fractValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
         sleep(0.1)
         return SensorManager.conv_bin_to_int(decValue, fractValue)
 
@@ -177,12 +184,13 @@ class SensorManager:
         return result
 
 def main():
-    # SensorManager.init_magnetometer()
-    # SensorManager.read_magnetometer()
+    SensorManager.init_magnetometer()
+    rad, deg = SensorManager.read_magnetometer()
+    print(str(rad) + ' ' + str(deg))
     SensorManager.init_temp_sensor()
     while 1:
         print(SensorManager.read_temp_sensor())
-    # SensorManager.read_temp_sensor()
+    # print(SensorManager.twos_to_int(5, 8))
 
 if __name__ == "__main__":
     main()

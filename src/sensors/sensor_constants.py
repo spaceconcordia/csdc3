@@ -15,6 +15,9 @@ ADDR =       'BASE_ADDR'
 REG =        'REGISTERS'
 CH =         'CHANNELS'
 VAL =        'VALUE'
+START =      'START'
+STOP =       'STOP'
+CONFIG =     'CONFIG'
 
 # i2c devices
 
@@ -74,7 +77,9 @@ I2C_DEVICES_LOOKUP_TABLE = {
         NAME: "DS1624",
         ADDR: 0x48,
         REG: {
-            VAL: 0xAA
+            VAL: 0xAA,
+            START: 0xEE,
+            CONFIG: 0xAC
         },
         CH: [0, 1, 2, 3, 4, 5, 6]
     },
