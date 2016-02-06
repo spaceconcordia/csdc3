@@ -27,7 +27,7 @@ class SensorManager:
         # SensorManager.bus.write_byte_data(0x1e, 0x02, 0x01)
         SensorManager.bus.write_byte_data(SensorEntropy.addr(MAG), \
         SensorEntropy.reg(MAG)['INIT'], 0x01)
-        time.sleep(0.01)
+        time.sleep(0.1)
 
     @staticmethod
     def init_real_time_clock():
@@ -35,7 +35,11 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor():
-        pass
+        SensorManager.bus.write_byte_data(0x48, \
+        0xEE, 0x01)
+        SensorManager.bus.write_byte_data(0x48, \
+        0xAC, 0x00)
+        time.sleep(0.1)
 
     @staticmethod
     def init_adc():
@@ -97,7 +101,11 @@ class SensorManager:
 
     @staticmethod
     def read_temp_sensor():
-        pass
+        SensorManager.bus.write_byte(0x48, 0xAA)
+        decValue = SensorManager.bus.read_byte(0x48)
+        fractValue = SensorManager.bus.read_byte(0x48)
+        sleep(0.1)
+        return SensorManager.conv_bin_to_int(decValue, fractValue)
 
     @staticmethod
     def read_adc():
@@ -141,7 +149,7 @@ class SensorManager:
     def gpio_input(pinId, inputTime):
         pass
 
-    """ -------------------- Reading --------------------- """
+    """ -------------------- Other --------------------- """
 
     @staticmethod
     def twos_to_int(val, len):
@@ -149,12 +157,32 @@ class SensorManager:
           val = val - (1 << len)
         return val
 
+    @staticmethod
+    def conv_bin_to_int(decimalBin, fractionalBin):
+        result = 0
+        isNegative = (decimalBin >> 7) & 0x1
+        if isNegative:
+            result = (decimalBin ^ 0xff) + 1
+            result *= -1
+        else:
+            result = decimalBin
+        tempFract = fractionalBin
+        count = 1
+        fract = 0
+        while count <= 8:
+            fract += ((tempFract >> 7) & 0x1) * pow(2, -count)
+            tempFract = tempFract << 1
+            count += 1
+        result += fract
+        return result
+
 def main():
     # SensorManager.init_magnetometer()
     # SensorManager.read_magnetometer()
-
+    SensorManager.init_temp_sensor()
     while 1:
-        SensorManager.gpio_output('J4.7', 1, 0)
+        print(SensorManager.read_temp_sensor())
+    # SensorManager.read_temp_sensor()
 
 if __name__ == "__main__":
     main()
