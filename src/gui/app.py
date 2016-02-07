@@ -4,7 +4,9 @@ import tornado.web
 import os.path
 import sys
 
-sys.path.insert(0, "/var/www/Aleksandr/src/handlers")
+from gui_constants import *
+
+sys.path.insert(0, HANDLERS_PATH)
 from payloadhandler   import PayloadHandler
 from commandshandler  import CommandsHandler
 from systemhandler    import SystemHandler
