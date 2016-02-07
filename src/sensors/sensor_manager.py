@@ -20,7 +20,8 @@ class SensorManager:
 
     @staticmethod
     def init_gyroscope():
-        pass
+        SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x00)
+        time.sleep(0.1)
 
     @staticmethod
     def init_magnetometer():
@@ -30,7 +31,7 @@ class SensorManager:
         time.sleep(0.1)
 
     @staticmethod
-    def init_real_time_clock():
+    def init_rtc():
         pass
 
     @staticmethod
@@ -48,7 +49,30 @@ class SensorManager:
 
     @staticmethod
     def init_adc():
-        pass
+        addr = SensorEntropy.addr(ADC)
+        adc_reg = SensorEntropy.reg(ADC)
+        bus = SensorManager.bus
+        busy_reg = SensorManager.bus.read_byte_data(addr, adc_reg['BUSY_STATUS_REG'])
+        # Use internal Vref
+        bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x04)
+        # Set continuous mode
+        bus.write_byte_data(addr, adc_reg['CONV_RATE_REG'], 0x01)
+        # Enable all channels
+        bus.write_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG'], 0x0)
+        # Set high limits
+        bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE'], 0x05)
+        bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE2'], 0x05)
+        # Start conversion without interrupts
+        bus.write_byte_data(addr, adc_reg['CONFIG_REG'], 0x01)
+
+        print('*' * 50)
+        print("Config:", format(bus.read_byte_data(addr, adc_reg['CONFIG_REG']), '#04x'))
+        print("Mode:", format(bus.read_byte_data(addr, adc_reg['ADV_CONFIG_REG']), '#04x'))
+        print("Conversion:", format(bus.read_byte_data(addr, adc_reg['CONV_RATE_REG']), '#04x'))
+        print("Channels:", format(bus.read_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG']), '#04x'))
+        print("Limits:", format(bus.read_byte_data(addr, adc_reg['LIMIT_REG_BASE']), '#04x'))
+        print("Interrupts:", format(bus.read_byte_data(addr, 0x1), '#04x'))
+        sleep(0.01)
 
     @staticmethod
     def init_power_sensor():
@@ -57,14 +81,62 @@ class SensorManager:
     """ -------------------- Reading --------------------- """
 
     @staticmethod
-    def read_gyroscope():
+    def init_i2c_mux():
         pass
 
     @staticmethod
+    def stop_gyroscope():
+        SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x01)
+        time.sleep(0.1)
+
+    @staticmethod
+    def stop_temp_sensor():
+        pass
+
+    @staticmethod
+    def stop_rtc():
+        pass
+
+    @staticmethod
+    def stop_adc_sensor():
+        pass
+
+    @staticmethod
+    def stop_power_sensor():
+        pass
+
+    """ -------------------- Reading --------------------- """
+
+    @staticmethod
+    def read_gyroscope():
+        address = SensorEntropy.addr(GYRO)
+        # Get the values from the sensor
+        reg_x_h = SensorEntropy.reg(GYRO)['X-H']
+        reg_x_l = SensorEntropy.reg(GYRO)['X-L']
+        reg_y_h = SensorEntropy.reg(GYRO)['Y-H']
+        reg_y_l = SensorEntropy.reg(GYRO)['Y-L']
+        reg_z_h = SensorEntropy.reg(GYRO)['Z-H']
+        reg_z_l = SensorEntropy.reg(GYRO)['Z-L']
+        valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_x_l)
+        sleep(0.1)
+        valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_y_l)
+        sleep(0.1)
+        valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
+            | SensorManager.bus.read_byte_data(address, reg_z_l)
+        sleep(0.1)
+
+        # Apply two's complement
+        valX = twos_to_int(valX)
+        valY = twos_to_int(valY)
+        valZ = twos_to_int(valZ)
+
+        print(valX, valY, valZ)
+
+    @staticmethod
     def read_magnetometer():
-
         address = SensorEntropy.addr(MAG)
-
         # Get the values from the sensor
         reg_x_h = SensorEntropy.reg(MAG)['X-H']
         reg_x_l = SensorEntropy.reg(MAG)['X-L']
@@ -74,10 +146,13 @@ class SensorManager:
         reg_z_l = SensorEntropy.reg(MAG)['Z-L']
         valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_x_l)
+        sleep(0.1)
         valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_y_l)
+        sleep(0.1)
         valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_z_l)
+        sleep(0.1)
 
         # Update the values to be of two compliment
         valX = SensorManager.twos_to_int(valX, 16);
@@ -102,7 +177,7 @@ class SensorManager:
         return (radians, degrees)
 
     @staticmethod
-    def read_real_time_clock():
+    def read_rtc():
         pass
 
     @staticmethod
@@ -115,8 +190,29 @@ class SensorManager:
         return SensorManager.conv_bin_to_int(decValue, fractValue)
 
     @staticmethod
-    def read_adc():
-        pass
+    def read_adc(experiment):
+        addr = SensorEntropy.addr(ADC)
+        adc_reg = SensorEntropy.reg(ADC)
+        bus = SensorManager.bus
+
+        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment)
+        strain = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
+        strain = strain >> 4
+
+        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment + 1)
+        force = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
+        force = force >> 4
+
+        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + 7)
+        temp = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFF80
+        temp = temp >> 7
+        if temp & 0x100 == 0:
+            temp /= 2.
+        else:
+            temp = -((512 - temp) / 2.)
+
+        sleep(0.01)
+        return (strain, force, temp)
 
     @staticmethod
     def read_power_sensor():
@@ -184,13 +280,10 @@ class SensorManager:
         return result
 
 def main():
-    SensorManager.init_magnetometer()
-    rad, deg = SensorManager.read_magnetometer()
-    print(str(rad) + ' ' + str(deg))
-    SensorManager.init_temp_sensor()
+    SensorManager.init_gyroscope()
     while 1:
-        print(SensorManager.read_temp_sensor())
-    # print(SensorManager.twos_to_int(5, 8))
+        SensorManager.read_gyroscope()
+        sleep(0.1)
 
 if __name__ == "__main__":
     main()
