@@ -1,7 +1,7 @@
 class CronManager:
     @staticmethod
     def update_cron_file(listOfJobs):
-        f = open('cronfile_test', 'w')
+        f = open('/var/spool/cron/crontabs/cronfile_test', 'w')
         for job in listOfJobs:
             if job.__class__.__name__ == CronJob.__name__:
                 f.write(job.GenerateCommand())
@@ -44,6 +44,6 @@ class CronJob:
 
 if __name__ == "__main__":
     jobList = []
-    jobList.append(CronJob('1','*','*','*','*', '/root/csdc3/src/custom_gpio.py'))
-    jobList.append(CronJob('1','1','1','2','3', '/root/csdc3/src/custom_i2c.py'))
+    jobList.append(CronJob('1','*','*','*','*', 'python3 /root/csdc3/src/custom_gpio.py'))
+    jobList.append(CronJob('1','1','1','2','3', 'python3 /root/csdc3/src/custom_i2c.py'))
     CronManager.update_cron_file(jobList)
