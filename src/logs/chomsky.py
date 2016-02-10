@@ -31,30 +31,75 @@ def selectTelemetryLog(sensor_id):
         + SENSORID + "='" + sensor_id + "'"
         + " ORDER BY " + TIMESTAMP + " DESC"):
         telemetry_rows.append(row)
-    print(telemetry_rows)
     conn.close()
-
     return telemetry_rows
 
-def insertSystemCallLog():
-    pass
+def insertSystemCallLog(level, syscall, subsystem, timestamp, stderr):
+    copies = ["/copy1/", "/copy2/", "/copy3/"]
+    for copy in copies:
+        conn = sqlite3.connect(SYSTEM_LOGS_PATH + copy + SYSTEM_CALLS_DB)
+        c = conn.cursor()
+        c.execute("INSERT INTO tabolo VALUES ('"                       
+            + level + "','"           
+            + syscall + "','"                    
+            + subsystem + "','" 
+            + str(timestamp) + "','"
+            + stderr
+            + "')")
+        conn.commit()
+        conn.close()
 
-def insertDebugLog():
-    pass
+def selectSystemCallLog(subsystem):
+    syscall_rows = []
+    conn = sqlite3.connect(SYSTEM_LOGS_PATH + "/copy1/" + SYSTEM_CALLS_DB)
+    c = conn.cursor()
+    for row in c.execute("SELECT * FROM tabolo WHERE "
+        + SUBSYSTEM + "='" + subsystem + "'"
+        + " ORDER BY " + TIMESTAMP + " DESC"):
+        syscall_rows.append(row)
+    conn.close()
+    return syscall_rows
 
-def selectSystemCallLog():
-    pass
+def insertDebugLog(level, log, subsystem, timestamp):
+    copies = ["/copy1/", "/copy2/", "/copy3/"]
+    for copy in copies:
+        conn = sqlite3.connect(SYSTEM_LOGS_PATH + copy + DEBUG_LOGS_DB)
+        c = conn.cursor()
+        c.execute("INSERT INTO tabolo VALUES ('"                       
+            + level + "','"           
+            + log + "','"                    
+            + subsystem + "','" 
+            + str(timestamp)
+            + "')")
+        conn.commit()
+        conn.close()
 
-def selectDebugLog():
-    pass
+def selectDebugLog(subsystem):
+    debug_rows = []
+    conn = sqlite3.connect(SYSTEM_LOGS_PATH + "/copy1/" + DEBUG_LOGS_DB)
+    c = conn.cursor()
+    for row in c.execute("SELECT * FROM tabolo WHERE "
+        + SUBSYSTEM + "='" + subsystem + "'"
+        + " ORDER BY " + TIMESTAMP + " DESC"):
+        debug_rows.append(row)
+    conn.close()
+    return debug_rows
 
 if __name__ == "__main__":
-    # TelemetryLog SELECT & INSERT test
+    # TelemetryLog SELECT & INSERT tests
     for i in range(500):
-        insertTelemetryLog("sensor_id", 5, "payload", i)
-    selectTelemetryLog("sensor_id")
+        insertTelemetryLog("sensor_id", 5, PAYLOAD, i)
+    print(selectTelemetryLog("sensor_id"))
     emptyTables()
 
-    # SystemCallLog SELECT & INSERT test
+    # SystemCallLog SELECT & INSERT tests
+    for i in range(500):
+        insertSystemCallLog(NOTICE, "date -s", CDH , i, "stderr")
+    print(selectSystemCallLog(CDH))
+    emptyTables()
 
-    # DebugLog SELECT & INSERT test
+    # DebugLog SELECT & INSERT tests
+    for i in range(500):
+        insertDebugLog(NOTICE, "FUCK IT DUDE", CDH , i)
+    print(selectDebugLog(CDH))
+    emptyTables()
