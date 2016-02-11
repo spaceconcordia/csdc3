@@ -3,6 +3,7 @@ sys.path.append('/root/csdc3/lib/ablib')
 from ablib_python3 import Pin
 from time import sleep
 from sensor_entropy import *
+from sensor_constants import *
 import smbus
 import time
 import math
@@ -15,17 +16,14 @@ class SensorManager:
     """ -------------------- Initialization --------------------- """
 
     @staticmethod
-    def init_i2c_mux():
-        pass
-
-    @staticmethod
-    def init_gyroscope():
+    def init_gyroscope(sensorId):
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x00)
         time.sleep(0.1)
 
     @staticmethod
-    def init_magnetometer():
-        # SensorManager.bus.write_byte_data(0x1e, 0x02, 0x01)
+    def init_magnetometer(sensorId):
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte_data(SensorEntropy.addr(MAG), \
         SensorEntropy.reg(MAG)['INIT'], 0x01)
         time.sleep(0.1)
@@ -35,10 +33,13 @@ class SensorManager:
         pass
 
     @staticmethod
-    def init_temp_sensor():
+    def init_temp_sensor(sensorId):
+        SensorManager.mux_select(sensorId)
+
 		# Start data conversion
         SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
         SensorEntropy.reg(TEMP)[START], 0x01)
+
 		# Enable continuous mode
         SensorManager.bus.write_byte_data(0x48, \
         SensorEntropy.reg(TEMP)[CONFIG], 0x00)
@@ -46,11 +47,14 @@ class SensorManager:
         time.sleep(0.1)
 
     @staticmethod
-    def init_adc():
+    def init_adc(sensorId):
+        SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(ADC)
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
-        busy_reg = SensorManager.bus.read_byte_data(addr, adc_reg['BUSY_STATUS_REG'])
+        busy_reg = SensorManager.bus.read_byte_data(addr, \
+        adc_reg['BUSY_STATUS_REG'])
+
         # Use internal Vref
         bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x04)
         # Set continuous mode
@@ -75,20 +79,18 @@ class SensorManager:
     @staticmethod
     def init_power_sensor():
         pass
-		
-	@staticmethod
-    def init_i2c_mux():
-        pass
-		
+
     """ -------------------- Stop --------------------- """
 
     @staticmethod
-    def stop_gyroscope():
+    def stop_gyroscope(sensorId):
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x01)
         time.sleep(0.1)
 
     @staticmethod
-    def stop_temp_sensor():
+    def stop_temp_sensor(sensorId):
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
         SensorEntropy.reg(TEMP)[STOP], 0x01)
 
@@ -97,7 +99,8 @@ class SensorManager:
         pass
 
     @staticmethod
-    def stop_adc_sensor():
+    def stop_adc_sensor(sensorId):
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte_data(SensorEntropy.addr(ADC), \
 		SensorEntropy.reg(ADC)['CONFIG_REG'], 0x00)
 
@@ -108,8 +111,10 @@ class SensorManager:
     """ -------------------- Reading --------------------- """
 
     @staticmethod
-    def read_gyroscope():
+    def read_gyroscope(sensorId):
+        SensorManager.mux_select(sensorId)
         address = SensorEntropy.addr(GYRO)
+
         # Get the values from the sensor
         reg_x_h = SensorEntropy.reg(GYRO)['X-H']
         reg_x_l = SensorEntropy.reg(GYRO)['X-L']
@@ -135,8 +140,10 @@ class SensorManager:
         print(valX, valY, valZ)
 
     @staticmethod
-    def read_magnetometer():
+    def read_magnetometer(sensorId):
+        SensorManager.mux_select(sensorId)
         address = SensorEntropy.addr(MAG)
+
         # Get the values from the sensor
         reg_x_h = SensorEntropy.reg(MAG)['X-H']
         reg_x_l = SensorEntropy.reg(MAG)['X-L']
@@ -161,7 +168,7 @@ class SensorManager:
 
         # Change valX and valY to radians
         radians = math.atan2(valY, valX)
-        # radians += -0.0197
+        radians += -0.0197
 
         # Compensate for errors
         if radians < 0:
@@ -173,34 +180,35 @@ class SensorManager:
         degrees = math.floor(radians * 180 / math.pi)
 
         # Print the value to the output
-        # print(str(radians) + " " + str(degrees))
         return (radians, degrees)
 
     @staticmethod
-    def read_rtc():
-		# Set up registers
-		seconds_reg = SensorEntropy.reg(RTC)['sec']
-		minute_reg = SensorEntropy.reg(RTC)['min']
-		hour_reg = SensorEntropy.reg(RTC)['hr']
-		day_reg = SensorEntropy.reg(RTC)['day']
-		date_reg = SensorEntropy.reg(RTC)['date']
-		month_reg = SensorEntropy.reg(RTC)['month']
-		year_reg = SensorEntropy.reg(RTC)['year']
-		
-        # Retrieve time values
-		second = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), seconds_reg)
-		minute = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), minute_reg)
-		hour = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), hour_reg)
-		day = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), day_reg)
-		date = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), date_reg)
-		month = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), month_reg)
-		year = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), year_reg)
+    def read_rtc(sensorId):
+        SensorManager.mux_select(sensorId)
 
-		return (second, minute, hour, day, date, month, year)
-		
+	    # Set up registers
+	    seconds_reg = SensorEntropy.reg(RTC)['sec']
+	    minute_reg = SensorEntropy.reg(RTC)['min']
+	    hour_reg = SensorEntropy.reg(RTC)['hr']
+	    day_reg = SensorEntropy.reg(RTC)['day']
+	    date_reg = SensorEntropy.reg(RTC)['date']
+	    month_reg = SensorEntropy.reg(RTC)['month']
+	    year_reg = SensorEntropy.reg(RTC)['year']
+
+        # Retrieve time values
+	    second = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), seconds_reg)
+	    minute = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), minute_reg)
+	    hour = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), hour_reg)
+	    day = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), day_reg)
+	    date = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), date_reg)
+	    month = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), month_reg)
+	    year = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), year_reg)
+
+	    return (second, minute, hour, day, date, month, year)
+
     @staticmethod
-    def read_temp_sensor():
-        # SensorManager.bus.write_byte(0x48, 0xAA)
+    def read_temp_sensor(sensorId):
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte(SensorEntropy.addr(TEMP), SensorEntropy.reg(TEMP)[VAL])
         decValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
         fractValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
@@ -208,7 +216,8 @@ class SensorManager:
         return SensorManager.conv_bin_to_int(decValue, fractValue)
 
     @staticmethod
-    def read_adc(experiment):
+    def read_adc(experiment, sensorId):
+        SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(ADC)
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
@@ -239,7 +248,6 @@ class SensorManager:
     """ -------------------- GPIO --------------------- """
 
     def gpio_output(pinId, onTime, offTime):
-
         if not (pinId in SensorManager.active_gpio_pins):
             SensorManager.active_gpio_pins[pinId] = 'off'
 
@@ -272,14 +280,25 @@ class SensorManager:
 
     """ -------------------- Other --------------------- """
 
-	@staticmethod
-    def muxselect(channel):
-		if channel < 0 or channel > 7:
-			return False
+    @staticmethod
+    def mux_select(sensorId):
+        channel = None
+        if sensorId in TEMP_IDENTIFIER_DICT:
+            channel = TEMP_IDENTIFIER_DICT[id][MUX]
+        elif sensorId in RTC_IDENTIFIER_DICT:
+            channel = RTC_IDENTIFIER_DICT[id][MUX]
+        elif sensorId in GYRO_IDENTIFIER_DICT:
+            channel = GYRO_IDENTIFIER_DICT[id][MUX]
+        elif sensorId in MAG_IDENTIFIER_DICT:
+            channel = MAG_IDENTIFIER_DICT[id][MUX]
+
+		if channel < 0 or channel > 7 or (not channel):
+		    return False
+
 		mux_address = SensorEntropy.addr(MUX)
 		SensorManager.bus.write_byte(mux_address, 1 << channel)
-		
-	@staticmethod
+
+    @staticmethod
     def twos_to_int(val, len):
         if val & (1 << len - 1):
           val = val - (1 << len)
@@ -305,11 +324,10 @@ class SensorManager:
         return result
 
 def main():
-    SensorManager.init_temp_sensor()
-	temp_value = SensorManager.read_temp_sensor()
-	SensorManager.stop_temp_sensor()
-	print(temp_value)
-	
+    SensorManager.init_temp_sensor(TEMP_4)
+    temp_value = SensorManager.read_temp_sensor(TEMP_4)
+    SensorManager.stop_temp_sensor(TEMP_4)
+    print(temp_value)
 
 if __name__ == "__main__":
     main()
