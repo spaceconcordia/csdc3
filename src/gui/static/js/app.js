@@ -1,4 +1,52 @@
+function updateDiskPartitionTable() {
+    $.ajax({
+        url: '/sysdata',
+        type: 'get',
+        data: {'table_name': 'diskPart'},
+        error: function() {
+            $( '#error-dialog' ).dialog( "open" );
+        },
+        success: function(data) {
+            $( '#disk-partition-table' ).html(data["jstable"]);
+            $( '#disk-partition-date' ).text(data["request_time"]);
+        }
+    });
+}
+
+function updateMemIntensiveProcesses() {
+    $.ajax({
+        url: '/sysdata',
+        type: 'get',
+        data: {'table_name': 'cpuIntensProc'},
+        error: function() {
+            $( '#error-dialog' ).dialog( "open" );
+        },
+        success: function(data) {
+            $( '#ram-intens-proc-table' ).html(data["jstable"]);
+            $( '#ram-intens-proc-date' ).text(data["request_time"]);
+        }
+    });
+}
+
+function updateCpuIntensiveProcesses() {
+    $.ajax({
+        url: '/sysdata',
+        type: 'get',
+        data: {'table_name': 'ramIntensProc'},
+        error: function() {
+            $( '#error-dialog' ).dialog( "open" );
+        },
+        success: function(data) {
+            $( '#cpu-intens-proc-table' ).html(data["jstable"]);
+            $( '#cpu-intens-proc-date' ).text(data["request_time"]);
+        }
+    });
+}
+
 $( document ).ready(function() {
+    updateDiskPartitionTable();
+    updateCpuIntensiveProcesses();
+    updateMemIntensiveProcesses();
 
     var sourceSwap = function () {
         var $this = $(this);
@@ -206,5 +254,18 @@ $( document ).ready(function() {
 	});
 	$( '#timetag-cmd-btn' ).click(function() {
 		$( '#timetag-cmd-dialog' ).dialog("open");
+	});
+    
+    $( '#ram-intens-proc-reload' ).click(function(e) {
+        e.preventDefault();
+        updateMemIntensiveProcesses();
+	});
+    $( '#cpu-intens-proc-reload' ).click(function(e) {
+        e.preventDefault();
+        updateCpuIntensiveProcesses();
+	});
+    $( '#disk-partition-reload' ).click(function(e) {
+        e.preventDefault();
+        updateDiskPartitionTable();
 	});
 });
