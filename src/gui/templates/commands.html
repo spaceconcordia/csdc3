@@ -37,8 +37,26 @@
             <div id="delete-logs-dialog" title="Confirm Dialog">Are you sure you want to delete all logged data?</div>
 			<button type="button" class="btn btn-primary" id="del-logs-btn">Delete Logged Data</button>
 
+            <div id="update-binaries-dialog" title="Upload file">
+                <form enctype="multipart/form-data" action="/updatebin" method="post">
+                    New Binary: <input type="file" name="filearg" />
+                    <br/><br/><center><input type="submit" value="upload" /></center>
+                </form>
+            </div>
 			<button type="button" class="btn btn-primary" id="update-bin-btn">Update Binaries</button>
+
+            <div id="roll-back-dialog" title="Choose File to Roll Back">
+                <form id="roll-back-id" enctype="multipart/form-data" action="/updatebin" method="post"></form>
+            </div>
 			<button type="button" class="btn btn-primary" id="roll-back-btn">Roll Back Binaries</button>
+
+            <div id="timetag-cmd-dialog" title="Upload file">
+                <form enctype="multipart/form-data" action="/timetagcmd" method="post">
+                    Bash Script: <input type="file" name="filearg" />
+                    Timetag: <input type="text" name="timetag" id="time-picker-cmd" value="" />
+                    <br/><br/><center><input type="submit" value="upload" /></center>
+                </form>
+            </div>
 			<button type="button" class="btn btn-primary" id="timetag-cmd-btn">Timetag Commands to Run</button>
 
 			</br></br>

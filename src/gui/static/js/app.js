@@ -165,12 +165,46 @@ $( document ).ready(function() {
 	$( '#del-logs-btn' ).click(function() {
 		$( '#delete-logs-dialog' ).dialog("open");
 	});
-	
-	$( '#update-bin-btn' ).click(function() {
-		console.log( '#update-bin-btn' );
+
+	$( '#update-binaries-dialog' ).dialog({
+		autoOpen: false
 	});
-	
+	$( '#update-bin-btn' ).click(function() {
+		$( '#update-binaries-dialog' ).dialog("open");
+	});
+
+	$( '#roll-back-dialog' ).dialog({
+		autoOpen: false
+	});
+    $( '#roll-back-btn' ).click(function() {
+		$.ajax({
+			url: '/updatebin',
+			type: 'GET',
+			error: function() {
+				$( '#error-dialog' ).dialog( "open" );
+			},
+			success: function(data) {
+                var backup_list = data["backup_list"];
+                var selectTag = '<select name=\'backup_file\'>'
+                for(index in backup_list) {
+                    var optionTag = '<option value=\"' + backup_list[index] + '\">' + backup_list[index] + '</option>'
+                    selectTag = selectTag.concat(optionTag);
+                }
+                selectTag = selectTag.concat('</select>');
+                console.log(selectTag)
+
+                $( '#roll-back-id' ).append(selectTag);
+                $( '#roll-back-id' ).append('<br/><br/><center><input type="submit" value="roll back" /></center>');
+                $( '#roll-back-dialog' ).dialog("open");
+			}
+        });
+    });
+
+	$( '#time-picker-cmd' ).datetimepicker();
+	$( '#timetag-cmd-dialog' ).dialog({
+		autoOpen: false
+	});
 	$( '#timetag-cmd-btn' ).click(function() {
-		console.log( '#timetag-cmd-btn' );
+		$( '#timetag-cmd-dialog' ).dialog("open");
 	});
 });
