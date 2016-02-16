@@ -1,20 +1,20 @@
 <div class="row">
-    <div class="col-xs-2">
+    <div class="col-xs-1">
         <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
     </div>
-    <div class="col-xs-8">
+    <div class="col-xs-10">
         <br/>
         <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
         <br/>
         <ul class="nav nav-tabs">
             <li><a href="/system">System Status</a></li>
             <li class="active"><a href="/commands">Send Commands</a></li>
-            <li><a href="/payload">Payload Experiment</a></li>
+            <li><a href="/payload">Payload Experiment Data</a></li>
             <li><a href="/telemetry">Telemetry Data</a></li>
-            <li><a href="/config">Set Config</a></li>
+            <li><a href="/config">Set Configurations</a></li>
         </ul>
     </div>
-    <div class="col-xs-2">
+    <div class="col-xs-1">
         <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
     </div>
 </div>
@@ -22,8 +22,29 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="main commands">
+            <div id="error-dialog" title="Error Dialog">An error occured while handling the command.</div>
+            <div id="job-success-dialog" title="Success Dialog"><div id="job-success-text"></div></div>
 
+            <div id="time-dialog" title="Get Time Response"><div id="time-text"></div></div>
+			<button type="button" class="btn btn-primary" id="get-time-btn">Get Time</button>
+			<button type="button" class="btn btn-primary" id="set-time-btn">Set Time</button>
+
+			<button type="button" class="btn btn-primary" id="get-logs-btn">Get Logged Data</button>
+
+            <div id="delete-logs-dialog" title="Confirm Dialog">Are you sure you want to delete all logged data?</div>
+			<button type="button" class="btn btn-primary" id="del-logs-btn">Delete Logged Data</button>
+
+			<button type="button" class="btn btn-primary" id="update-bin-btn">Update Binaries</button>
+
+			<button type="button" class="btn btn-primary" id="timetag-cmd-btn">Send Bash Commands to Run</button>
+
+			</br></br>
+
+            <div id="deploy-antenna-dialog" title="Confirm Dialog">Are you sure you want to trigger the antenna deployment?</div>
+			<button type="button" class="btn btn-primary" id="deploy-antenna-btn">Deploy Antenna</button>
+
+			<div id="start-payload-dialog" title="Confirm Dialog">Are you sure you want to start the payload experiment?</div>
+			<button type="button" class="btn btn-primary" id="start-payload-btn">Run Payload Experiment</button>
         </div>
     </div>
 </div>
-

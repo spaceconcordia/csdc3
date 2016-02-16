@@ -7,13 +7,17 @@ import sys
 from gui_constants import *
 
 sys.path.insert(0, HANDLERS_PATH)
-from payloadhandler   import PayloadHandler
-from commandshandler  import CommandsHandler
-from systemhandler    import SystemHandler
-from telemetryhandler import TelemetryHandler
-from confighandler    import ConfigHandler
-from inputhandler     import InputHandler
-from paramhandler     import ParamHandler
+from payloadhandler       import PayloadHandler
+from commandshandler      import CommandsHandler
+from systemhandler        import SystemHandler
+from telemetryhandler     import TelemetryHandler
+from confighandler        import ConfigHandler
+
+sys.path.insert(0, SYSTEM_HANDLERS_PATH)
+from timehandler          import TimeHandler
+from deployantennahandler import DeployAntennaHandler
+from startpayloadhandler  import StartPayloadHandler
+from logshandler          import LogsHandler
 
 settings = dict(
     template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -28,8 +32,12 @@ application = tornado.web.Application([
 	(r"/payload", PayloadHandler),
 	(r"/telemetry", TelemetryHandler),
     (r"/config", ConfigHandler),
-    (r"/test/([0-9]+)", InputHandler),
-    (r"/param", ParamHandler)
+
+# system command handler
+    (r"/time", TimeHandler),
+    (r"/deploy-antenna", DeployAntennaHandler),
+    (r"/start-payload", StartPayloadHandler),
+    (r"/logs", LogsHandler),
 ], **settings)
 
 if __name__ == "__main__":
