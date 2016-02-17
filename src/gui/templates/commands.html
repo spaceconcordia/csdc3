@@ -25,8 +25,11 @@
             <div id="error-dialog" title="Error Dialog">An error occured while handling the command.</div>
             <div id="job-success-dialog" title="Success Dialog"><div id="job-success-text"></div></div>
 
-            <div id="time-dialog" title="Get Time Response"><div id="time-text"></div></div>
+            <div id="get-time-dialog" title="Get Time Response"><div id="time-text"></div></div>
 			<button type="button" class="btn btn-primary" id="get-time-btn">Get Time</button>
+            <div id="set-time-dialog" title="Choose Sys Time to Set">
+                <input type="text" name="time-picker" id="time-picker" value="" />
+            </div>
 			<button type="button" class="btn btn-primary" id="set-time-btn">Set Time</button>
 
 			<button type="button" class="btn btn-primary" id="get-logs-btn">Get Logged Data</button>
@@ -35,8 +38,8 @@
 			<button type="button" class="btn btn-primary" id="del-logs-btn">Delete Logged Data</button>
 
 			<button type="button" class="btn btn-primary" id="update-bin-btn">Update Binaries</button>
-
-			<button type="button" class="btn btn-primary" id="timetag-cmd-btn">Send Bash Commands to Run</button>
+			<button type="button" class="btn btn-primary" id="roll-back-btn">Roll Back Binaries</button>
+			<button type="button" class="btn btn-primary" id="timetag-cmd-btn">Timetag Commands to Run</button>
 
 			</br></br>
 

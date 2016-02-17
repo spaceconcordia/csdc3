@@ -5,7 +5,7 @@ It does it for both data_logs and system_logs.
 import sqlite3
 from config_setup_constants import *
 
-if __name__ == "__main__":
+def createDBs():
     copies = ["/copy1/", "/copy2/", "/copy3/"]
     for copy in copies:
         for table in DB_TABLES_LIST:
@@ -26,3 +26,6 @@ if __name__ == "__main__":
             conn.commit()
 
             conn.close()
+
+if __name__ == "__main__":
+    createDBs()

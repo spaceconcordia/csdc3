@@ -80,7 +80,8 @@
  */
 #get-time-btn, #set-time-btn,
 #get-logs-btn, #del-logs-btn, 
-#update-bin-btn, #timetag-cmd-btn,
+#update-bin-btn, #roll-back-btn, 
+#timetag-cmd-btn,
 #deploy-antenna-btn, #start-payload-btn {
 	display: block;
 	margin: 0 auto;

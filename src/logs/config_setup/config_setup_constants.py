@@ -3,6 +3,7 @@ File containts the constants used by the logs modules.
 """
 
 # paths to both log types
+SCRIPTS_PATH =        "/root/csdc3/src/gui/scripts"
 SYSTEM_LOGS_PATH =    "/root/csdc3/src/logs/system_logs"
 DATA_LOGS_PATH =      "/root/csdc3/src/logs/data_logs"
 

@@ -1,5 +1,14 @@
 $( document ).ready(function() {
 
+    var sourceSwap = function () {
+        var $this = $(this);
+        var newSource = $this.data('alt-src');
+        $this.data('alt-src', $this.attr('src'));
+        $this.attr('src', newSource);
+    }
+
+    $('img.reload').hover(sourceSwap, sourceSwap);
+
 	$( '#error-dialog' ).dialog({
 		autoOpen: false
 	});
@@ -71,7 +80,7 @@ $( document ).ready(function() {
 		$( '#start-payload-dialog' ).dialog( "open" )
 	});
 
-	$( '#time-dialog' ).dialog({
+	$( '#get-time-dialog' ).dialog({
 		autoOpen: false,
 		buttons: {
 			"Ok": function () {
@@ -89,13 +98,40 @@ $( document ).ready(function() {
 			success: function(data) {
 				var time = data["time"];
 				$( '#time-text' ).text(time);
-				$( '#time-dialog' ).dialog("open");
+				$( '#get-time-dialog' ).dialog("open");
 			}
 		})
 	});
 
+	$( '#time-picker' ).datetimepicker();
+	$( '#set-time-dialog' ).dialog({
+		autoOpen: false,
+		buttons: {
+			"Set": function () {
+				var timeread = $( '#time-picker' ).datetimepicker().val();
+				$.ajax({
+					url: '/time',
+					type: 'POST',
+					data: { sys_time: timeread },
+					error: function() {
+						$( '#error-dialog' ).dialog( "open" )
+					},
+					success: function(data) {
+						if (data["status_code"] == 400) {
+                            $( '#error-dialog' ).dialog( "open" )
+                        } else if (data["status_code"] == 200) {
+                        	var time = data["time"];
+                            $( '#time-text' ).text("system time was set to: " + data["time-set"]);
+                            $( '#get-time-dialog' ).dialog("open");
+                        }
+					}
+				});
+				$(this).dialog('close');
+			}
+		}
+	});
 	$( '#set-time-btn' ).click(function() {
-		// Add a date picker form dialog
+		$( '#set-time-dialog' ).dialog("open");
 	});
 	
 	$( '#get-logs-btn' ).click(function() {
