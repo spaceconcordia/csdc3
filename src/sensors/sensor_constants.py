@@ -28,6 +28,7 @@ TEMP =       'Temperature Sensor'
 MUX =        'I2C Multiplexer'
 ADC =        'ADC Payload'
 POWER =      'Power Sensor'
+W1TEMP = "One-Wire Thermistor"
 
 I2C_DEVICES_LIST = [GYRO, MAG, RTC, TEMP, MUX, ADC, POWER]
 
@@ -79,7 +80,15 @@ I2C_DEVICES_LOOKUP_TABLE = {
         REG: {
             VAL: 0xAA,
             START: 0xEE,
+            STOP: 0x22,
             CONFIG: 0xAC
+        },
+        CH: [0, 1, 2, 3, 4, 5, 6]
+    },
+    W1TEMP: {
+        NAME: "DS18B20",
+        ADDR: 0x48,
+        REG: {
         },
         CH: [0, 1, 2, 3, 4, 5, 6]
     },

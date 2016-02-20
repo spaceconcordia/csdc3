@@ -3,6 +3,7 @@ sys.path.append('/root/csdc3/lib/ablib')
 from ablib_python3 import Pin
 from time import sleep
 from sensor_entropy import *
+from sensor_constants import *
 import smbus
 import time
 import math
@@ -36,12 +37,10 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor():
-        # SensorManager.bus.write_byte_data(0x48, \
-        # 0xEE, 0x01)
-        # SensorManager.bus.write_byte_data(0x48, \
-        # 0xAC, 0x00)
+		# Start data conversion
         SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
-        SensorEntropy.reg(TEMP)[START], 0x01)
+        SensorEntropy.reg(TEMP)['START'], 0x01)
+		# Enable continuous mode
         SensorManager.bus.write_byte_data(0x48, \
         SensorEntropy.reg(TEMP)[CONFIG], 0x00)
 
@@ -78,11 +77,7 @@ class SensorManager:
     def init_power_sensor():
         pass
 
-    """ -------------------- Reading --------------------- """
-
-    @staticmethod
-    def init_i2c_mux():
-        pass
+    """ -------------------- Stop --------------------- """
 
     @staticmethod
     def stop_gyroscope():
@@ -91,7 +86,8 @@ class SensorManager:
 
     @staticmethod
     def stop_temp_sensor():
-        pass
+        SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
+        SensorEntropy.reg(TEMP)[STOP], 0x01)
 
     @staticmethod
     def stop_rtc():
@@ -99,7 +95,8 @@ class SensorManager:
 
     @staticmethod
     def stop_adc_sensor():
-        pass
+        SensorManager.bus.write_byte_data(SensorEntropy.addr(ADC), \
+		SensorEntropy.reg(ADC)['CONFIG_REG'], 0x00)
 
     @staticmethod
     def stop_power_sensor():
@@ -178,7 +175,25 @@ class SensorManager:
 
     @staticmethod
     def read_rtc():
-        pass
+		    # Set up registers
+		    seconds_reg = SensorEntropy.reg(RTC)['sec']
+		    minute_reg = SensorEntropy.reg(RTC)['min']
+		    hour_reg = SensorEntropy.reg(RTC)['hr']
+		    day_reg = SensorEntropy.reg(RTC)['day']
+		    date_reg = SensorEntropy.reg(RTC)['date']
+		    month_reg = SensorEntropy.reg(RTC)['month']
+		    year_reg = SensorEntropy.reg(RTC)['year']
+
+        # Retrieve time values
+		    second = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), seconds_reg)
+		    minute = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), minute_reg)
+		    hour = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), hour_reg)
+		    day = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), day_reg)
+		    date = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), date_reg)
+		    month = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), month_reg)
+		    year = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), year_reg)
+
+		    return (second, minute, hour, day, date, month, year)
 
     @staticmethod
     def read_temp_sensor():
@@ -255,6 +270,13 @@ class SensorManager:
     """ -------------------- Other --------------------- """
 
     @staticmethod
+    def muxselect(channel):
+        if channel < 0 or channel > 7:
+            return False
+        mux_address = SensorEntropy.addr(MUX)
+        SensorManager.bus.write_byte(mux_address, 1 << channel)
+
+    @staticmethod
     def twos_to_int(val, len):
         if val & (1 << len - 1):
           val = val - (1 << len)
@@ -280,10 +302,11 @@ class SensorManager:
         return result
 
 def main():
-    SensorManager.init_gyroscope()
-    while 1:
-        SensorManager.read_gyroscope()
-        sleep(0.1)
+    SensorManager.init_temp_sensor()
+    temp_value = SensorManager.read_temp_sensor()
+    SensorManager.stop_temp_sensor()
+    print(temp_value)
+
 
 if __name__ == "__main__":
     main()
