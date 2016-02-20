@@ -272,7 +272,14 @@ class SensorManager:
 
     """ -------------------- Other --------------------- """
 
-    @staticmethod
+	@staticmethod
+    def muxselect(channel):
+		if channel < 0 or channel > 7:
+			return False
+		mux_address = SensorEntropy.addr(MUX)
+		SensorManager.bus.write_byte(mux_address, 1 << channel)
+		
+	@staticmethod
     def twos_to_int(val, len):
         if val & (1 << len - 1):
           val = val - (1 << len)
