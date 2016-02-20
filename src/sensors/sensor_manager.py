@@ -39,7 +39,7 @@ class SensorManager:
     def init_temp_sensor():
 		# Start data conversion
         SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
-        SensorEntropy.reg(TEMP)['START'], 0x01)
+        SensorEntropy.reg(TEMP)[START], 0x01)
 		# Enable continuous mode
         SensorManager.bus.write_byte_data(0x48, \
         SensorEntropy.reg(TEMP)[CONFIG], 0x00)
@@ -271,10 +271,10 @@ class SensorManager:
 
     @staticmethod
     def muxselect(channel):
-        if channel < 0 or channel > 7:
-            return False
-        mux_address = SensorEntropy.addr(MUX)
-        SensorManager.bus.write_byte(mux_address, 1 << channel)
+		    if channel < 0 or channel > 7:
+			    return False
+		    mux_address = SensorEntropy.addr(MUX)
+		    SensorManager.bus.write_byte(mux_address, 1 << channel)
 
     @staticmethod
     def twos_to_int(val, len):
@@ -306,7 +306,6 @@ def main():
     temp_value = SensorManager.read_temp_sensor()
     SensorManager.stop_temp_sensor()
     print(temp_value)
-
 
 if __name__ == "__main__":
     main()

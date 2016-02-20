@@ -15,18 +15,26 @@ DEBUG_LOGS_DB =       "debuglogs.db"
 TELEMETRY_DB =        "telemetry.db"
 
 # constants for db and table names and value types
-SUBSYSTEM =           "subsystem"
-PAYLOAD =             "payload"
-CDH =                 "cdh"
-POWER =               "power"
-ACS =                 "acs"
-COMMS =               "communications"
+SUBSYSTEM =           "Subsystem"
+PAYLOAD =             "Payload"
+CDH =                 "C&DH"
+POWER =               "Power"
+ACS =                 "ACS"
+COMMS =               "Communications"
 
-LOG =                 "log"
-SENSORID =            "sensoridentifier"
-VALUE =               "val"
-TIMESTAMP =           "timestamp"
-LEVEL =               "level"
+LOG =                 "Log"
+SENSORID =            "SensorIdentifier"
+VALUE =               "Val"
+TIMESTAMP =           "Timestamp"
+LEVEL =               "Level"
+
+# debug levels
+NOTICE =              "NOTICE"
+WARNING =             "WARNING"
+DEBUG =               "DEBUG"
+ERROR =               "ERROR"
+URGENT =              "URGENT"
+CRITICAL =            "CRITICAL"
 
 SYSCALL =             "systemcall"
 STDIN =               "stdin"
@@ -51,8 +59,6 @@ SYSTEM_CALLS_COLS = [
 ,   (SYSCALL,   TEXT)
 ,   (SUBSYSTEM, TEXT)
 ,   (TIMESTAMP, INTEGER)
-,   (STDIN,     TEXT)
-,   (STDOUT,    TEXT)
 ,   (STDERR,    TEXT)
 ]
 
