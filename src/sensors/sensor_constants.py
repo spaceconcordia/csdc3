@@ -79,6 +79,7 @@ I2C_DEVICES_LOOKUP_TABLE = {
         REG: {
             VAL: 0xAA,
             START: 0xEE,
+			STOP: 0x22,
             CONFIG: 0xAC
         },
         CH: [0, 1, 2, 3, 4, 5, 6]
