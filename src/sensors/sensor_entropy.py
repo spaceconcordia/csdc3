@@ -43,6 +43,22 @@ class SensorEntropy:
             return I2C_DEVICES_LOOKUP_TABLE[sensor_type][CH]
         return None
 
+    @staticmethod
+    def get_specific_address(sensor_id):
+        """
+        returns the address for a specified sensor
+        """
+        if sensor_id in TEMP_IDENTIFIER_DICT:
+            return TEMP_IDENTIFIER_DICT[id][ADDR]
+        elif sensor_id in RTC_IDENTIFIER_DICT:
+            return RTC_IDENTIFIER_DICT[id][ADDR]
+        elif sensor_id in GYRO_IDENTIFIER_DICT:
+            return GYRO_IDENTIFIER_DICT[id][ADDR]
+        elif sensor_id in MAG_IDENTIFIER_DICT:
+            return MAG_IDENTIFIER_DICT[id][ADDR]
+        else:
+            raise Exception('Sensor id does not exist')
+
 if __name__ == "__main__":
     for sensor in I2C_DEVICES_LIST:
         print("~~~~~~~~~~~~~~~~~~~~~~~~")

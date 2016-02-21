@@ -18,6 +18,8 @@ VAL =        'VALUE'
 START =      'START'
 STOP =       'STOP'
 CONFIG =     'CONFIG'
+I2C =        'I2C'
+MUX =        'MUX'
 
 # i2c devices
 
@@ -52,11 +54,35 @@ MAG_1 = 'I2C0_mux0_ch2_1E'
 MAG_2 = 'I2C0_mux0_ch3_1E'
 POWER_0 = 'I2C0_mux0_ch4_0'
 
-TEMP_IDENTIFIER_LIST = [TEMP_0, TEMP_1, TEMP_2, TEMP_3, \
-TEMP_4, TEMP_5, TEMP_6, TEMP_7, TEMP_8, TEMP_9]
-RTC_IDENTIFIER_LIST = [RTC_0, RTC_1]
-GYRO_IDENTIFIER_LIST = [GYRO_0, GYRO_1, GYRO_2]
-MAG_IDENTIFIER_LIST = [MAG_0, MAG_1, MAG_2]
+TEMP_IDENTIFIER_DICT = {
+    TEMP_0: {I2C: 0, MUX: 1, CH: 0, ADDR: 0x48},
+    TEMP_1: {I2C: 0, MUX: 1, CH: 0, ADDR: 0x49},
+    TEMP_2: {I2C: 0, MUX: 1, CH: 1, ADDR: 0x48},
+    TEMP_3: {I2C: 0, MUX: 1, CH: 4, ADDR: 0x49},
+    TEMP_4: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x48},
+    TEMP_5: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x49},
+    TEMP_6: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x4a},
+    TEMP_7: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x4b},
+    TEMP_8: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x4c},
+    TEMP_9: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x4d}
+}
+
+RTC_IDENTIFIER_DICT = {
+    RTC_0: {I2C: 0, MUX: 0, CH: 0, ADDR: 0x68},
+    RTC_1: {I2C: 1, MUX: None, CH: None, ADDR: 0x68}
+}
+
+GYRO_IDENTIFIER_DICT = {
+    GYRO_0: {I2C: 0, MUX: 0, CH: 1, ADDR: 0x68},
+    GYRO_1: {I2C: 0, MUX: 0, CH: 1, ADDR: 0x68},
+    GYRO_2: {I2C: 0, MUX: 0, CH: 1, ADDR: 0x68}
+}
+
+MAG_IDENTIFIER_DICT = {
+    MAG_0: {I2C: 0, MUX: 0, CH: 1, ADDR: 0x1E},
+    MAG_1: {I2C: 0, MUX: 0, CH: 2, ADDR: 0x1E},
+    MAG_2: {I2C: 0, MUX: 0, CH: 3, ADDR: 0x1E}
+}
 
 I2C_DEVICES_LIST = [GYRO, MAG, RTC, TEMP, MUX, ADC, POWER]
 
