@@ -17,13 +17,13 @@ class SensorManager:
 
     @staticmethod
     def init_gyroscope(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x00)
         time.sleep(0.1)
 
     @staticmethod
     def init_magnetometer(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte_data(SensorEntropy.addr(MAG), \
         SensorEntropy.reg(MAG)['INIT'], 0x01)
         time.sleep(0.1)
@@ -34,7 +34,7 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
 
 		# Start data conversion
         SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
@@ -48,7 +48,7 @@ class SensorManager:
 
     @staticmethod
     def init_adc(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(ADC)
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
@@ -84,13 +84,13 @@ class SensorManager:
 
     @staticmethod
     def stop_gyroscope(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x01)
         time.sleep(0.1)
 
     @staticmethod
     def stop_temp_sensor(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
         SensorEntropy.reg(TEMP)[STOP], 0x01)
 
@@ -100,7 +100,7 @@ class SensorManager:
 
     @staticmethod
     def stop_adc_sensor(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte_data(SensorEntropy.addr(ADC), \
 		SensorEntropy.reg(ADC)['CONFIG_REG'], 0x00)
 
@@ -112,7 +112,7 @@ class SensorManager:
 
     @staticmethod
     def read_gyroscope(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         address = SensorEntropy.addr(GYRO)
 
         # Get the values from the sensor
@@ -141,7 +141,7 @@ class SensorManager:
 
     @staticmethod
     def read_magnetometer(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         address = SensorEntropy.addr(MAG)
 
         # Get the values from the sensor
@@ -184,7 +184,7 @@ class SensorManager:
 
     @staticmethod
     def read_rtc(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
 
 	    # Set up registers
 	    seconds_reg = SensorEntropy.reg(RTC)['sec']
@@ -208,7 +208,7 @@ class SensorManager:
 
     @staticmethod
     def read_temp_sensor(sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         SensorManager.bus.write_byte(SensorEntropy.addr(TEMP), SensorEntropy.reg(TEMP)[VAL])
         decValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
         fractValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
@@ -217,7 +217,7 @@ class SensorManager:
 
     @staticmethod
     def read_adc(experiment, sensorId):
-        mux_select(sensorId)
+        SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(ADC)
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
@@ -324,9 +324,9 @@ class SensorManager:
         return result
 
 def main():
-    SensorManager.init_temp_sensor()
-    temp_value = SensorManager.read_temp_sensor()
-    SensorManager.stop_temp_sensor()
+    SensorManager.init_temp_sensor(TEMP_4)
+    temp_value = SensorManager.read_temp_sensor(TEMP_4)
+    SensorManager.stop_temp_sensor(TEMP_4)
     print(temp_value)
 
 if __name__ == "__main__":
