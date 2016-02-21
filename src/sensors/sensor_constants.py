@@ -28,7 +28,35 @@ TEMP =       'Temperature Sensor'
 MUX =        'I2C Multiplexer'
 ADC =        'ADC Payload'
 POWER =      'Power Sensor'
-W1TEMP = "One-Wire Thermistor"
+W1TEMP =     'One-Wire Thermistor'
+
+# Unique Sensor Identifiers
+ADC_0 = 'I2C0_mux1_ch0_1D'
+TEMP_0 = 'I2C0_mux1_ch0_48'
+TEMP_1 = 'I2C0_mux1_ch0_49'
+TEMP_2 = 'I2C0_mux1_ch1_48'
+TEMP_3 = 'I2C0_mux1_ch4_49'
+TEMP_4 = 'I2C0_mux0_ch4_48'
+TEMP_5 = 'I2C0_mux0_ch4_49'
+TEMP_6 = 'I2C0_mux0_ch4_4a'
+TEMP_7 = 'I2C0_mux0_ch4_4b'
+TEMP_8 = 'I2C0_mux0_ch4_4c'
+TEMP_9 = 'I2C0_mux0_ch4_4d'
+RTC_0 = 'I2C0_mux0_ch0_68'
+RTC_1 = 'I2C1_68'
+GYRO_0 = 'I2C0_mux0_ch1_68'
+GYRO_1 = 'I2C0_mux0_ch2_68'
+GYRO_2 = 'I2C0_mux0_ch3_68'
+MAG_0 = 'I2C0_mux0_ch1_1E'
+MAG_1 = 'I2C0_mux0_ch2_1E'
+MAG_2 = 'I2C0_mux0_ch3_1E'
+POWER_0 = 'I2C0_mux0_ch4_0'
+
+TEMP_IDENTIFIER_LIST = [TEMP_0, TEMP_1, TEMP_2, TEMP_3, \
+TEMP_4, TEMP_5, TEMP_6, TEMP_7, TEMP_8, TEMP_9]
+RTC_IDENTIFIER_LIST = [RTC_0, RTC_1]
+GYRO_IDENTIFIER_LIST = [GYRO_0, GYRO_1, GYRO_2]
+MAG_IDENTIFIER_LIST = [MAG_0, MAG_1, MAG_2]
 
 I2C_DEVICES_LIST = [GYRO, MAG, RTC, TEMP, MUX, ADC, POWER]
 
