@@ -21,7 +21,11 @@ class TableHandler(tornado.web.RequestHandler):
         if data_name == "None" or \
             (data_name != RAM_INTENSIVE_PROCESSES
                 and  data_name != CPU_INTENSIVE_PROCESSES
-                    and  data_name != DISK_PARTITION):
+                    and  data_name != DISK_PARTITION
+                        and  data_name != CPU_INTENSIVE_PROCESSES
+                            and  data_name != RAM_USAGE_CHART
+                                and  data_name != CPU_AVG_LOAD_CHART
+                                    and  data_name != CPU_UTIL_CHART):
             self.write({
                 "status_code": 400,
                 "message": "Illegal input arguments",
@@ -115,7 +119,10 @@ class TableHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == RAM_USAGE_CHART:
-            print("RAM_USAGE_CHART")
+            os.system('free -m > ' + GUI_PATH + '/out.txt')
+            with open(GUI_PATH + '/out.txt', 'r') as f:
+                content = f.read().split('\n')
+                content.pop()
             self.write({
                 "status_code": 200,
                 "timeseries_data": 0,
@@ -124,19 +131,28 @@ class TableHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == CPU_AVG_LOAD_CHART:
-            print("CPU_AVG_LOAD_CHART")
+            os.system('uptime > ' + GUI_PATH + '/out.txt')
+            with open(GUI_PATH + '/out.txt', 'r') as f:
+                content = f.read().split('\n')
+                content.pop()
             self.write({
                 "status_code": 200,
-                "jstable": 0,
+                "timeseries_data": 0,
                 "request_time": str(datetime.datetime.now()).split('.')[0]
             })
             self.finish()
 
         elif data_name == CPU_UTIL_CHART:
-            print("CPU_UTIL_CHART")
+            os.system('mpstat > ' + GUI_PATH + '/out.txt')
+            with open(GUI_PATH + '/out.txt', 'r') as f:
+                content = f.read().split('\n')
+                content.pop()
+                mpstatVals = content.pop(3).split()
+                idleVal = mpstatVals[len(mpstatVals)-1]
+                cpuUtilVal = 100 - float(idleVal)
             self.write({
                 "status_code": 200,
-                "timeseries_data": 0,
+                "timeseries_data": cpuUtilVal,
                 "request_time": str(datetime.datetime.now()).split('.')[0]
             })
             self.finish()

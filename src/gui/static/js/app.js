@@ -3,6 +3,7 @@ function updateDiskPartitionTable() {
     $.ajax({
         url: '/sysdata',
         type: 'get',
+        cache: false,
         data: {'data_name': 'diskPart'},
         error: function() {
             $( '#error-dialog' ).dialog( "open" );
@@ -18,6 +19,7 @@ function updateMemIntensiveProcesses() {
     $.ajax({
         url: '/sysdata',
         type: 'get',
+        cache: false,
         data: {'data_name': 'cpuIntensProc'},
         error: function() {
             $( '#error-dialog' ).dialog( "open" );
@@ -33,6 +35,7 @@ function updateCpuIntensiveProcesses() {
     $.ajax({
         url: '/sysdata',
         type: 'get',
+        cache: false,
         data: {'data_name': 'ramIntensProc'},
         error: function() {
             $( '#error-dialog' ).dialog( "open" );
@@ -44,18 +47,27 @@ function updateCpuIntensiveProcesses() {
     });
 }
 
+var smoothieRamUsage =       new SmoothieChart();
+var smoothieCpuAvgLoad =     new SmoothieChart();
+var smoothieCpuUtilization = new SmoothieChart({maxValue:100,minValue:0});
+
+var ramUsageLine =           new TimeSeries();
+var cpuUtilizationLine =     new TimeSeries();
+var cpuAvgLoadLine5mins =    new TimeSeries();
+var cpuAvgLoadLine10mins =   new TimeSeries();
+var cpuAvgLoadLine15mins =   new TimeSeries();
+
 function updateRamUsageCharts() {
     $.ajax({
         url: '/sysdata',
         type: 'get',
         cache: false,
         data: {'data_name': 'ramUsageCharts'},
-        error: function() {
-            // SHIT
-        },
+        error: function() {},
         success: function(data) {
+            console.log(data["request_time"])
             $( '#ram-usage-date' ).text(data["request_time"]);
-            // add data to line
+            ramUsageLine.append(new Date().getTime(), Math.random());
         }
     });
 }
@@ -66,12 +78,12 @@ function updateCpuAvgLoadCharts() {
         type: 'get',
         cache: false,
         data: {'data_name': 'cpuAvgLoadCharts'},
-        error: function() {
-            // SHIT
-        },
+        error: function() {},
         success: function(data) {
             $( '#cpu-avg-load-date' ).text(data["request_time"]);
-            // add data to line
+            cpuAvgLoadLine5mins.append(new Date().getTime(), Math.random());
+            cpuAvgLoadLine10mins.append(new Date().getTime(), Math.random());
+            cpuAvgLoadLine15mins.append(new Date().getTime(), Math.random());
         }
     });
 }
@@ -82,25 +94,13 @@ function updateCpuUtilizationCharts() {
         cache: false,
         type: 'get',
         data: {'data_name': 'cpuUtilizationCharts'},
-        error: function() { new TimeSeries();
-            // SHIT
-        },
+        error: function() {},
         success: function(data) {
             $( '#cpu-utilization-date' ).text(data["request_time"]);
-            // add data to line
+            cpuUtilizationLine.append(new Date().getTime(), data["timeseries_data"]);
         }
     });
 }
-
-var smoothieRamUsage =       new SmoothieChart();
-var smoothieCpuAvgLoad =     new SmoothieChart();
-var smoothieCpuUtilization = new SmoothieChart();
-
-var ramUsageLine =           new TimeSeries();
-var cpuUtilizationLine =     new TimeSeries();
-var cpuAvgLoadLine5mins =    new TimeSeries();
-var cpuAvgLoadLine10mins =   new TimeSeries();
-var cpuAvgLoadLine15mins =   new TimeSeries();
 
 $( document ).ready(function() {
     updateDiskPartitionTable();
@@ -111,17 +111,21 @@ $( document ).ready(function() {
     smoothieCpuAvgLoad.streamTo(document.getElementById("cpu-avg-load-canvas"));
     smoothieCpuUtilization.streamTo(document.getElementById("cpu-util-canvas"));
 
-    setInterval(function() { // do the 3 charts sequentially.
-        updateRamUsageCharts();
+    setInterval(function() {
         updateCpuAvgLoadCharts();
+    }, 1000);
+    setInterval(function() {
+        updateRamUsageCharts();
+    }, 1000);
+    setInterval(function() { // 
         updateCpuUtilizationCharts();
-    }, 3000);
+    }, 1000);
 
     smoothieRamUsage.addTimeSeries(ramUsageLine);
-    smoothieCpuAvgLoad.addTimeSeries(cpuUtilizationLine);
-    smoothieCpuUtilization.addTimeSeries(cpuAvgLoadLine5mins);
-    smoothieCpuUtilization.addTimeSeries(cpuAvgLoadLine10mins);
-    smoothieCpuUtilization.addTimeSeries(cpuAvgLoadLine15mins);
+    smoothieCpuUtilization.addTimeSeries(cpuUtilizationLine, {lineWidth:2,strokeStyle:'#0000ff',fillStyle:'rgba(0,128,255,0.30)'});
+    smoothieCpuAvgLoad.addTimeSeries(cpuAvgLoadLine5mins);
+    smoothieCpuAvgLoad.addTimeSeries(cpuAvgLoadLine10mins);
+    smoothieCpuAvgLoad.addTimeSeries(cpuAvgLoadLine15mins);
 
     var sourceSwap = function () {
         var $this = $(this);
