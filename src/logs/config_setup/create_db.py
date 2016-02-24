@@ -2,8 +2,14 @@
 Connect to each one of the DBs (3 copies) & create their tables.
 It does it for both data_logs and system_logs.
 """
+import os
 import sqlite3
 from config_setup_constants import *
+
+def createStaticLogs():
+    os.system("touch " + STATIC_LOGS_PATH + "/telemetry.log")
+    os.system("touch " + STATIC_LOGS_PATH + "/debuglogs.log")
+    os.system("touch " + STATIC_LOGS_PATH + "/syscall.log")
 
 def createDBs():
     copies = ["/copy1/", "/copy2/", "/copy3/"]
@@ -26,6 +32,8 @@ def createDBs():
             conn.commit()
 
             conn.close()
+
+    createStaticLogs()
 
 if __name__ == "__main__":
     createDBs()

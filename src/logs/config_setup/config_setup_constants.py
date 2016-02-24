@@ -6,6 +6,7 @@ File containts the constants used by the logs modules.
 SCRIPTS_PATH =        "/root/csdc3/src/gui/scripts"
 SYSTEM_LOGS_PATH =    "/root/csdc3/src/logs/system_logs"
 DATA_LOGS_PATH =      "/root/csdc3/src/logs/data_logs"
+STATIC_LOGS_PATH =    "/root/csdc3/src/logs/logs"
 
 NUM_REDUNDANT_COPIES = 3
 
@@ -21,6 +22,8 @@ CDH =                 "C&DH"
 POWER =               "Power"
 ACS =                 "ACS"
 COMMS =               "Communications"
+
+SUBSYSTEM_LIST = [PAYLOAD, CDH, POWER, ACS, COMMS]
 
 LOG =                 "Log"
 SENSORID =            "SensorIdentifier"

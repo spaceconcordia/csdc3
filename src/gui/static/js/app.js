@@ -276,9 +276,22 @@ $( document ).ready(function() {
 	$( '#set-time-btn' ).click(function() {
 		$( '#set-time-dialog' ).dialog("open");
 	});
-	
+
+    $( '#get-telemetry-logs' ).click(function() {
+
+	});
+    $( '#get-syscall-logs' ).click(function() {
+
+	});
+    $( '#get-debug-logs' ).click(function() {
+
+	});
+
+    $( '#get-logs-dialog' ).dialog({
+		autoOpen: false,
+	});
 	$( '#get-logs-btn' ).click(function() {
-		console.log( '#get-logs-btn' );
+		$( '#get-logs-dialog' ).dialog("open");
 	});
 
 	$( '#delete-logs-dialog' ).dialog({
