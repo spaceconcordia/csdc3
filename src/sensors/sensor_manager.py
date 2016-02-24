@@ -434,8 +434,10 @@ class SensorManager:
 
     @staticmethod
     def mux_select(sensorId):
+        print(sensorId)
         newChannel = None
         if sensorId in TEMP_IDENTIFIER_DICT:
+            print('Inside TEMP')
             newChannel = TEMP_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in RTC_IDENTIFIER_DICT:
             newChannel = RTC_IDENTIFIER_DICT[sensorId][CH]
@@ -444,14 +446,15 @@ class SensorManager:
         elif sensorId in MAG_IDENTIFIER_DICT:
             newChannel = MAG_IDENTIFIER_DICT[sensorId][CH]
 
-        if newChannel < 0 or newChannel > 7 \
-        or (not newChannel):
+        if newChannel < 0 or newChannel > 7 or (not newChannel):
             return False
 
+        print ('New Channel: ' + newChannel)
         if newChannel != SensorManager.channel:
             SensorManager.channel = newChannel
             mux_address = SensorEntropy.addr(MUX)
             SensorManager.bus.write_byte(mux_address, 1 << newChannel)
+            return True
 
     @staticmethod
     def twos_to_int(val, len):
@@ -494,6 +497,9 @@ def main():
     SensorManager.init_temp_sensor(TEMP_0)
     temp_value = SensorManager.read_temp_sensor(TEMP_0)
     SensorManager.stop_temp_sensor(TEMP_0)
+    SensorManager.init_temp_sensor(TEMP_4)
+    temp_value = SensorManager.read_temp_sensor(TEMP_4)
+    SensorManager.stop_temp_sensor(TEMP_4)
     print(temp_value)
 
 if __name__ == "__main__":
