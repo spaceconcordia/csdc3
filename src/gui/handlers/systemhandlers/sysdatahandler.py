@@ -13,19 +13,17 @@ RAM_USAGE_CHART =              "ramUsageCharts"
 CPU_AVG_LOAD_CHART =           "cpuAvgLoadCharts"
 CPU_UTIL_CHART =               "cpuUtilizationCharts"
 
-class TableHandler(tornado.web.RequestHandler):
+class SysdataHandler(tornado.web.RequestHandler):
     def get(self):
-        # for the tables: ramIntensProc, cpuIntensProc, DiskPart
         data_name = self.get_argument("data_name", "None")
 
         if data_name == "None" or \
             (data_name != RAM_INTENSIVE_PROCESSES
                 and  data_name != CPU_INTENSIVE_PROCESSES
                     and  data_name != DISK_PARTITION
-                        and  data_name != CPU_INTENSIVE_PROCESSES
-                            and  data_name != RAM_USAGE_CHART
-                                and  data_name != CPU_AVG_LOAD_CHART
-                                    and  data_name != CPU_UTIL_CHART):
+                        and  data_name != RAM_USAGE_CHART
+                            and  data_name != CPU_AVG_LOAD_CHART
+                                and  data_name != CPU_UTIL_CHART):
             self.write({
                 "status_code": 400,
                 "message": "Illegal input arguments",
@@ -34,10 +32,10 @@ class TableHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == RAM_INTENSIVE_PROCESSES:
-            os.system('ps aux | sort -rk 4,4 | head -n 6 > ' + GUI_PATH + '/out.txt')
+            os.system('ps aux | sort -rk 4,4 | head -n 6 > ' + GUI_PATH + '/out1.txt')
             jstable = '<table class="table"><thead><tr><th>PID</th><th>User</th>' + \
                 '<th>Mem%</th><th>Rss</th><th>Vsz</th><th>Cmd</th></tr></thead><tbody>'
-            with open(GUI_PATH + '/out.txt', 'r') as f:
+            with open(GUI_PATH + '/out1.txt', 'r') as f:
                 content = f.read()
                 rows = content.split('\n')
                 rows.pop(0)
@@ -56,7 +54,7 @@ class TableHandler(tornado.web.RequestHandler):
                                           + '<td>' + cmd + '</td>'           \
                                       + '</tr>'
             jstable = jstable + '</tbody></table>'
-            os.system('rm ' + GUI_PATH + '/out.txt')
+            os.system('rm ' + GUI_PATH + '/out1.txt')
             self.write({
                 "status_code": 200,
                 "jstable": jstable,
@@ -65,10 +63,10 @@ class TableHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == CPU_INTENSIVE_PROCESSES:
-            os.system('ps aux | sort -rk 3,3 | head -n 6 > ' + GUI_PATH + '/out.txt')
+            os.system('ps aux | sort -rk 3,3 | head -n 6 > ' + GUI_PATH + '/out2.txt')
             jstable = '<table class="table"><thead><tr><th>PID</th><th>User</th>' + \
                 '<th>Cpu%</th><th>Rss</th><th>Vsz</th><th>Cmd</th></tr></thead><tbody>'
-            with open(GUI_PATH + '/out.txt', 'r') as f:
+            with open(GUI_PATH + '/out2.txt', 'r') as f:
                 content = f.read()
                 rows = content.split('\n')
                 rows.pop(0)
@@ -89,7 +87,7 @@ class TableHandler(tornado.web.RequestHandler):
                                           + '<td>' + cmd + '</td>'           \
                                       + '</tr>'
             jstable = jstable + '</tbody></table>'
-            os.system('rm ' + GUI_PATH + '/out.txt')
+            os.system('rm ' + GUI_PATH + '/out2.txt')
             self.write({
                 "status_code": 200,
                 "jstable": jstable,
@@ -119,12 +117,13 @@ class TableHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == RAM_USAGE_CHART:
-            os.system('free -m > ' + GUI_PATH + '/out.txt')
-            with open(GUI_PATH + '/out.txt', 'r') as f:
+            os.system('free -m > ' + GUI_PATH + '/out3.txt')
+            with open(GUI_PATH + '/out3.txt', 'r') as f:
                 content = f.read().split('\n')
                 content.pop()
                 ramUsageVals = content.pop(1).split()
                 ramUsageRatioVal = float(ramUsageVals[2])/float(ramUsageVals[1])
+            os.system('rm ' + GUI_PATH + '/out3.txt')
             self.write({
                 "status_code": 200,
                 "timeseries_data": ramUsageRatioVal*100,
@@ -136,10 +135,11 @@ class TableHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == CPU_AVG_LOAD_CHART:
-            os.system('uptime > ' + GUI_PATH + '/out.txt')
-            with open(GUI_PATH + '/out.txt', 'r') as f:
+            os.system('uptime > ' + GUI_PATH + '/out4.txt')
+            with open(GUI_PATH + '/out4.txt', 'r') as f:
                 loadAvgsInfo = f.read().split(':')
                 loadAvgs = loadAvgsInfo[len(loadAvgsInfo)-1].replace('\n','').split(',')
+            os.system('rm ' + GUI_PATH + '/out4.txt')
             self.write({
                 "status_code": 200,
                 "timeseries_data1": float(loadAvgs[0]),
@@ -150,13 +150,14 @@ class TableHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == CPU_UTIL_CHART:
-            os.system('mpstat > ' + GUI_PATH + '/out.txt')
-            with open(GUI_PATH + '/out.txt', 'r') as f:
+            os.system('mpstat > ' + GUI_PATH + '/out5.txt')
+            with open(GUI_PATH + '/out5.txt', 'r') as f:
                 content = f.read().split('\n')
                 content.pop()
                 mpstatVals = content.pop(3).split()
                 idleVal = mpstatVals[len(mpstatVals)-1]
                 cpuUtilVal = 100 - float(idleVal)
+            os.system('rm ' + GUI_PATH + '/out5.txt')
             self.write({
                 "status_code": 200,
                 "timeseries_data": cpuUtilVal,

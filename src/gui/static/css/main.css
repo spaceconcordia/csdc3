@@ -101,6 +101,14 @@
 	width: 30%;
 }
 
+#get-telemetry-logs, #get-syscall-logs, #get-debug-logs {
+	display: block;
+	margin: 0 auto;
+    margin-top: 1.5%;
+    margin-bottom: 1.5%;
+	width: 60%;
+}
+
 /*
  *  Dialogs that go with cmd buttons
  */

@@ -20,7 +20,7 @@ from startpayloadhandler  import StartPayloadHandler
 from logshandler          import LogsHandler
 from timetagcmdhandler    import TimetagcmdHandler
 from updatebinhandler     import UpdatebinHandler
-from tablehandler         import TableHandler
+from sysdatahandler       import SysdataHandler
 
 settings = dict(
     template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -43,7 +43,10 @@ application = tornado.web.Application([
     (r"/logs", LogsHandler),
     (r"/timetagcmd", TimetagcmdHandler),
     (r"/updatebin", UpdatebinHandler),
-    (r"/sysdata", TableHandler),
+    (r"/sysdata", SysdataHandler),
+
+# static logs handlers
+    (r"/(.*)", tornado.web.StaticFileHandler, {'path': '/root/csdc3/src/logs/logs/'}),
 ], **settings)
 
 if __name__ == "__main__":
