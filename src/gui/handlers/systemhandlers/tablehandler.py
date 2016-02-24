@@ -123,9 +123,14 @@ class TableHandler(tornado.web.RequestHandler):
             with open(GUI_PATH + '/out.txt', 'r') as f:
                 content = f.read().split('\n')
                 content.pop()
+                ramUsageVals = content.pop(1).split()
+                ramUsageRatioVal = float(ramUsageVals[2])/float(ramUsageVals[1])
             self.write({
                 "status_code": 200,
-                "timeseries_data": 0,
+                "timeseries_data": ramUsageRatioVal*100,
+                "free_ram": ramUsageVals[3],
+                "used_ram": ramUsageVals[2],
+                "total_ram": ramUsageVals[1],
                 "request_time": str(datetime.datetime.now()).split('.')[0]
             })
             self.finish()
@@ -133,11 +138,13 @@ class TableHandler(tornado.web.RequestHandler):
         elif data_name == CPU_AVG_LOAD_CHART:
             os.system('uptime > ' + GUI_PATH + '/out.txt')
             with open(GUI_PATH + '/out.txt', 'r') as f:
-                content = f.read().split('\n')
-                content.pop()
+                loadAvgsInfo = f.read().split(':')
+                loadAvgs = loadAvgsInfo[len(loadAvgsInfo)-1].replace('\n','').split(',')
             self.write({
                 "status_code": 200,
-                "timeseries_data": 0,
+                "timeseries_data1": float(loadAvgs[0]),
+                "timeseries_data5": float(loadAvgs[1]),
+                "timeseries_data15": float(loadAvgs[2]),
                 "request_time": str(datetime.datetime.now()).split('.')[0]
             })
             self.finish()

@@ -55,8 +55,17 @@
     margin-top: 5%;
     height: 100%;
     width: 100%;
-    max-height: 250px;
     overflow: auto;
+}
+
+.short {
+    min-height: 268px;
+    max-height: 268px;
+}
+
+.long {
+    min-height: 279px;
+    max-height: 279px;
 }
 
 .middle {
