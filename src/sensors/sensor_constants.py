@@ -54,6 +54,12 @@ MAG_1 = 'I2C0_mux0_ch2_1E'
 MAG_2 = 'I2C0_mux0_ch3_1E'
 POWER_0 = 'I2C0_mux0_ch4_0'
 
+# Subsystems
+PAYLOAD = 'payload'
+CDH = 'cdh'
+POWER = 'power'
+SOFTWARE = 'software'
+
 TEMP_IDENTIFIER_DICT = {
     TEMP_0: {I2C: 0, MUX: 1, CH: 0, ADDR: 0x48},
     TEMP_1: {I2C: 0, MUX: 1, CH: 0, ADDR: 0x49},

@@ -1,6 +1,8 @@
 import sys
 sys.path.append('/root/csdc3/lib/ablib')
+sys.path.append('/root/csdc3/src/logs')
 from ablib_python3 import Pin
+from chomsky import *
 from time import sleep
 from sensor_entropy import *
 from sensor_constants import *
@@ -185,6 +187,7 @@ class SensorManager:
 
         print(valX, valY, valZ)
 
+
     @staticmethod
     def read_magnetometer(sensorId):
         SensorManager.mux_select(sensorId)
@@ -283,7 +286,10 @@ class SensorManager:
                 str(SensorEntropy.addr(TEMP))
             return -1
 
-        return SensorManager.conv_bin_to_int(decValue, fractValue)
+        value = SensorManager.conv_bin_to_int(decValue, fractValue)
+
+        # Log temperature sensor data
+        insertTelemetryLog(sensorId, value, PAYLOAD, date())
 
     @staticmethod
     def read_adc(experiment, sensorId):
