@@ -22,20 +22,20 @@ class SensorManager:
             SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x00)
         except IOError:
             print('[INIT] Error writing to gyroscope at address ' + \
-                str(SensorEntropy.addr(GYRO))
+                str(SensorEntropy.addr(GYRO)))
             return -1
         time.sleep(0.1)
 
     @staticmethod
     def init_magnetometer(sensorId):
-        mag_reg = SensorEntropy.reg(MAG)    
+        mag_reg = SensorEntropy.reg(MAG)
         SensorManager.mux_select(sensorId)
         try:
             SensorManager.bus.write_byte_data(SensorEntropy.addr(MAG), \
             mag_reg['INIT'], 0x01)
         except IOError:
             print('[INIT] Error writing to magnetometer at address ' + \
-                str(SensorEntropy.addr(MAG))
+                str(SensorEntropy.addr(MAG)))
             return -1
         time.sleep(0.1)
 
@@ -295,7 +295,7 @@ class SensorManager:
             SensorManager.bus.write_byte(addr, SensorEntropy.reg(TEMP)[VAL])
         except IOError:
             print('[READ] Error writing to temperature sensor at address ' + \
-                str(SensorEntropy.addr(TEMP))
+                str(SensorEntropy.addr(TEMP)))
             return -1
         try:
             decValue = SensorManager.bus.read_byte(addr)
@@ -303,7 +303,7 @@ class SensorManager:
             sleep(0.1)
         except IOError:
             print('[READ] Error reading from temperature sensor at address ' + \
-                str(SensorEntropy.addr(TEMP))
+                str(SensorEntropy.addr(TEMP)))
             return -1
 
         return SensorManager.conv_bin_to_int(decValue, fractValue)
@@ -329,7 +329,7 @@ class SensorManager:
             temp = temp >> 7
         except IOError:
             print('[READ] Error reading from ADC at address ' + \
-                str(addr)
+                str(addr))
             return -1
 
         if temp & 0x100 == 0:
@@ -341,22 +341,22 @@ class SensorManager:
         return (strain, force, temp)
 
     @staticmethod
-    def read_power_sensor():
+    def read_power_sensor(sensorId):
         try:
             SensorManager.mux_select(sensorId)
             addr = SensorEntropy.addr(POWER)
             power_reg = SensorEntropy.reg(POWER)
-            bus = SensorManager.bus       
+            bus = SensorManager.bus
 
-            current = bus.read_byte_data(addr, power_reg['REG_CURRENT']
-            bus_voltage = bus.read_byte_data(addr, power_reg['REG_BUSVOLTAGE']
-            shunt_voltage = bus.read_byte_data(addr, power_reg['REG_SHUNTVOLTAGE']
-            power = bus.read_byte_data(addr, power_reg['REG_POWER']
+            current = bus.read_byte_data(addr, power_reg['REG_CURRENT'])
+            bus_voltage = bus.read_byte_data(addr, power_reg['REG_BUSVOLTAGE'])
+            shunt_voltage = bus.read_byte_data(addr, power_reg['REG_SHUNTVOLTAGE'])
+            power = bus.read_byte_data(addr, power_reg['REG_POWER'])
         except IOError:
             print('[READ] Error reading from power sensor at address ' + \
-                str(addr)
+                str(addr))
             return -1
-        
+
         return (current, shunt_voltage, bus_voltage, power)
 
     """ -------------------- GPIO --------------------- """
