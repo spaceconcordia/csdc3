@@ -18,14 +18,24 @@ class SensorManager:
     @staticmethod
     def init_gyroscope(sensorId):
         SensorManager.mux_select(sensorId)
-        SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x00)
+        try:
+            SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x00)
+        except IOError:
+            print('[INIT] Error writing to gyroscope at address ' + \
+                str(SensorEntropy.addr(GYRO))
+            return -1
         time.sleep(0.1)
 
     @staticmethod
     def init_magnetometer(sensorId):
         SensorManager.mux_select(sensorId)
-        SensorManager.bus.write_byte_data(SensorEntropy.addr(MAG), \
-        SensorEntropy.reg(MAG)['INIT'], 0x01)
+        try:
+            SensorManager.bus.write_byte_data(SensorEntropy.addr(MAG), \
+            SensorEntropy.reg(MAG)['INIT'], 0x01)
+        except IOError:
+            print('[INIT] Error writing to magnetometer at address ' + \
+                str(SensorEntropy.addr(MAG))
+            return -1
         time.sleep(0.1)
 
     @staticmethod
@@ -35,22 +45,18 @@ class SensorManager:
     @staticmethod
     def init_temp_sensor(sensorId):
         #SensorManager.mux_select(sensorId)
-        
+
         try:
             # Start data conversion
             SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
             SensorEntropy.reg(TEMP)[START], 0x01)
-        except IOError:
-            print('Error writing to temperature sensor at address ' + \
-                str(SensorEntropy.reg(TEMP)[START]))
-
-        try:
             # Enable continuous mode
-            SensorManager.bus.write_byte_data(0x48, \
+            SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
             SensorEntropy.reg(TEMP)[CONFIG], 0x00)
         except IOError:
-            print('Error writing to temperature sensor at address ' + \
-                str(SensorEntropy.reg(TEMP)[CONFIG]))
+            print('[INIT] Error writing to temperature sensor at address ' + \
+                str(SensorEntropy.addr(TEMP)))
+            return -1
 
         time.sleep(0.1)
 
@@ -63,25 +69,36 @@ class SensorManager:
         busy_reg = SensorManager.bus.read_byte_data(addr, \
         adc_reg['BUSY_STATUS_REG'])
 
-        # Use internal Vref
-        bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x04)
-        # Set continuous mode
-        bus.write_byte_data(addr, adc_reg['CONV_RATE_REG'], 0x01)
-        # Enable all channels
-        bus.write_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG'], 0x0)
-        # Set high limits
-        bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE'], 0x05)
-        bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE2'], 0x05)
-        # Start conversion without interrupts
-        bus.write_byte_data(addr, adc_reg['CONFIG_REG'], 0x01)
+        try:
+            # Use internal Vref
+            bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x04)
+            # Set continuous mode
+            bus.write_byte_data(addr, adc_reg['CONV_RATE_REG'], 0x01)
+            # Enable all channels
+            bus.write_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG'], 0x0)
+            # Set high limits
+            bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE'], 0x05)
+            bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE2'], 0x05)
+            # Start conversion without interrupts
+            bus.write_byte_data(addr, adc_reg['CONFIG_REG'], 0x01)
+        except IOError:
+            print('[INIT] Error writing to ADC at address ' + \
+                str(addr))
+            return -1
 
-        print('*' * 50)
-        print("Config:", format(bus.read_byte_data(addr, adc_reg['CONFIG_REG']), '#04x'))
-        print("Mode:", format(bus.read_byte_data(addr, adc_reg['ADV_CONFIG_REG']), '#04x'))
-        print("Conversion:", format(bus.read_byte_data(addr, adc_reg['CONV_RATE_REG']), '#04x'))
-        print("Channels:", format(bus.read_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG']), '#04x'))
-        print("Limits:", format(bus.read_byte_data(addr, adc_reg['LIMIT_REG_BASE']), '#04x'))
-        print("Interrupts:", format(bus.read_byte_data(addr, 0x1), '#04x'))
+        try:
+            print('*' * 50)
+            print("Config:", format(bus.read_byte_data(addr, adc_reg['CONFIG_REG']), '#04x'))
+            print("Mode:", format(bus.read_byte_data(addr, adc_reg['ADV_CONFIG_REG']), '#04x'))
+            print("Conversion:", format(bus.read_byte_data(addr, adc_reg['CONV_RATE_REG']), '#04x'))
+            print("Channels:", format(bus.read_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG']), '#04x'))
+            print("Limits:", format(bus.read_byte_data(addr, adc_reg['LIMIT_REG_BASE']), '#04x'))
+            print("Interrupts:", format(bus.read_byte_data(addr, 0x1), '#04x'))
+        except IOError:
+            print('[INIT] Error reading from ADC at address ' + \
+                str(addr))
+            return -1
+
         sleep(0.01)
 
     @staticmethod
@@ -93,14 +110,24 @@ class SensorManager:
     @staticmethod
     def stop_gyroscope(sensorId):
         SensorManager.mux_select(sensorId)
-        SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x01)
+        try:
+            SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x01)
+        except IOError:
+            print('[STOP] Error writing to gyroscope at address ' + \
+                str(SensorEntropy.addr(GYRO)))
+            return -1
         time.sleep(0.1)
 
     @staticmethod
     def stop_temp_sensor(sensorId):
         SensorManager.mux_select(sensorId)
-        SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
-        SensorEntropy.reg(TEMP)[STOP], 0x01)
+        try:
+            SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
+            SensorEntropy.reg(TEMP)[STOP], 0x01)
+        except IOError:
+            print('[STOP] Error writing to temperature sensor at address ' + \
+                str(SensorEntropy.addr(TEMP)))
+            return -1
 
     @staticmethod
     def stop_rtc():
@@ -109,8 +136,13 @@ class SensorManager:
     @staticmethod
     def stop_adc_sensor(sensorId):
         SensorManager.mux_select(sensorId)
-        SensorManager.bus.write_byte_data(SensorEntropy.addr(ADC), \
-		SensorEntropy.reg(ADC)['CONFIG_REG'], 0x00)
+        try:
+            SensorManager.bus.write_byte_data(SensorEntropy.addr(ADC), \
+		          SensorEntropy.reg(ADC)['CONFIG_REG'], 0x00)
+        except IOError:
+            print('[STOP] Error writing to ADC at address ' + \
+                str(SensorEntropy.addr(ADC)))
+            return -1
 
     @staticmethod
     def stop_power_sensor():
@@ -130,7 +162,7 @@ class SensorManager:
         reg_y_l = SensorEntropy.reg(GYRO)['Y-L']
         reg_z_h = SensorEntropy.reg(GYRO)['Z-H']
         reg_z_l = SensorEntropy.reg(GYRO)['Z-L']
-        
+
         try:
             valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
             | SensorManager.bus.read_byte_data(address, reg_x_l)
@@ -142,7 +174,8 @@ class SensorManager:
             | SensorManager.bus.read_byte_data(address, reg_z_l)
             sleep(0.1)
         except IOError:
-            print('Read error from Gyroscope')
+            print('[READ] Error reading from gyroscope at address ' + \
+                str(address))
             return -1
 
         # Apply two's complement
@@ -164,14 +197,21 @@ class SensorManager:
         reg_y_l = SensorEntropy.reg(MAG)['Y-L']
         reg_z_h = SensorEntropy.reg(MAG)['Z-H']
         reg_z_l = SensorEntropy.reg(MAG)['Z-L']
-        valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
-            | SensorManager.bus.read_byte_data(address, reg_x_l)
-        sleep(0.1)
-        valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
-            | SensorManager.bus.read_byte_data(address, reg_y_l)
-        sleep(0.1)
-        valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
-            | SensorManager.bus.read_byte_data(address, reg_z_l)
+
+        try:
+            valX = (SensorManager.bus.read_byte_data(address, reg_x_h) << 8) \
+                | SensorManager.bus.read_byte_data(address, reg_x_l)
+            sleep(0.1)
+            valY = (SensorManager.bus.read_byte_data(address, reg_y_h) << 8) \
+                | SensorManager.bus.read_byte_data(address, reg_y_l)
+            sleep(0.1)
+            valZ = (SensorManager.bus.read_byte_data(address, reg_z_h) << 8) \
+                | SensorManager.bus.read_byte_data(address, reg_z_l)
+        except IOError:
+            print('[READ] Error reading from magnetometer at address ' + \
+                str(address))
+            return -1
+
         sleep(0.1)
 
         # Update the values to be of two compliment
@@ -208,32 +248,39 @@ class SensorManager:
         month_reg = SensorEntropy.reg(RTC)['month']
         year_reg = SensorEntropy.reg(RTC)['year']
 
-          # Retrieve time values
-        second = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), seconds_reg)
-        minute = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), minute_reg)
-        hour = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), hour_reg)
-        day = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), day_reg)
-        date = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), date_reg)
-        month = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), month_reg)
-        year = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), year_reg)
+        # Retrieve time values
+        try:
+            second = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), seconds_reg)
+            minute = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), minute_reg)
+            hour = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), hour_reg)
+            day = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), day_reg)
+            date = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), date_reg)
+            month = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), month_reg)
+            year = SensorManager.bus.read_byte_data(SensorEntropy.addr(RTC), year_reg)
+        except IOError:
+            print('[READ] Error reading from RTC at address ' + \
+                str(SensorEntropy.addr(RTC)))
+            return -1
 
         return (second, minute, hour, day, date, month, year)
 
     @staticmethod
     def read_temp_sensor(sensorId):
         SensorManager.mux_select(sensorId)
-        
+
         try:
             SensorManager.bus.write_byte(SensorEntropy.addr(TEMP), SensorEntropy.reg(TEMP)[VAL])
         except IOError:
-            print()
+            print('[READ] Error writing to temperature sensor at address ' + \
+                str(SensorEntropy.addr(TEMP))
             return -1
         try:
             decValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
             fractValue = SensorManager.bus.read_byte(SensorEntropy.addr(TEMP))
             sleep(0.1)
         except IOError:
-            print('Error reading temperature sensor')
+            print('[READ] Error reading from temperature sensor at address ' + \
+                str(SensorEntropy.addr(TEMP))
             return -1
 
         return SensorManager.conv_bin_to_int(decValue, fractValue)
@@ -245,17 +292,23 @@ class SensorManager:
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
 
-        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment)
-        strain = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
-        strain = strain >> 4
+        try:
+            bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment)
+            strain = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
+            strain = strain >> 4
 
-        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment + 1)
-        force = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
-        force = force >> 4
+            bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment + 1)
+            force = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
+            force = force >> 4
 
-        bus.write_byte(addr, adc_reg['READ_REG_BASE'] + 7)
-        temp = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFF80
-        temp = temp >> 7
+            bus.write_byte(addr, adc_reg['READ_REG_BASE'] + 7)
+            temp = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFF80
+            temp = temp >> 7
+        except IOError:
+            print('[READ] Error reading from ADC at address ' + \
+                str(addr)
+            return -1
+
         if temp & 0x100 == 0:
             temp /= 2.
         else:
