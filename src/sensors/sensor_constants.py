@@ -20,6 +20,7 @@ STOP =       'STOP'
 CONFIG =     'CONFIG'
 I2C =        'I2C'
 MUX =        'MUX'
+SUB =        'SUBSYSTEM'
 
 # i2c devices
 
@@ -61,33 +62,33 @@ POWER = 'power'
 SOFTWARE = 'software'
 
 TEMP_IDENTIFIER_DICT = {
-    TEMP_0: {I2C: 0, MUX: 1, CH: 0, ADDR: 0x48},
-    TEMP_1: {I2C: 0, MUX: 1, CH: 0, ADDR: 0x49},
-    TEMP_2: {I2C: 0, MUX: 1, CH: 1, ADDR: 0x48},
-    TEMP_3: {I2C: 0, MUX: 1, CH: 4, ADDR: 0x49},
-    TEMP_4: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x48},
-    TEMP_5: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x49},
-    TEMP_6: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x4a},
-    TEMP_7: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x4b},
-    TEMP_8: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x4c},
-    TEMP_9: {I2C: 0, MUX: 0, CH: 4, ADDR: 0x4d}
+    TEMP_0: {I2C: 0, MUX: 1, CH: 0, SUB: '', ADDR: 0x48},
+    TEMP_1: {I2C: 0, MUX: 1, CH: 0, SUB: '', ADDR: 0x49},
+    TEMP_2: {I2C: 0, MUX: 1, CH: 1, SUB: '', ADDR: 0x48},
+    TEMP_3: {I2C: 0, MUX: 1, CH: 4, SUB: '', ADDR: 0x49},
+    TEMP_4: {I2C: 0, MUX: 0, CH: 4, SUB: '', ADDR: 0x48},
+    TEMP_5: {I2C: 0, MUX: 0, CH: 4, SUB: '', ADDR: 0x49},
+    TEMP_6: {I2C: 0, MUX: 0, CH: 4, SUB: '', ADDR: 0x4a},
+    TEMP_7: {I2C: 0, MUX: 0, CH: 4, SUB: '', ADDR: 0x4b},
+    TEMP_8: {I2C: 0, MUX: 0, CH: 4, SUB: '', ADDR: 0x4c},
+    TEMP_9: {I2C: 0, MUX: 0, CH: 4, SUB: '', ADDR: 0x4d}
 }
 
 RTC_IDENTIFIER_DICT = {
-    RTC_0: {I2C: 0, MUX: 0, CH: 0, ADDR: 0x68},
-    RTC_1: {I2C: 1, MUX: None, CH: None, ADDR: 0x68}
+    RTC_0: {I2C: 0, MUX: 0, CH: 0, SUB: '', ADDR: 0x68},
+    RTC_1: {I2C: 1, MUX: None, CH: None, SUB: '', ADDR: 0x68}
 }
 
 GYRO_IDENTIFIER_DICT = {
-    GYRO_0: {I2C: 0, MUX: 0, CH: 1, ADDR: 0x68},
-    GYRO_1: {I2C: 0, MUX: 0, CH: 1, ADDR: 0x68},
-    GYRO_2: {I2C: 0, MUX: 0, CH: 1, ADDR: 0x68}
+    GYRO_0: {I2C: 0, MUX: 0, CH: 1, SUB: '', ADDR: 0x68},
+    GYRO_1: {I2C: 0, MUX: 0, CH: 1, SUB: '', ADDR: 0x68},
+    GYRO_2: {I2C: 0, MUX: 0, CH: 1, SUB: '', ADDR: 0x68}
 }
 
 MAG_IDENTIFIER_DICT = {
-    MAG_0: {I2C: 0, MUX: 0, CH: 1, ADDR: 0x1E},
-    MAG_1: {I2C: 0, MUX: 0, CH: 2, ADDR: 0x1E},
-    MAG_2: {I2C: 0, MUX: 0, CH: 3, ADDR: 0x1E}
+    MAG_0: {I2C: 0, MUX: 0, CH: 1, SUB: '', ADDR: 0x1E},
+    MAG_1: {I2C: 0, MUX: 0, CH: 2, SUB: '', ADDR: 0x1E},
+    MAG_2: {I2C: 0, MUX: 0, CH: 3, SUB: '', ADDR: 0x1E}
 }
 
 I2C_DEVICES_LIST = [GYRO, MAG, RTC, TEMP, MUX, ADC, POWER]
@@ -223,7 +224,7 @@ I2C_DEVICES_LOOKUP_TABLE = {
 	        'CONFIG_MODE_ADCOFF'              : 0x0004,
 	        'CONFIG_MODE_SVOLT_CONTINUOUS'    : 0x0005,
 	        'CONFIG_MODE_BVOLT_CONTINUOUS'    : 0x0006,
-	        'CONFIG_MODE_SANDBVOLT_CONTINUOUS': 0x0007 
+	        'CONFIG_MODE_SANDBVOLT_CONTINUOUS': 0x0007
 	    },
         CH: [4]
     }

@@ -14,6 +14,7 @@ class SensorManager:
 
     bus = smbus.SMBus(0)
     active_gpio_pins = {}
+    channel = None
 
     """ -------------------- Initialization --------------------- """
 
@@ -309,10 +310,9 @@ class SensorManager:
                 str(SensorEntropy.addr(TEMP)))
             return -1
 
-        value = SensorManager.conv_bin_to_int(decValue, fractValue)
-
         # Log temperature sensor data
-        insertTelemetryLog(sensorId, value, PAYLOAD, date())
+        value = SensorManager.conv_bin_to_int(decValue, fractValue)
+        insertTelemetryLog(sensorId, value, PAYLOAD, int(time.time()))
 
     @staticmethod
     def read_adc(experiment, sensorId):
@@ -402,21 +402,24 @@ class SensorManager:
 
     @staticmethod
     def mux_select(sensorId):
-        channel = None
+        newChannel = None
         if sensorId in TEMP_IDENTIFIER_DICT:
-            channel = TEMP_IDENTIFIER_DICT[sensorId][CH]
+            newChannel = TEMP_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in RTC_IDENTIFIER_DICT:
-            channel = RTC_IDENTIFIER_DICT[sensorId][CH]
+            newChannel = RTC_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in GYRO_IDENTIFIER_DICT:
-            channel = GYRO_IDENTIFIER_DICT[sensorId][CH]
+            newChannel = GYRO_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in MAG_IDENTIFIER_DICT:
-            channel = MAG_IDENTIFIER_DICT[sensorId][CH]
+            newChannel = MAG_IDENTIFIER_DICT[sensorId][CH]
 
-        if channel < 0 or channel > 7 or (not channel):
+        if newChannel < 0 or newChannel > 7 \
+        or (not newChannel):
             return False
 
-        mux_address = SensorEntropy.addr(MUX)
-        SensorManager.bus.write_byte(mux_address, 1 << channel)
+        if newChannel ~= SensorManager.channel:
+            SensorManager.channel = newChannel
+            mux_address = SensorEntropy.addr(MUX)
+            SensorManager.bus.write_byte(mux_address, 1 << newChannel)
 
     @staticmethod
     def twos_to_int(val, len):
