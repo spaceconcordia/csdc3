@@ -153,7 +153,7 @@ class SensorManager:
             raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
-        stopReg = SensorManager.reg(TEMP)[STOP]
+        stopReg = SensorEntropy.reg(TEMP)[STOP]
         try:
             SensorManager.bus.write_byte_data(addr, stopReg, 0x01)
         except IOError:
