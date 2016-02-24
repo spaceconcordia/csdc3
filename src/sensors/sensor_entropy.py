@@ -14,10 +14,42 @@ class SensorEntropy:
         return None
 
     @staticmethod
-    def addr(sensor_type):
+    def addr(sensorId):
         """
         returns the i2c base address if the sensor_type passed is valid,
         else, return 'None'
+        """
+        if sensorId in TEMP_IDENTIFIER_DICT:
+            return TEMP_IDENTIFIER_DICT[sensorId][ADDR]
+        elif sensorId in RTC_IDENTIFIER_DICT:
+            return RTC_IDENTIFIER_DICT[sensorId][ADDR]
+        elif sensorId in GYRO_IDENTIFIER_DICT:
+            return GYRO_IDENTIFIER_DICT[sensorId][ADDR]
+        elif sensorId in MAG_IDENTIFIER_DICT:
+            return MAG_IDENTIFIER_DICT[sensorId][ADDR]
+        return None
+
+    def subsystem(sensorId):
+        """
+        returns the subsytems corresponding to the sensorId
+        that is passed as an argument.
+        """
+        if sensorId in TEMP_IDENTIFIER_DICT:
+            return TEMP_IDENTIFIER_DICT[sensorId][SUB]
+        elif sensorId in RTC_IDENTIFIER_DICT:
+            return RTC_IDENTIFIER_DICT[sensorId][SUB]
+        elif sensorId in GYRO_IDENTIFIER_DICT:
+            return GYRO_IDENTIFIER_DICT[sensorId][SUB]
+        elif sensorId in MAG_IDENTIFIER_DICT:
+            return MAG_IDENTIFIER_DICT[sensorId][SUB]
+        return None
+
+
+    @staticmethod
+    def addr_deprecated(sensor_type):
+        """
+        returns the i2c base address if the sensor_type passed is valid,
+        else, return 'None' (do not use: see updated method)
         """
         if sensor_type in I2C_DEVICES_LIST:
             return I2C_DEVICES_LOOKUP_TABLE[sensor_type][ADDR]
