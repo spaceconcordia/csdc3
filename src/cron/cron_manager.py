@@ -1,49 +1,68 @@
 class CronManager:
-    @staticmethod
-    def update_cron_file(listOfJobs):
-        f = open('/var/spool/cron/crontabs/cronfile_test', 'w')
-        for job in listOfJobs:
-            if job.__class__.__name__ == CronJob.__name__:
-                f.write(job.GenerateCommand())
-            else:
-                raise TypeError("Invalid date object")
+    def __init__(self):
+        self.jobList = []
+
+    def update_cron_file(self):
+        """
+        Method for updating cron file, based on
+        the contents of the list.
+        """
+        # f = open('/var/spool/cron/crontabs/cronfile_test', 'w')
+        f = open('C:\Users\justi\Desktop\cronfile_test', 'w')
+        for job in self.jobList:
+            f.write(self.generate_command(job))
         f.close()
 
-class CronJob:
-    def __init__(self, minute, hour, day, month, weekday, command):
-        if minute == '*' or 0 <= int(minute) <= 59:
-            self.minute = minute
-        else:
+    def generate_command(self, job):
+        return job['minute'] + ' ' + job['hour'] + ' ' + job['day'] + \
+         ' ' + job['month'] + ' ' + job['weekday'] + \
+         ' ' + job['command'] + '\n'
+
+    def add_or_update_job(self, minute, hour, day, month, weekday, command):
+        """
+        Method for adding jobs. If the job is already added,
+        the schedule for this job will be updated.
+        """
+        if not (minute == '*' or 0 <= int(minute) <= 59):
             raise Exception("Minute out of range")
-        if hour == '*' or 0 <= int(hour) <= 23:
-            self.hour = hour
-        else:
+        if not (hour == '*' or 0 <= int(hour) <= 23):
             raise Exception("Hour out of range")
-        if day == '*' or 1 <= int(day) <= 31:
-            self.day = day
-        else:
+        if not (day == '*' or 1 <= int(day) <= 31):
             raise Exception("Day out of range")
-        if month == '*' or 1 <= int(month) <= 12:
-            self.month = month
-        else:
+        if not (month == '*' or 1 <= int(month) <= 12):
             raise Exception("Month out of range")
-        if weekday == '*' or 0 <= int(weekday) <= 6:
-            self.weekday = weekday
-        else:
+        if not (weekday == '*' or 0 <= int(weekday) <= 6):
             raise Exception("Weekday out of range")
 
-        self.command = command
+        # Check if the job already exists, if yes then remove.
+        for job in self.jobList:
+            if job['command'] == command:
+                self.jobList.remove(job)
 
-    def GenerateCommand(self):
-        return self.minute + ' ' + self.hour + ' ' + self.day + \
-         ' ' + self.month + ' ' + self.weekday + ' ' + self.command + '\n'
+        # Add new job to list
+        job = {'minute': minute, 'hour': hour, 'day': day, \
+        'month': month, 'weekday': weekday, 'command': command}
 
-# Overall Structure
-# minute (0-59), hour (0-23, 0 = midnight), day (1-31),
-# month (1-12), weekday (0-6, 0 = Sunday), command
+        self.jobList.append(job)
+
+    def remove_job(self, command):
+        """
+        Method for removing existing jobs.
+        """
+        isJobFound = False
+        for job in self.jobList:
+            if job['command'] == command:
+                self.jobList.remove(job)
+                isJobFound = True
+
+        if not isJobFound:
+            raise Exception('Job does not exist and cannot be removed.')
+
 
 if __name__ == "__main__":
-    jobList = []
-    jobList.append(CronJob('1','*','*','*','*', 'python3 /root/csdc3/src/custom_gpio.py'))
-    jobList.append(CronJob('1','1','1','2','3', 'python3 /root/csdc3/src/custom_i2c.py'))
-    CronManager.update_cron_file(jobList)
+    cronManager = CronManager()
+    cronManager.add_or_update_job('1','*','*','*','*', 'python3 /root/csdc3/src/custom_gpio.py')
+    cronManager.add_or_update_job('1','1','1','2','3', 'python3 /root/csdc3/src/custom_i2c.py')
+    cronManager.add_or_update_job('1','1','1','2','5', 'python3 /root/csdc3/src/custom_i2c.py')
+    # cronManager.remove_job('python3 /root/csdc3/src/custom_gpio.py')
+    cronManager.update_cron_file()
