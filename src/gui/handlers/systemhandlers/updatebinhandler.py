@@ -29,7 +29,7 @@ class UpdatebinHandler(tornado.web.RequestHandler):
                 self.write({
                     "status_code": 400,
                     "message": "Illegal input arguments",
-                    "description": "data_name was not passed"
+                    "description": "the file you are trying to update doesn't "
                 })
                 self.finish()
             else:
@@ -41,5 +41,8 @@ class UpdatebinHandler(tornado.web.RequestHandler):
                         fh.write(fileinfo['body'])
                         fh.close()
         else: # backup_file name is given gotta roll back.
-            pass
+            for tuple in SRC_TUPLES:
+                if backup_file in tuple[0]:
+                    os.system("mv " + BACKUP_PATH + backup_file + ".bak" + " " + tuple[1] + backup_file)
+
         self.render('index.html', section='commands')

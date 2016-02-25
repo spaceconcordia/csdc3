@@ -280,10 +280,8 @@ $( document ).ready(function() {
                     selectTag = selectTag.concat(optionTag);
                 }
                 selectTag = selectTag.concat('</select>');
-                console.log(selectTag)
-
-                $( '#roll-back-id' ).append(selectTag);
-                $( '#roll-back-id' ).append('<br/><br/><center><input type="submit" value="roll back" /></center>');
+                var formInput = selectTag + '<br/><br/><center><input type="submit" value="roll back" /></center>'
+                $( '#roll-back-id' ).html(formInput);
                 $( '#roll-back-dialog' ).dialog("open");
 			}
         });
