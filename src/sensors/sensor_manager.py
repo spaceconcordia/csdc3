@@ -412,36 +412,18 @@ class SensorManager:
 
     """ -------------------- GPIO --------------------- """
 
-    def gpio_output(pinId, onTime, offTime):
-        if not (pinId in SensorManager.active_gpio_pins):
-            SensorManager.active_gpio_pins[pinId] = 'off'
-
+    def gpio_output(pinId, pinStatus):
         led = Pin(pinId,'OUTPUT')
-
-        if onTime == 0 and offTime == 0:
-            return
-        elif onTime == 0:
-            if SensorManager.active_gpio_pins[pinId] == 'on':
-                led.off()
-                SensorManager.active_gpio_pins[pinId] == 'off'
-            else:
-                led.off()
-        elif offTime == 0:
-            if SensorManager.active_gpio_pins[pinId] == 'off':
-                led.on()
-                SensorManager.active_gpio_pins[pinId] = 'on'
-            else:
-                led.on()
-        else:
+        if pinStatus == ON:
             led.on()
-            SensorManager.active_gpio_pins[pinId] = 'on'
-            sleep(onTime)
+        elif pinStatus == OFF:
             led.off()
-            SensorManager.active_gpio_pins[pinId] = 'off'
-            sleep(offTime)
+        else:
+            raise Exception('Incorrect GPIO status')
 
     def gpio_input(pinId, inputTime):
-        pass
+        pin = Pin(pinId,'INPUT')
+        return PB.digitalRead() == 0
 
     """ -------------------- Other --------------------- """
 
@@ -504,14 +486,19 @@ class SensorManager:
         return False
 
 def main():
-    SensorManager.init_temp_sensor(TEMP_0)
-    temp_value = SensorManager.read_temp_sensor(TEMP_0)
-    SensorManager.stop_temp_sensor(TEMP_0)
-    print('TEMP0: ' + str(temp_value))
-    SensorManager.init_temp_sensor(TEMP_4)
-    temp_value = SensorManager.read_temp_sensor(TEMP_4)
-    SensorManager.stop_temp_sensor(TEMP_4)
-    print('TEMP4: '+ str(temp_value))
+    # I2C Example
+    # SensorManager.init_temp_sensor(TEMP_0)
+    # temp_value = SensorManager.read_temp_sensor(TEMP_0)
+    # SensorManager.stop_temp_sensor(TEMP_0)
+    # print('TEMP0: ' + str(temp_value))
+    # SensorManager.init_temp_sensor(TEMP_4)
+    # temp_value = SensorManager.read_temp_sensor(TEMP_4)
+    # SensorManager.stop_temp_sensor(TEMP_4)
+    # print('TEMP4: '+ str(temp_value))
+
+    # GPIO Example
+    SensorManager.gpio_output('J4.7', ON)
+    sleep(5)
 
 if __name__ == "__main__":
     main()

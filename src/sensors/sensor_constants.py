@@ -22,6 +22,11 @@ I2C =        'I2C'
 MUX =        'MUX'
 SUB =        'SUBSYSTEM'
 
+# GPIO Status
+
+ON = 'on'
+OFF = 'off'
+
 # One Wire Addresses
 
 PANEL0 = 'one_wire_panel0'
