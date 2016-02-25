@@ -1,6 +1,8 @@
 import tornado.web
 import datetime
-import os, uuid
+import os
+
+from bak_constants import *
 
 BACKUP_PATH = "/root/csdc3/src/backup/"
 
@@ -22,17 +24,22 @@ class UpdatebinHandler(tornado.web.RequestHandler):
         if backup_file == "None": # Update binaries with file passed
             fileinfo = self.request.files['filearg'][0]
             fname = fileinfo['filename']
-            fbody = fileinfo['body']
 
-            fh = open(BACKUP_PATH + fname, 'wb+')
-            fh.write(fbody)
-            fh.close()
-
-            # find the path to that name & do the replacement of files.
-            # will need to make use of os.system
-
+            if not(fname in SRC_LISTS):
+                self.write({
+                    "status_code": 400,
+                    "message": "Illegal input arguments",
+                    "description": "data_name was not passed"
+                })
+                self.finish()
+            else:
+                for tuple in SRC_TUPLES:
+                    if fname in tuple[0]:
+                        file_to_update = tuple[1] + fname
+                        os.system("mv " + file_to_update + " " + BACKUP_PATH + fname + ".bak")
+                        fh = open(file_to_update, 'wb+')
+                        fh.write(fileinfo['body'])
+                        fh.close()
         else: # backup_file name is given gotta roll back.
-            # find the path to that name & do the replacement of files.
-            # will need to make use of os.system
-
+            pass
         self.render('index.html', section='commands')
