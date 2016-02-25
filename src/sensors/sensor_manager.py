@@ -1,6 +1,10 @@
 import sys
 sys.path.append('/root/csdc3/lib/ablib')
+sys.path.append('/root/csdc3/src/logs')
+sys.path.append('/root/csdc3/src/logs/config_setup')
 from ablib_python3 import Pin
+from ablib_python3 import DS18B20
+from chomsky import *
 from time import sleep
 from sensor_entropy import *
 from sensor_constants import *
@@ -12,30 +16,35 @@ class SensorManager:
 
     bus = smbus.SMBus(0)
     active_gpio_pins = {}
+    channel = None
 
     """ -------------------- Initialization --------------------- """
 
     @staticmethod
     def init_gyroscope(sensorId):
+        if not SensorManager.isCorrectSensor(sensorId, GYRO):
+            raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
         try:
-            SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x00)
+            SensorManager.bus.write_byte(SensorEntropy.addr(sensorId), 0x00)
         except IOError:
             print('[INIT] Error writing to gyroscope at address ' + \
-                str(SensorEntropy.addr(GYRO)))
+                str(SensorEntropy.addr(sensorId)))
             return -1
         time.sleep(0.1)
 
     @staticmethod
     def init_magnetometer(sensorId):
+        if not SensorManager.isCorrectSensor(sensorId, MAG):
+            raise Exception('Incorrect sensor specified')
         mag_reg = SensorEntropy.reg(MAG)
         SensorManager.mux_select(sensorId)
         try:
-            SensorManager.bus.write_byte_data(SensorEntropy.addr(MAG), \
+            SensorManager.bus.write_byte_data(SensorEntropy.addr(sensorId), \
             mag_reg['INIT'], 0x01)
         except IOError:
             print('[INIT] Error writing to magnetometer at address ' + \
-                str(SensorEntropy.addr(MAG)))
+                str(SensorEntropy.addr(sensorId)))
             return -1
         time.sleep(0.1)
 
@@ -45,26 +54,27 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor(sensorId):
-        #SensorManager.mux_select(sensorId)
-
+        if not SensorManager.isCorrectSensor(sensorId, TEMP):
+            raise Exception('Incorrect sensor specified')
+        SensorManager.mux_select(sensorId)
         try:
             # Start data conversion
-            SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
-            SensorEntropy.reg(TEMP)[START], 0x01)
+            addr = SensorEntropy.addr(sensorId)
+            startReg = SensorEntropy.reg(TEMP)[START]
+            configReg = SensorEntropy.reg(TEMP)[CONFIG]
+            SensorManager.bus.write_byte_data(addr, startReg, 0x01)
             # Enable continuous mode
-            SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
-            SensorEntropy.reg(TEMP)[CONFIG], 0x00)
+            SensorManager.bus.write_byte_data(addr, configReg, 0x00)
         except IOError:
-            print('[INIT] Error writing to temperature sensor at address ' + \
-                str(SensorEntropy.addr(TEMP)))
+            print('[INIT] Error writing to temperature\
+             sensor at address '+str(addr))
             return -1
-
         time.sleep(0.1)
 
     @staticmethod
     def init_adc(sensorId):
         SensorManager.mux_select(sensorId)
-        addr = SensorEntropy.addr(ADC)
+        addr = SensorEntropy.addr(sensorId)
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
         busy_reg = SensorManager.bus.read_byte_data(addr, \
@@ -83,8 +93,7 @@ class SensorManager:
             # Start conversion without interrupts
             bus.write_byte_data(addr, adc_reg['CONFIG_REG'], 0x01)
         except IOError:
-            print('[INIT] Error writing to ADC at address ' + \
-                str(addr))
+            print('[INIT] Error writing to ADC at address ' + str(addr))
             return -1
 
         try:
@@ -96,16 +105,14 @@ class SensorManager:
             print("Limits:", format(bus.read_byte_data(addr, adc_reg['LIMIT_REG_BASE']), '#04x'))
             print("Interrupts:", format(bus.read_byte_data(addr, 0x1), '#04x'))
         except IOError:
-            print('[INIT] Error reading from ADC at address ' + \
-                str(addr))
+            print('[INIT] Error reading from ADC at address ' + str(addr))
             return -1
-
-        sleep(0.01)
+        sleep(0.1)
 
     @staticmethod
-    def init_power_sensor():
+    def init_power_sensor(sensorId):
         try:
-            addr = SensorEntropy.addr(POWER)
+            addr = SensorEntropy.addr(sensorId)
             power_reg = SensorEntropy.reg(POWER)
             # Set calibration
             calibration = 0x1000
@@ -122,59 +129,65 @@ class SensorManager:
             SensorManager.bus.write_byte_data(addr, \
             power_reg['REG_CONFIG'], config)
         except IOError:
-            print('[INIT] Error reading from Power at address ' + \
-                str(addr))
+            print('[INIT] Error reading from Power at address ' + str(addr))
             return -1
+        sleep(0.1)
 
     """ -------------------- Stop --------------------- """
 
     @staticmethod
     def stop_gyroscope(sensorId):
+        if not SensorManager.isCorrectSensor(sensorId, GYRO):
+            raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
+        addr = SensorEntropy.addr(sensorId)
         try:
-            SensorManager.bus.write_byte(SensorEntropy.addr(GYRO), 0x01)
+            SensorManager.bus.write_byte(addr, 0x01)
         except IOError:
-            print('[STOP] Error writing to gyroscope at address ' + \
-                str(SensorEntropy.addr(GYRO)))
+            print('[STOP] Error writing to gyroscope at address ' + str(addr))
             return -1
         time.sleep(0.1)
 
     @staticmethod
     def stop_temp_sensor(sensorId):
+        if not SensorManager.isCorrectSensor(sensorId, TEMP):
+            raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
+        addr = SensorEntropy.addr(sensorId)
+        stopReg = SensorEntropy.reg(TEMP)[STOP]
         try:
-            SensorManager.bus.write_byte_data(SensorEntropy.addr(TEMP), \
-            SensorEntropy.reg(TEMP)[STOP], 0x01)
+            SensorManager.bus.write_byte_data(addr, stopReg, 0x01)
         except IOError:
-            print('[STOP] Error writing to temperature sensor at address ' + \
-                str(SensorEntropy.addr(TEMP)))
+            print('[STOP] Error writing to temperature sensor at address ' + str(addr))
             return -1
-
-    @staticmethod
-    def stop_rtc():
-        pass
 
     @staticmethod
     def stop_adc_sensor(sensorId):
         SensorManager.mux_select(sensorId)
+        addr = SensorEntropy.addr(sensorId)
+        configReg = SensorEntropy.reg(ADC)['CONFIG_REG']
         try:
-            SensorManager.bus.write_byte_data(SensorEntropy.addr(ADC), \
-		          SensorEntropy.reg(ADC)['CONFIG_REG'], 0x00)
+            SensorManager.bus.write_byte_data(addr, configReg, 0x00)
         except IOError:
-            print('[STOP] Error writing to ADC at address ' + \
-                str(SensorEntropy.addr(ADC)))
+            print('[STOP] Error writing to ADC at address ' + str(addr))
             return -1
 
     @staticmethod
-    def stop_power_sensor():
+    def stop_rtc(sensorId):
+        pass
+
+    @staticmethod
+    def stop_power_sensor(sensorId):
         pass
 
     """ -------------------- Reading --------------------- """
 
     @staticmethod
     def read_gyroscope(sensorId):
+        if not SensorManager.isCorrectSensor(sensorId, GYRO):
+            raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
-        address = SensorEntropy.addr(GYRO)
+        address = SensorEntropy.addr(sensorId)
         gyro_reg = SensorEntropy.reg(GYRO)
 
         # Get the values from the sensor
@@ -205,12 +218,19 @@ class SensorManager:
         valY = twos_to_int(valY)
         valZ = twos_to_int(valZ)
 
-        print(valX, valY, valZ)
+        sleep(0.1)
+        # Log data
+        value = (valX, valY, valZ)
+        sub = SensorEntropy.subsystem(sensorId)
+        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        return value
 
     @staticmethod
     def read_magnetometer(sensorId):
+        if not SensorManager.isCorrectSensor(sensorId, MAG):
+            raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
-        address = SensorEntropy.addr(MAG)
+        address = SensorEntropy.addr(sensorId)
         mag_reg = SensorEntropy.reg(MAG)
 
         # Get the values from the sensor
@@ -235,8 +255,6 @@ class SensorManager:
                 str(address))
             return -1
 
-        sleep(0.1)
-
         # Update the values to be of two compliment
         valX = SensorManager.twos_to_int(valX, 16);
         valY = SensorManager.twos_to_int(valY, 16);
@@ -255,8 +273,11 @@ class SensorManager:
         # Turn radians into degrees
         degrees = math.floor(radians * 180 / math.pi)
 
-        # Print the value to the output
-        return (radians, degrees)
+        # Log data
+        value = (radians, degrees)
+        sub = SensorEntropy.subsystem(sensorId)
+        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        return value
 
     @staticmethod
     def read_rtc(sensorId):
@@ -282,20 +303,26 @@ class SensorManager:
             year = bus.read_byte_data(addr, year_reg)
         except IOError:
             print('[READ] Error reading from RTC at address ' + \
-                str(SensorEntropy.addr(RTC)))
+                str(SensorEntropy.addr(sensorId)))
             return -1
 
-        return (second, minute, hour, day, date, month, year)
+        # Log data
+        value = (second, minute, hour, day, date, month, year)
+        sub = SensorEntropy.subsystem(sensorId)
+        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        return value
 
     @staticmethod
     def read_temp_sensor(sensorId):
+        if not SensorManager.isCorrectSensor(sensorId, TEMP):
+            raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
-        addr = SensorEntropy.addr(TEMP)
+        addr = SensorEntropy.addr(sensorId)
         try:
             SensorManager.bus.write_byte(addr, SensorEntropy.reg(TEMP)[VAL])
         except IOError:
             print('[READ] Error writing to temperature sensor at address ' + \
-                str(SensorEntropy.addr(TEMP)))
+                str(addr))
             return -1
         try:
             decValue = SensorManager.bus.read_byte(addr)
@@ -303,15 +330,19 @@ class SensorManager:
             sleep(0.1)
         except IOError:
             print('[READ] Error reading from temperature sensor at address ' + \
-                str(SensorEntropy.addr(TEMP)))
+                str(addr))
             return -1
 
-        return SensorManager.conv_bin_to_int(decValue, fractValue)
+        # Log data
+        value = SensorManager.conv_bin_to_int(decValue, fractValue)
+        sub = SensorEntropy.subsystem(sensorId)
+        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        return value
 
     @staticmethod
     def read_adc(experiment, sensorId):
         SensorManager.mux_select(sensorId)
-        addr = SensorEntropy.addr(ADC)
+        addr = SensorEntropy.addr(sensorId)
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
 
@@ -338,16 +369,20 @@ class SensorManager:
             temp = -((512 - temp) / 2.)
 
         sleep(0.01)
-        return (strain, force, temp)
+
+        # Log data
+        value = (strain, force, temp)
+        sub = SensorEntropy.subsystem(sensorId)
+        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        return value
 
     @staticmethod
     def read_power_sensor(sensorId):
+        SensorManager.mux_select(sensorId)
+        addr = SensorEntropy.addr(sensorId)
+        power_reg = SensorEntropy.reg(POWER)
+        bus = SensorManager.bus
         try:
-            SensorManager.mux_select(sensorId)
-            addr = SensorEntropy.addr(POWER)
-            power_reg = SensorEntropy.reg(POWER)
-            bus = SensorManager.bus
-
             current = bus.read_byte_data(addr, power_reg['REG_CURRENT'])
             bus_voltage = bus.read_byte_data(addr, power_reg['REG_BUSVOLTAGE'])
             shunt_voltage = bus.read_byte_data(addr, power_reg['REG_SHUNTVOLTAGE'])
@@ -357,60 +392,61 @@ class SensorManager:
                 str(addr))
             return -1
 
-        return (current, shunt_voltage, bus_voltage, power)
+        # Log data
+        value = (current, shunt_voltage, bus_voltage, power)
+        sub = SensorEntropy.subsystem(sensorId)
+        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        return value
+
+    """ -------------------- 1Wire --------------------- """
+
+    @staticmethod
+    def get_panel_data(panelId):
+        if not panelId in SIDE_PANEL_ONE_WIRE_DICT:
+            raise Exception('Incorrect sensor specified')
+        addr = SIDE_PANEL_ONE_WIRE_DICT[panelId]
+        sensor = DS18B20(addr)
+        value = sensor.getTemp()
+        insertTelemetryLog(panelId, value, CDH, int(time.time()))
+        return value
 
     """ -------------------- GPIO --------------------- """
 
-    def gpio_output(pinId, onTime, offTime):
-        if not (pinId in SensorManager.active_gpio_pins):
-            SensorManager.active_gpio_pins[pinId] = 'off'
-
+    def gpio_output(pinId, pinStatus):
         led = Pin(pinId,'OUTPUT')
-
-        if onTime == 0 and offTime == 0:
-            return
-        elif onTime == 0:
-            if SensorManager.active_gpio_pins[pinId] == 'on':
-                led.off()
-                SensorManager.active_gpio_pins[pinId] == 'off'
-            else:
-                led.off()
-        elif offTime == 0:
-            if SensorManager.active_gpio_pins[pinId] == 'off':
-                led.on()
-                SensorManager.active_gpio_pins[pinId] = 'on'
-            else:
-                led.on()
-        else:
+        if pinStatus == ON:
             led.on()
-            SensorManager.active_gpio_pins[pinId] = 'on'
-            sleep(onTime)
+        elif pinStatus == OFF:
             led.off()
-            SensorManager.active_gpio_pins[pinId] = 'off'
-            sleep(offTime)
+        else:
+            raise Exception('Incorrect GPIO status')
 
     def gpio_input(pinId, inputTime):
-        pass
+        pin = Pin(pinId,'INPUT')
+        return PB.digitalRead() == 0
 
     """ -------------------- Other --------------------- """
 
     @staticmethod
     def mux_select(sensorId):
-        channel = None
+        newChannel = None
         if sensorId in TEMP_IDENTIFIER_DICT:
-            channel = TEMP_IDENTIFIER_DICT[sensorId][CH]
+            newChannel = TEMP_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in RTC_IDENTIFIER_DICT:
-            channel = RTC_IDENTIFIER_DICT[sensorId][CH]
+            newChannel = RTC_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in GYRO_IDENTIFIER_DICT:
-            channel = GYRO_IDENTIFIER_DICT[sensorId][CH]
+            newChannel = GYRO_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in MAG_IDENTIFIER_DICT:
-            channel = MAG_IDENTIFIER_DICT[sensorId][CH]
+            newChannel = MAG_IDENTIFIER_DICT[sensorId][CH]
 
-        if channel < 0 or channel > 7 or (not channel):
+        if newChannel < 0 or newChannel > 7 or newChannel is None:
             return False
 
-        mux_address = SensorEntropy.addr(MUX)
-        SensorManager.bus.write_byte(mux_address, 1 << channel)
+        if newChannel != SensorManager.channel:
+            SensorManager.channel = newChannel
+            mux_address = SensorEntropy.addr(MUX)
+            SensorManager.bus.write_byte(mux_address, 1 << newChannel)
+            return True
 
     @staticmethod
     def twos_to_int(val, len):
@@ -437,11 +473,32 @@ class SensorManager:
         result += fract
         return result
 
+    @staticmethod
+    def isCorrectSensor(sensorId, SensorType):
+        if SensorType == TEMP:
+            return sensorId in TEMP_IDENTIFIER_DICT
+        elif SensorType == RTC:
+            return sensorId in RTC_IDENTIFIER_DICT
+        elif SensorType == GYRO:
+            return sensorId in GYRO_IDENTIFIER_DICT
+        elif SensorType == MAG:
+            return sensorId in MAG_IDENTIFIER_DICT
+        return False
+
 def main():
-    SensorManager.init_temp_sensor(TEMP_4)
-    temp_value = SensorManager.read_temp_sensor(TEMP_4)
-    SensorManager.stop_temp_sensor(TEMP_4)
-    print(temp_value)
+    # I2C Example
+    # SensorManager.init_temp_sensor(TEMP_0)
+    # temp_value = SensorManager.read_temp_sensor(TEMP_0)
+    # SensorManager.stop_temp_sensor(TEMP_0)
+    # print('TEMP0: ' + str(temp_value))
+    # SensorManager.init_temp_sensor(TEMP_4)
+    # temp_value = SensorManager.read_temp_sensor(TEMP_4)
+    # SensorManager.stop_temp_sensor(TEMP_4)
+    # print('TEMP4: '+ str(temp_value))
+
+    # GPIO Example
+    SensorManager.gpio_output('J4.7', ON)
+    sleep(5)
 
 if __name__ == "__main__":
     main()
