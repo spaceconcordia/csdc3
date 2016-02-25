@@ -2,11 +2,12 @@ import tornado.web
 import datetime
 import os, uuid
 
-__UPLOADS__ = "/root/csdc3/src/timetagged_cmds/"
 CRON_PATH =   "/root/csdc3/src/cron/"
 import sys
 sys.path.insert(0, CRON_PATH)
 from cron_manager import CronManager
+
+TIMETAGGED_CMD_PATH = "/root/csdc3/src/timetagged_cmds/"
 
 class TimetagcmdHandler(tornado.web.RequestHandler):
 
@@ -15,7 +16,7 @@ class TimetagcmdHandler(tornado.web.RequestHandler):
         fname = fileinfo['filename']
         fbody = fileinfo['body']
 
-        fh = open(__UPLOADS__ + fname, 'wb+')
+        fh = open(TIMETAGGED_CMD_PATH + fname, 'wb+')
         fh.write(fbody)
         fh.close()
 
@@ -44,7 +45,7 @@ class TimetagcmdHandler(tornado.web.RequestHandler):
                                         int(runday),              \
                                         int(runmonth),            \
                                         '*',                      \
-                                        __UPLOADS__ + fname)
+                                        TIMETAGGED_CMD_PATH + fname)
             cron_mana.update_cron_file()
             # render the index page again
             self.render('index.html', section='commands')
