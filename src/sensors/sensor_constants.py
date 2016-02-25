@@ -22,6 +22,20 @@ I2C =        'I2C'
 MUX =        'MUX'
 SUB =        'SUBSYSTEM'
 
+# One Wire Addresses
+
+PANEL0 = 'one_wire_panel0'
+PANEL1 = 'one_wire_panel1'
+PANEL2 = 'one_wire_panel2'
+PANEL3 = 'one_wire_panel3'
+
+SIDE_PANEL_ONE_WIRE_DICT = {
+    PANEL0: '00000188490c',
+    PANEL1: 'addr1',
+    PANEL2: 'addr2',
+    PANEL3: 'addr3'
+}
+
 # i2c devices
 
 GYRO =       'Gyroscope'
@@ -34,32 +48,32 @@ POWER =      'Power Sensor'
 W1TEMP =     'One-Wire Thermistor'
 
 # Unique Sensor Identifiers
-ADC_0 = 'I2C0_mux1_ch0_1D'
-TEMP_0 = 'I2C0_mux1_ch0_48'
-TEMP_1 = 'I2C0_mux1_ch0_49'
-TEMP_2 = 'I2C0_mux1_ch1_48'
-TEMP_3 = 'I2C0_mux1_ch4_49'
-TEMP_4 = 'I2C0_mux0_ch4_48'
-TEMP_5 = 'I2C0_mux0_ch4_49'
-TEMP_6 = 'I2C0_mux0_ch4_4a'
-TEMP_7 = 'I2C0_mux0_ch4_4b'
-TEMP_8 = 'I2C0_mux0_ch4_4c'
-TEMP_9 = 'I2C0_mux0_ch4_4d'
-RTC_0 = 'I2C0_mux0_ch0_68'
-RTC_1 = 'I2C1_68'
-GYRO_0 = 'I2C0_mux0_ch1_68'
-GYRO_1 = 'I2C0_mux0_ch2_68'
-GYRO_2 = 'I2C0_mux0_ch3_68'
-MAG_0 = 'I2C0_mux0_ch1_1E'
-MAG_1 = 'I2C0_mux0_ch2_1E'
-MAG_2 = 'I2C0_mux0_ch3_1E'
-POWER_0 = 'I2C0_mux0_ch4_0'
+ADC_0 =      'I2C0_mux1_ch0_1D'
+TEMP_0 =     'I2C0_mux1_ch0_48'
+TEMP_1 =     'I2C0_mux1_ch0_49'
+TEMP_2 =     'I2C0_mux1_ch1_48'
+TEMP_3 =     'I2C0_mux1_ch4_49'
+TEMP_4 =     'I2C0_mux0_ch4_48'
+TEMP_5 =     'I2C0_mux0_ch4_49'
+TEMP_6 =     'I2C0_mux0_ch4_4a'
+TEMP_7 =     'I2C0_mux0_ch4_4b'
+TEMP_8 =     'I2C0_mux0_ch4_4c'
+TEMP_9 =     'I2C0_mux0_ch4_4d'
+RTC_0 =      'I2C0_mux0_ch0_68'
+RTC_1 =      'I2C1_68'
+GYRO_0 =     'I2C0_mux0_ch1_68'
+GYRO_1 =     'I2C0_mux0_ch2_68'
+GYRO_2 =     'I2C0_mux0_ch3_68'
+MAG_0 =      'I2C0_mux0_ch1_1E'
+MAG_1 =      'I2C0_mux0_ch2_1E'
+MAG_2 =      'I2C0_mux0_ch3_1E'
+POWER_0 =    'I2C0_mux0_ch4_0'
 
 # Subsystems
-PAYLOAD = 'payload'
-CDH = 'cdh'
-POWER = 'power'
-SOFTWARE = 'software'
+PAYLOAD =    'payload'
+CDH =        'cdh'
+POWER =      'power'
+SOFTWARE =   'software'
 
 TEMP_IDENTIFIER_DICT = {
     TEMP_0: {I2C: 0, MUX: 1, CH: 0, SUB: PAYLOAD, ADDR: 0x48},

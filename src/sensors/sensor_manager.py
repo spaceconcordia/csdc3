@@ -3,6 +3,7 @@ sys.path.append('/root/csdc3/lib/ablib')
 sys.path.append('/root/csdc3/src/logs')
 sys.path.append('/root/csdc3/src/logs/config_setup')
 from ablib_python3 import Pin
+from ablib_python3 import DS18B20
 from chomsky import *
 from time import sleep
 from sensor_entropy import *
@@ -395,6 +396,18 @@ class SensorManager:
         value = (current, shunt_voltage, bus_voltage, power)
         sub = SensorEntropy.subsystem(sensorId)
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        return value
+
+    """ -------------------- 1Wire --------------------- """
+
+    @staticmethod
+    def get_panel_data(panelId):
+        if not panelId in SIDE_PANEL_ONE_WIRE_DICT:
+            raise Exception('Incorrect sensor specified')
+        addr = SIDE_PANEL_ONE_WIRE_DICT[panelId]
+        sensor = DS18B20(addr)
+        value = sensor.getTemp()
+        insertTelemetryLog(panelId, value, CDH, int(time.time()))
         return value
 
     """ -------------------- GPIO --------------------- """
