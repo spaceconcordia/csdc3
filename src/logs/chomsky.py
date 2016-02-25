@@ -141,16 +141,16 @@ if __name__ == "__main__":
     for i in range(50):
         insertTelemetryLog("sensor_id", 5, PAYLOAD, i)
     print(selectTelemetryLog("sensor_id"))
-    emptyTables()
+#   emptyTables()
 
     # SystemCallLog SELECT & INSERT tests
     for i in range(50):
         insertSystemCallLog(NOTICE, "date -s", CDH , i, "stderr")
     print(selectSystemCallLog(CDH))
-    emptyTables()
+#    emptyTables()
 
     # DebugLog SELECT & INSERT tests
     for i in range(50):
         insertDebugLog(NOTICE, "FUCK IT DUDE", CDH , i)
     print(selectDebugLog(CDH))
-    emptyTables()
+#    emptyTables()

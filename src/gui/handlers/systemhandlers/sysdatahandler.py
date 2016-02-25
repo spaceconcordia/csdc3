@@ -32,7 +32,7 @@ class SysdataHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == RAM_INTENSIVE_PROCESSES:
-            os.system('ps aux | sort -rk 4,4 | head -n 6 > ' + GUI_PATH + '/out1.txt')
+            os.system('ps aux | sort -rk 4,4 | head -n 7 > ' + GUI_PATH + '/out1.txt')
             jstable = '<table class="table"><thead><tr><th>PID</th><th>User</th>' + \
                 '<th>Mem%</th><th>Rss</th><th>Vsz</th><th>Cmd</th></tr></thead><tbody>'
             with open(GUI_PATH + '/out1.txt', 'r') as f:
@@ -63,7 +63,7 @@ class SysdataHandler(tornado.web.RequestHandler):
             self.finish()
 
         elif data_name == CPU_INTENSIVE_PROCESSES:
-            os.system('ps aux | sort -rk 3,3 | head -n 6 > ' + GUI_PATH + '/out2.txt')
+            os.system('ps aux | sort -rk 3,3 | head -n 7 > ' + GUI_PATH + '/out2.txt')
             jstable = '<table class="table"><thead><tr><th>PID</th><th>User</th>' + \
                 '<th>Cpu%</th><th>Rss</th><th>Vsz</th><th>Cmd</th></tr></thead><tbody>'
             with open(GUI_PATH + '/out2.txt', 'r') as f:

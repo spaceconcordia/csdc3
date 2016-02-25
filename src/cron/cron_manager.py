@@ -7,16 +7,15 @@ class CronManager:
         Method for updating cron file, based on
         the contents of the list.
         """
-        # f = open('/var/spool/cron/crontabs/cronfile_test', 'w')
-        f = open('C:\Users\justi\Desktop\cronfile_test', 'w')
+        f = open('/var/spool/cron/crontabs/cronfile', 'w')
         for job in self.jobList:
             f.write(self.generate_command(job))
         f.close()
 
     def generate_command(self, job):
-        return job['minute'] + ' ' + job['hour'] + ' ' + job['day'] + \
-         ' ' + job['month'] + ' ' + job['weekday'] + \
-         ' ' + job['command'] + '\n'
+        return str(job['minute']) + ' ' + str(job['hour']) + ' ' + str(job['day']) + \
+         ' ' + str(job['month']) + ' ' + str(job['weekday']) + \
+         ' ' + str(job['command']) + '\n'
 
     def add_or_update_job(self, minute, hour, day, month, weekday, command):
         """

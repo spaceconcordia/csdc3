@@ -8,10 +8,10 @@
     border-bottom: 1.5px solid #337ab7;
     border-bottom-left-radius: 2.5%;
     border-bottom-right-radius: 2.5%;
-    margin-right: .5%;
-    margin-left: .5%;
-    margin-bottom: 1%;
-    padding-bottom: 1%;
+    margin-right: .15%;
+    margin-left: .15%;
+    margin-bottom: .5%;
+    padding-bottom: .5%;
     height: 100%;
 }
 
@@ -59,8 +59,8 @@
 }
 
 .short {
-    min-height: 268px;
-    max-height: 268px;
+    min-height: 280px;
+    max-height: 280px;
 }
 
 .long {

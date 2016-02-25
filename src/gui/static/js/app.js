@@ -1,4 +1,3 @@
-
 function updateDiskPartitionTable() {
     $.ajax({
         url: '/sysdata',
@@ -124,13 +123,13 @@ $( document ).ready(function() {
 
     setInterval(function() {
         updateCpuAvgLoadCharts();
-    }, 1200);
+    }, 1500);
     setInterval(function() {
         updateRamUsageCharts();
-    }, 1200);
+    }, 1500);
     setInterval(function() {
         updateCpuUtilizationCharts();
-    }, 1200);
+    }, 1500);
 
     smoothieRamUsage.addTimeSeries(ramUsageLine,
         {lineWidth:2,strokeStyle:'#0000ff',fillStyle:'rgba(0,128,255,0.30)'});
@@ -165,62 +164,6 @@ $( document ).ready(function() {
 				$(this).dialog('close');
 			}
 		}
-	});
-
-	$( '#deploy-antenna-dialog' ).dialog({
-		autoOpen: false,
-		resizable: false,
-		modal: true,
-		buttons: {
-			"Yes": function () {
-				$.ajax({
-					url: '/deploy-antenna',
-					type: 'put',
-					error: function() {
-						$( '#error-dialog' ).dialog( "open" )
-					},
-					success: function(data) {
-						$( '#job-success-text' ).text("The antenna deployment was started successfully");
-						$( '#job-success-dialog' ).dialog( "open" )
-					}
-				});
-				$(this).dialog('close');
-			},
-			"Cancel": function () {
-				$(this).dialog('close');
-			}
-		}
-	});
-	$( '#deploy-antenna-btn' ).click(function() {
-		$( '#deploy-antenna-dialog' ).dialog( "open" )
-	});
-
-	$( '#start-payload-dialog' ).dialog({
-		autoOpen: false,
-		resizable: false,
-		modal: true,
-		buttons: {
-			"Yes": function () {
-				$.ajax({
-					url: '/start-payload',
-					type: 'put',
-					error: function() {
-						$( '#error-dialog' ).dialog( "open" )
-					},
-					success: function(data) {
-						$( '#job-success-text' ).text("The payload experiment was started successfully");
-						$( '#job-success-dialog' ).dialog( "open" )
-					}
-				});
-				$(this).dialog('close');
-			},
-			"Cancel": function () {
-				$(this).dialog('close');
-			}
-		}
-	});
-	$( '#start-payload-btn' ).click(function() {
-		$( '#start-payload-dialog' ).dialog( "open" )
 	});
 
 	$( '#get-time-dialog' ).dialog({
@@ -275,16 +218,6 @@ $( document ).ready(function() {
 	});
 	$( '#set-time-btn' ).click(function() {
 		$( '#set-time-dialog' ).dialog("open");
-	});
-
-    $( '#get-telemetry-logs' ).click(function() {
-
-	});
-    $( '#get-syscall-logs' ).click(function() {
-
-	});
-    $( '#get-debug-logs' ).click(function() {
-
 	});
 
     $( '#get-logs-dialog' ).dialog({
@@ -375,5 +308,61 @@ $( document ).ready(function() {
     $( '#disk-partition-reload' ).click(function(e) {
         e.preventDefault();
         updateDiskPartitionTable();
+	});
+
+	$( '#deploy-antenna-dialog' ).dialog({
+		autoOpen: false,
+		resizable: false,
+		modal: true,
+		buttons: {
+			"Yes": function () {
+				$.ajax({
+					url: '/deploy-antenna',
+					type: 'put',
+					error: function() {
+						$( '#error-dialog' ).dialog( "open" )
+					},
+					success: function(data) {
+						$( '#job-success-text' ).text("The antenna deployment was started successfully");
+						$( '#job-success-dialog' ).dialog( "open" )
+					}
+				});
+				$(this).dialog('close');
+			},
+			"Cancel": function () {
+				$(this).dialog('close');
+			}
+		}
+	});
+	$( '#deploy-antenna-btn' ).click(function() {
+		$( '#deploy-antenna-dialog' ).dialog( "open" )
+	});
+
+	$( '#start-payload-dialog' ).dialog({
+		autoOpen: false,
+		resizable: false,
+		modal: true,
+		buttons: {
+			"Yes": function () {
+				$.ajax({
+					url: '/start-payload',
+					type: 'put',
+					error: function() {
+						$( '#error-dialog' ).dialog( "open" )
+					},
+					success: function(data) {
+						$( '#job-success-text' ).text("The payload experiment was started successfully");
+						$( '#job-success-dialog' ).dialog( "open" )
+					}
+				});
+				$(this).dialog('close');
+			},
+			"Cancel": function () {
+				$(this).dialog('close');
+			}
+		}
+	});
+	$( '#start-payload-btn' ).click(function() {
+		$( '#start-payload-dialog' ).dialog( "open" )
 	});
 });

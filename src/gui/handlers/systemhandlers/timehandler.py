@@ -12,7 +12,6 @@ class TimeHandler(tornado.web.RequestHandler):
 
     def post(self):
         time_to_set = self.get_argument("sys_time", "DEFAULT")
-        print("date -s " + time_to_set)
         os.system("date -s '" + time_to_set + "'")
 
         if time_to_set == "DEFAULT":
