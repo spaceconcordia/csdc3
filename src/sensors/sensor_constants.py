@@ -35,9 +35,9 @@ PANEL2 = 'one_wire_panel2'
 PANEL3 = 'one_wire_panel3'
 
 SIDE_PANEL_ONE_WIRE_DICT = {
-    PANEL0: '00000188490c',
-    PANEL1: 'addr1',
-    PANEL2: 'addr2',
+    PANEL0: '000001885520',
+    PANEL1: '000001aaf87d',
+    PANEL2: '000001aaf9e5',
     PANEL3: 'addr3'
 }
 

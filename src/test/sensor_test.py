@@ -25,7 +25,7 @@ class TestSensors(unittest.TestCase):
         heater.on()
 
         temp_value = -999
-        
+
         SensorManager.init_temp_sensor(TEMP_4)
         start = time.time()
         with open("log.txt", "w") as f:
@@ -61,6 +61,20 @@ class TestSensors(unittest.TestCase):
 
    def mux_switch(self):
        pass
+
+   def gpio_toggle(self):
+       for i in range(5):
+           SensorManager.gpio_output('J4.31', ON)
+           time.sleep(1)
+           SensorManager.gpio_output('J4.31', OFF)
+           time.sleep(1)
+
+   def w1_read(self):
+       for i in range(5):
+           for panel in panels:
+               temperature = SensorManager.get_panel_data(panel)
+               print(temperature, end=',')
+           print()
 
 if __name__ == "__main__":
     unittest.main()

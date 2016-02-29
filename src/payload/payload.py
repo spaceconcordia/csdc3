@@ -36,7 +36,7 @@ class Payload():
             return False
 
     def init_sensors(self):
-        SensorManager.init_adc()
+        SensorManager.init_adc(ADC)
         #SensorManager.init_temp_sensor()
 
     def start(self):
@@ -50,7 +50,7 @@ class Payload():
         while True:
             elapsed = time.time() - start_time
             print("[" + str(round(elapsed, 3)) + " s] ", end='')
-            strain, force, adc_temp = SensorManager.read_adc(self.experiment)
+            strain, force, adc_temp = SensorManager.read_adc(self.experiment, ADC)
             print(strain, force, adc_temp)
 
             time.sleep(self.sampling_freq)
@@ -96,7 +96,6 @@ def get_disk_usage(path):
 def main():
     payload = Payload(0)
     payload.start()
-
 
 if __name__ == "__main__":
     main()

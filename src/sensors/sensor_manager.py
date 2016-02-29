@@ -373,7 +373,7 @@ class SensorManager:
         # Log data
         value = (strain, force, temp)
         sub = SensorEntropy.subsystem(sensorId)
-        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        #insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
 
     @staticmethod
@@ -438,8 +438,10 @@ class SensorManager:
             newChannel = GYRO_IDENTIFIER_DICT[sensorId][CH]
         elif sensorId in MAG_IDENTIFIER_DICT:
             newChannel = MAG_IDENTIFIER_DICT[sensorId][CH]
+        elif sensorId == ADC:
+            newChannel = I2C_DEVICES_LOOKUP_TABLE[ADC][CH][0]
 
-        if newChannel < 0 or newChannel > 7 or newChannel is None:
+        if newChannel is None or newChannel < 0 or newChannel > 7:
             return False
 
         if newChannel != SensorManager.channel:
@@ -487,18 +489,26 @@ class SensorManager:
 
 def main():
     # I2C Example
-    # SensorManager.init_temp_sensor(TEMP_0)
-    # temp_value = SensorManager.read_temp_sensor(TEMP_0)
-    # SensorManager.stop_temp_sensor(TEMP_0)
-    # print('TEMP0: ' + str(temp_value))
-    # SensorManager.init_temp_sensor(TEMP_4)
-    # temp_value = SensorManager.read_temp_sensor(TEMP_4)
-    # SensorManager.stop_temp_sensor(TEMP_4)
-    # print('TEMP4: '+ str(temp_value))
+    SensorManager.init_temp_sensor(TEMP_0)
+    temp_value = SensorManager.read_temp_sensor(TEMP_0)
+    SensorManager.stop_temp_sensor(TEMP_0)
+    print('TEMP0: ' + str(temp_value))
+    SensorManager.init_temp_sensor(TEMP_4)
+    temp_value = SensorManager.read_temp_sensor(TEMP_4)
+    SensorManager.stop_temp_sensor(TEMP_4)
+    print('TEMP4: '+ str(temp_value))
+    panels = [PANEL0, PANEL1]
 
     # GPIO Example
-    SensorManager.gpio_output('J4.7', ON)
-    sleep(5)
+    """
+    SensorManager.gpio_output('J4.31', ON)
+    for i in range(5):
+        for panel in panels:
+            temperature = SensorManager.get_panel_data(panel)
+            print(temperature, end=',')
+        print()
+    SensorManager.gpio_output('J4.31', OFF)
+    """
 
 if __name__ == "__main__":
     main()

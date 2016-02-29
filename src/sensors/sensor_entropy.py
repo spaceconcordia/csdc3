@@ -29,6 +29,8 @@ class SensorEntropy:
             return MAG_IDENTIFIER_DICT[sensorId][ADDR]
         elif sensorId == MUX:
             return I2C_DEVICES_LOOKUP_TABLE[MUX][ADDR]
+        elif sensorId == ADC:
+            return I2C_DEVICES_LOOKUP_TABLE[ADC][ADDR]
         return None
 
     def subsystem(sensorId):
