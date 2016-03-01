@@ -23,12 +23,12 @@ MUX =        'MUX'
 SUB =        'SUBSYSTEM'
 
 # GPIO Status
-
 ON = 'on'
 OFF = 'off'
+DIR = 'direction'
+PIN = 'pin'
 
 # One Wire Addresses
-
 PANEL0 = 'one_wire_panel0'
 PANEL1 = 'one_wire_panel1'
 PANEL2 = 'one_wire_panel2'
@@ -42,7 +42,6 @@ SIDE_PANEL_ONE_WIRE_DICT = {
 }
 
 # i2c devices
-
 GYRO =       'Gyroscope'
 MAG =        'Magnetometer'
 RTC =        'Real-time Clock'
@@ -74,11 +73,58 @@ MAG_1 =      'I2C0_mux0_ch2_1E'
 MAG_2 =      'I2C0_mux0_ch3_1E'
 POWER_0 =    'I2C0_mux0_ch4_0'
 
+# GPIO Identifiers
+PSS_HTR_STAT_1_GPIO = "PA27"
+PSS_HTR_STAT_2_GPIO = "PA26"
+PSS_HTR_STAT_3_GPIO = "PA25"
+PSS_HTR_STAT_4_GPIO = "PA24"
+RADIO_TX_CURR_SENSE_GPIO = "PB11"
+PAYLOAD_CURR_SENSE_GPIO = "PB12"
+PSS_HR_MUX_SEL_GPIO = "PA7"
+I2C_MUX_RESET_GPIO = "PA28"
+DEPLOYMENT_SW_A_GPIO = "PA22"
+DEPLOYMENT_SW_B_GPIO = "PA21"
+RADIO_EN_GPIO = "PA5"
+PAYLOAD_HTR_A_GPIO = "PC31"
+PAYLOAD_HTR_B_GPIO = "PC27"
+PAYLOAD_EN_GPIO = "PB13"
+PSS_HTR_EN_1_GPIO = "PC4"
+PSS_HTR_EN_2_GPIO = "PC28"
+PSS_HTR_EN_3_GPIO = "PA6"
+PSS_HTR_EN_4_GPIO = "PA8"
+WATCHDOG_GPIO = "PA23"
+SENSORS_EN_GPIO = "PB14"
+
+GPIO_LOOKUP_TABLE = {
+	PSS_HTR_STAT_1_GPIO: {DIR: IN, PIN: 'J4.17'}
+	PSS_HTR_STAT_2_GPIO: {DIR: IN, PIN: 'J4.15'}
+	PSS_HTR_STAT_3_GPIO: {DIR: IN, PIN: 'J4.13'}
+	PSS_HTR_STAT_4_GPIO: {DIR: IN, PIN: 'J4.11'}
+	RADIO_TX_CURR_SENSE_GPIO: {DIR: IN, PIN: 'J4.34'}
+	PAYLOAD_CURR_SENSE_GPIO: {DIR: IN, PIN: 'J4.36'}
+
+	PSS_HR_MUX_SEL_GPIO: {DIR: OUT, PIN: 'J4.26'}
+	I2C_MUX_RESET_GPIO: {DIR: OUT, PIN: 'J4.19'}
+	DEPLOYMENT_SW_A_GPIO: {DIR: OUT, PIN: 'J4.8'}
+	DEPLOYMENT_SW_B_GPIO: {DIR: OUT, PIN: 'J4.10'}
+	RADIO_EN_GPIO: {DIR: OUT, PIN: 'J4.28'}
+	PAYLOAD_HTR_A_GPIO: {DIR: OUT, PIN: 'J4.32'}
+	PAYLOAD_HTR_B_GPIO: {DIR: OUT, PIN: 'J4.30'}
+	PAYLOAD_EN_GPIO: {DIR: OUT, PIN: 'J4.38'}
+	PSS_HTR_EN_1_GPIO: {DIR: OUT, PIN: 'J4.31'}
+	PSS_HTR_EN_2_GPIO: {DIR: OUT, PIN: 'J4.29'}
+	PSS_HTR_EN_3_GPIO: {DIR: OUT, PIN: 'J4.27'}
+	PSS_HTR_EN_4_GPIO: {DIR: OUT, PIN: 'J4.25'}
+	WATCHDOG_GPIO: {DIR: OUT, PIN: 'J4.7'}
+	SENSORS_EN_GPIO: {DIR: OUT, PIN: 'J4.40'}
+}
+
 # Subsystems
 PAYLOAD =    'payload'
 CDH =        'cdh'
 POWER =      'power'
 SOFTWARE =   'software'
+ACS = 		 'acs'
 
 TEMP_IDENTIFIER_DICT = {
     TEMP_0: {I2C: 0, MUX: 1, CH: 0, SUB: PAYLOAD, ADDR: 0x48},
@@ -94,20 +140,20 @@ TEMP_IDENTIFIER_DICT = {
 }
 
 RTC_IDENTIFIER_DICT = {
-    RTC_0: {I2C: 0, MUX: 0, CH: 0, SUB: PAYLOAD, ADDR: 0x68},
-    RTC_1: {I2C: 1, MUX: None, CH: None, SUB: PAYLOAD, ADDR: 0x68}
+    RTC_0: {I2C: 0, MUX: 0, CH: 0, SUB: CDH, ADDR: 0x68},
+    RTC_1: {I2C: 1, MUX: None, CH: None, SUB: CDH, ADDR: 0x68}
 }
 
 GYRO_IDENTIFIER_DICT = {
-    GYRO_0: {I2C: 0, MUX: 0, CH: 1, SUB: PAYLOAD, ADDR: 0x68},
-    GYRO_1: {I2C: 0, MUX: 0, CH: 1, SUB: PAYLOAD, ADDR: 0x68},
-    GYRO_2: {I2C: 0, MUX: 0, CH: 1, SUB: PAYLOAD, ADDR: 0x68}
+    GYRO_0: {I2C: 0, MUX: 0, CH: 1, SUB: ACS, ADDR: 0x68},
+    GYRO_1: {I2C: 0, MUX: 0, CH: 1, SUB: ACS, ADDR: 0x68},
+    GYRO_2: {I2C: 0, MUX: 0, CH: 1, SUB: ACS, ADDR: 0x68}
 }
 
 MAG_IDENTIFIER_DICT = {
-    MAG_0: {I2C: 0, MUX: 0, CH: 1, SUB: PAYLOAD, ADDR: 0x1E},
-    MAG_1: {I2C: 0, MUX: 0, CH: 2, SUB: PAYLOAD, ADDR: 0x1E},
-    MAG_2: {I2C: 0, MUX: 0, CH: 3, SUB: PAYLOAD, ADDR: 0x1E}
+    MAG_0: {I2C: 0, MUX: 0, CH: 1, SUB: ACS, ADDR: 0x1E},
+    MAG_1: {I2C: 0, MUX: 0, CH: 2, SUB: ACS, ADDR: 0x1E},
+    MAG_2: {I2C: 0, MUX: 0, CH: 3, SUB: ACS, ADDR: 0x1E}
 }
 
 I2C_DEVICES_LIST = [GYRO, MAG, RTC, TEMP, MUX, ADC, POWER]
@@ -160,7 +206,7 @@ I2C_DEVICES_LOOKUP_TABLE = {
         REG: {
             VAL: 0xAA,
             START: 0xEE,
-			      STOP: 0x22,
+			STOP: 0x22,
             CONFIG: 0xAC
         },
         CH: [0, 1, 2, 3, 4, 5, 6]

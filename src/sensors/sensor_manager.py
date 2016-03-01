@@ -413,6 +413,7 @@ class SensorManager:
     """ -------------------- GPIO --------------------- """
 
     def gpio_output(pinId, pinStatus):
+		pinId = get_gpio_pin(pinId)
         led = Pin(pinId,'OUTPUT')
         if pinStatus == ON:
             led.on()

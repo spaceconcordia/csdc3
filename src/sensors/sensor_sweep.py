@@ -17,7 +17,7 @@ def main():
     ds18b20 = [PANEL0, PANEL1]
     for temp_sensor in ds1624:
         SensorManager.init_temp_sensor(temp_sensor)
-    SensorManager.gpio_output('J4.31', ON)
+    SensorManager.gpio_output(PSS_HTR_EN_1_GPIO, ON)
     with open("/root/csdc3/src/sensors/temp_log.txt", "a") as f:
         for i in range(1):
             start = time.time()
@@ -36,7 +36,7 @@ def main():
             temperatures.append(readtime)
             f.write(str(temperatures) + '\n')
 
-    SensorManager.gpio_output('J4.31', OFF)
+    SensorManager.gpio_output(PSS_HTR_EN_1_GPIO, OFF)
     for temp_sensor in ds1624:
         SensorManager.stop_temp_sensor(temp_sensor)
 
