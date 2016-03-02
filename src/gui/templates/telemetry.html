@@ -10,9 +10,20 @@
             <li><a href="/system">System Status</a></li>
             <li><a href="/commands">Send Commands</a></li>
             <li><a href="/payload">Payload Experiment Data</a></li>
-            <li class="active"><a href="/telemetry">Telemetry Data</a></li>
+            <li role="presentation" class="dropdown active">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    Telemetry Data <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">HW Interfacing</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">CDH</a></li>
+                    <li><a href="#">Power</a></li>
+                </ul>
+            </li>
             <li><a href="/config">Set Configurations</a></li>
         </ul>
+
     </div>
     <div class="col-xs-1">
         <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">

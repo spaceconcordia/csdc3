@@ -64,7 +64,6 @@ function updateRamUsageCharts() {
         data: {'data_name': 'ramUsageCharts'},
         error: function() {},
         success: function(data) {
-            console.log(data["request_time"])
             $( '#ram-usage-date' ).text(data["request_time"]);
             var ram_usage_perc = data["timeseries_data"];
             ramUsageLine.append(new Date().getTime(), ram_usage_perc);
@@ -113,9 +112,14 @@ function updateCpuUtilizationCharts() {
 }
 
 $( document ).ready(function() {
+	$( '.dropdown-toggle' ).dropdown();
+
     updateDiskPartitionTable();
     updateCpuIntensiveProcesses();
     updateMemIntensiveProcesses();
+    updateCpuAvgLoadCharts();
+    updateRamUsageCharts();
+    updateCpuUtilizationCharts();
 
     smoothieRamUsage.streamTo(document.getElementById("ram-usage-canvas"));
     smoothieCpuAvgLoad.streamTo(document.getElementById("cpu-avg-load-canvas"));
