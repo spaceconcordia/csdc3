@@ -29,6 +29,8 @@ class SensorEntropy:
             return MAG_IDENTIFIER_DICT[sensorId][ADDR]
         elif sensorId == MUX:
             return I2C_DEVICES_LOOKUP_TABLE[MUX][ADDR]
+        elif sensorId == ADC:
+            return I2C_DEVICES_LOOKUP_TABLE[ADC][ADDR]
         return None
 
     def subsystem(sensorId):
@@ -92,6 +94,21 @@ class SensorEntropy:
             return MAG_IDENTIFIER_DICT[id][ADDR]
         else:
             raise Exception('Sensor id does not exist')
+
+	@staticmethod
+	def get_gpio_pin(sensorId):
+		"""
+		Returns the pin id for a gpio
+		"""
+		if sensorId in GPIO_LOOKUP_TABLE:
+			return GPIO_LOOKUP_TABLE[sensorId][PIN]
+			
+	def get_gpio_direction(sensorId):
+		"""
+		Returns direction of gpio
+		"""
+		if sensorId in GPIO_LOOKUP_TABLE:
+			return GPIO_LOOKUP_TABLE[sensorId][DIR]
 
 if __name__ == "__main__":
     for sensor in I2C_DEVICES_LIST:
