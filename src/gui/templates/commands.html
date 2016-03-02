@@ -1,0 +1,82 @@
+<div class="row">
+    <div class="col-xs-1">
+        <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
+    </div>
+    <div class="col-xs-10">
+        <br/>
+        <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
+        <br/>
+        <ul class="nav nav-tabs">
+            <li><a href="/system">System Status</a></li>
+            <li class="active"><a href="/commands">Send Commands</a></li>
+            <li><a href="/payload">Payload Experiment Data</a></li>
+            <li><a href="/telemetry">Telemetry Data</a></li>
+            <li><a href="/config">Set Configurations</a></li>
+        </ul>
+    </div>
+    <div class="col-xs-1">
+        <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="main commands">
+            <div id="error-dialog" title="Error Dialog">An error occured while handling the command.</div>
+            <div id="job-success-dialog" title="Success Dialog"><div id="job-success-text"></div></div>
+
+            <div id="get-time-dialog" title="Get Time Response"><div id="time-text"></div></div>
+			<button type="button" class="btn btn-primary" id="get-time-btn">Get Time</button>
+            <div id="set-time-dialog" title="Choose Sys Time to Set">
+                <input type="text" name="time-picker" id="time-picker" value="" />
+            </div>
+			<button type="button" class="btn btn-primary" id="set-time-btn">Set Time</button>
+
+            <div id="get-logs-dialog" title="Get Logs">
+                <a target="_blank" href="/telemetry.log">
+                    <button type="button" class="btn btn-info" id="get-telemetry-logs">Telemetry</button>
+                </a>
+                <a target="_blank" href="/syscall.log">
+                    <button type="button" class="btn btn-info" id="get-syscall-logs">Syscall</button>
+                </a>
+                <a target="_blank" href="/debuglogs.log">
+                    <button type="button" class="btn btn-info" id="get-debug-logs">Debug</button>
+                </a>
+            </div>
+			<button type="button" class="btn btn-primary" id="get-logs-btn">Get Logged Data</button>
+
+            <div id="delete-logs-dialog" title="Confirm Dialog">Are you sure you want to delete all logged data?</div>
+			<button type="button" class="btn btn-primary" id="del-logs-btn">Delete Logged Data</button>
+
+            <div id="update-binaries-dialog" title="Upload file">
+                <form enctype="multipart/form-data" action="/updatebin" method="post">
+                    New Binary: <input type="file" name="filearg" />
+                    <br/><br/><center><input type="submit" value="upload" /></center>
+                </form>
+            </div>
+			<button type="button" class="btn btn-primary" id="update-bin-btn">Update Binaries</button>
+
+            <div id="roll-back-dialog" title="Choose File to Roll Back">
+                <form id="roll-back-id" enctype="multipart/form-data" action="/updatebin" method="post"></form>
+            </div>
+			<button type="button" class="btn btn-primary" id="roll-back-btn">Roll Back Binaries</button>
+
+            <div id="timetag-cmd-dialog" title="Upload file">
+                <form enctype="multipart/form-data" action="/timetagcmd" method="post">
+                    Bash Script: <input type="file" name="filearg" />
+                    Timetag: <input type="text" name="timetag" id="time-picker-cmd" value="" />
+                    <br/><br/><center><input type="submit" value="upload" /></center>
+                </form>
+            </div>
+			<button type="button" class="btn btn-primary" id="timetag-cmd-btn">Timetag Commands to Run</button>
+
+			</br></br>
+
+            <div id="deploy-antenna-dialog" title="Confirm Dialog">Are you sure you want to trigger the antenna deployment?</div>
+			<button type="button" class="btn btn-primary" id="deploy-antenna-btn">Deploy Antenna</button>
+
+			<div id="start-payload-dialog" title="Confirm Dialog">Are you sure you want to start the payload experiment?</div>
+			<button type="button" class="btn btn-primary" id="start-payload-btn">Run Payload Experiment</button>
+        </div>
+    </div>
+</div>
