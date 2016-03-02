@@ -8,8 +8,19 @@ from config_setup_constants import *
 
 def createStaticLogs():
     os.system("touch " + STATIC_LOGS_PATH + "/telemetry.log")
-    os.system("touch " + STATIC_LOGS_PATH + "/debuglogs.log")
+    with open(STATIC_LOGS_PATH + '/telemetry.log', 'w') as f:
+        f.write('SENSORID - VALUE - SUBSYSTEM - TIMESTAMP\n')
+        f.write('========   =====   =========   =========\n')
+
     os.system("touch " + STATIC_LOGS_PATH + "/syscall.log")
+    with open(STATIC_LOGS_PATH + '/syscall.log', 'w') as f:
+        f.write('LEVEL - SYSCALL - SUBSYSTEM - TIMESTAMP - STDERR\n')
+        f.write('=====   =======   =========   =========   ======\n')
+
+    os.system("touch " + STATIC_LOGS_PATH + "/debuglogs.log")
+    with open(STATIC_LOGS_PATH + '/debuglogs.log', 'w') as f:
+        f.write('LEVEL - LOG - SUBSYSTEM - TIMESTAMP\n')
+        f.write('=====   ===   =========   =========\n')
 
 def createDBs():
     copies = ["/copy1/", "/copy2/", "/copy3/"]
