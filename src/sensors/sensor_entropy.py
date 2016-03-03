@@ -46,6 +46,8 @@ class SensorEntropy:
             return GYRO_IDENTIFIER_DICT[sensorId][SUB]
         elif sensorId in MAG_IDENTIFIER_DICT:
             return MAG_IDENTIFIER_DICT[sensorId][SUB]
+        elif sensorId == ADC:
+            return PAYLOAD 
         return None
 
 
@@ -95,20 +97,20 @@ class SensorEntropy:
         else:
             raise Exception('Sensor id does not exist')
 
-	@staticmethod
-	def get_gpio_pin(sensorId):
-		"""
-		Returns the pin id for a gpio
-		"""
-		if sensorId in GPIO_LOOKUP_TABLE:
-			return GPIO_LOOKUP_TABLE[sensorId][PIN]
-			
-	def get_gpio_direction(sensorId):
-		"""
-		Returns direction of gpio
-		"""
-		if sensorId in GPIO_LOOKUP_TABLE:
-			return GPIO_LOOKUP_TABLE[sensorId][DIR]
+    @staticmethod
+    def get_gpio_pin(sensorId):
+      """
+      Returns the pin id for a gpio
+      """
+      if sensorId in GPIO_LOOKUP_TABLE:
+        return GPIO_LOOKUP_TABLE[sensorId][PIN]
+        
+    def get_gpio_direction(sensorId):
+      """
+      Returns direction of gpio
+      """
+      if sensorId in GPIO_LOOKUP_TABLE:
+        return GPIO_LOOKUP_TABLE[sensorId][DIR]
 
 if __name__ == "__main__":
     for sensor in I2C_DEVICES_LIST:

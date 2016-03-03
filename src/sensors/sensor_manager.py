@@ -96,19 +96,6 @@ class SensorManager:
             print('[INIT] Error writing to ADC at address ' + str(addr))
             return -1
 
-        try:
-            print('*' * 50)
-            print("Config:", format(bus.read_byte_data(addr, adc_reg['CONFIG_REG']), '#04x'))
-            print("Mode:", format(bus.read_byte_data(addr, adc_reg['ADV_CONFIG_REG']), '#04x'))
-            print("Conversion:", format(bus.read_byte_data(addr, adc_reg['CONV_RATE_REG']), '#04x'))
-            print("Channels:", format(bus.read_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG']), '#04x'))
-            print("Limits:", format(bus.read_byte_data(addr, adc_reg['LIMIT_REG_BASE']), '#04x'))
-            print("Interrupts:", format(bus.read_byte_data(addr, 0x1), '#04x'))
-        except IOError:
-            print('[INIT] Error reading from ADC at address ' + str(addr))
-            return -1
-        sleep(0.1)
-
     @staticmethod
     def init_power_sensor(sensorId):
         try:
@@ -168,7 +155,7 @@ class SensorManager:
         configReg = SensorEntropy.reg(ADC)['CONFIG_REG']
         try:
             SensorManager.bus.write_byte_data(addr, configReg, 0x00)
-        except IOError:
+        except (IOError, OSError):
             print('[STOP] Error writing to ADC at address ' + str(addr))
             return -1
 
@@ -361,7 +348,7 @@ class SensorManager:
         except IOError:
             print('[READ] Error reading from ADC at address ' + \
                 str(addr))
-            return -1
+            return -1, -1, -1
 
         if temp & 0x100 == 0:
             temp /= 2.
@@ -373,7 +360,7 @@ class SensorManager:
         # Log data
         value = (strain, force, temp)
         sub = SensorEntropy.subsystem(sensorId)
-        #insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
 
     @staticmethod
@@ -404,16 +391,20 @@ class SensorManager:
     def get_panel_data(panelId):
         if not panelId in SIDE_PANEL_ONE_WIRE_DICT:
             raise Exception('Incorrect sensor specified')
-        addr = SIDE_PANEL_ONE_WIRE_DICT[panelId]
-        sensor = DS18B20(addr)
-        value = sensor.getTemp()
-        insertTelemetryLog(panelId, value, CDH, int(time.time()))
+        try:
+            addr = SIDE_PANEL_ONE_WIRE_DICT[panelId]
+            sensor = DS18B20(addr)
+            value = sensor.getTemp()
+            insertTelemetryLog(panelId, value, CDH, int(time.time()))
+        except (IOError, OSError):
+            print("[READ] Error reading from 1-wire DS18B20")
+            return -1
         return value
 
     """ -------------------- GPIO --------------------- """
 
     def gpio_output(pinId, pinStatus):
-		pinId = get_gpio_pin(pinId)
+        pinId = SensorEntropy.get_gpio_pin(pinId)
         led = Pin(pinId,'OUTPUT')
         if pinStatus == ON:
             led.on()
@@ -423,8 +414,9 @@ class SensorManager:
             raise Exception('Incorrect GPIO status')
 
     def gpio_input(pinId, inputTime):
+        pinId = SensorEntropy.get_gpio_pin(pinId)
         pin = Pin(pinId,'INPUT')
-        return PB.digitalRead() == 0
+        return pin.digitalRead() == 0
 
     """ -------------------- Other --------------------- """
 
@@ -490,26 +482,11 @@ class SensorManager:
 
 def main():
     # I2C Example
-    SensorManager.init_temp_sensor(TEMP_0)
-    temp_value = SensorManager.read_temp_sensor(TEMP_0)
-    SensorManager.stop_temp_sensor(TEMP_0)
-    print('TEMP0: ' + str(temp_value))
-    SensorManager.init_temp_sensor(TEMP_4)
-    temp_value = SensorManager.read_temp_sensor(TEMP_4)
-    SensorManager.stop_temp_sensor(TEMP_4)
-    print('TEMP4: '+ str(temp_value))
-    panels = [PANEL0, PANEL1]
-
-    # GPIO Example
-    """
-    SensorManager.gpio_output('J4.31', ON)
-    for i in range(5):
-        for panel in panels:
-            temperature = SensorManager.get_panel_data(panel)
-            print(temperature, end=',')
-        print()
-    SensorManager.gpio_output('J4.31', OFF)
-    """
+    ds1624 = [TEMP_PAYLOAD_A, TEMP_BAT_1]
+    for sensor in ds1624:
+        SensorManager.init_temp_sensor(sensor)
+        value = SensorManager.read_temp_sensor(sensor)
+        self.assertNotEqual(value, -1)
 
 if __name__ == "__main__":
     main()

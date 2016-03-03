@@ -13,7 +13,7 @@ import math
 from sensor_manager import SensorManager
 
 def main():
-    ds1624 = [TEMP_0, TEMP_4]
+    ds1624 = [TEMP_PAYLOAD_A, TEMP_BAT_1]
     ds18b20 = [PANEL0, PANEL1]
     for temp_sensor in ds1624:
         SensorManager.init_temp_sensor(temp_sensor)
@@ -26,11 +26,11 @@ def main():
                 value = SensorManager.read_temp_sensor(temp_sensor)
                 temperatures.append(value)
 
-            
+
             for temp_sensor in ds18b20:
                 value = SensorManager.get_panel_data(temp_sensor)
                 temperatures.append(value)
-            
+
 
             readtime = time.time() - start
             temperatures.append(readtime)
