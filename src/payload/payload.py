@@ -70,10 +70,7 @@ class Payload():
         self.set_heaters(self.experiment, False)
         self.set_power(False)
         # Turn off ADC
-        addr = SensorEntropy.addr(ADC)
-        adc_reg = SensorEntropy.reg(ADC)
-        bus = SensorManager.bus
-        bus.write_byte_data(addr, adc_reg['CONFIG_REG'], 0x00)
+        SensorManager.stop_adc_sensor(ADC)
 
     def set_heaters(self, experiment=0, state=False):
         print("Turning heaters", state, "for experiment #", experiment)
