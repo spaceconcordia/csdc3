@@ -64,6 +64,13 @@ application = tornado.web.Application([
      (r"/(.*)", tornado.web.StaticFileHandler, {'path': '/root/csdc3/src/logs/logs/'}),
 ], **settings)
 
+## check the queue for pending messages, and rely that to all connected clients
+def checkQueue():
+	if not output_queue.empty():
+		message = output_queue.get()
+		for c in clients:
+			c.write_message(message)
+
 if __name__ == "__main__":
 	## start the serial worker in background (as a deamon)
     sp = serialworker.SerialProcess(input_queue, output_queue)
