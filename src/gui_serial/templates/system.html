@@ -1,0 +1,122 @@
+<div class="row">
+    <div class="col-xs-1">
+        <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
+    </div>
+    <div class="col-xs-10">
+        <br/>
+        <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
+        <br/>
+        <ul class="nav nav-tabs">
+            <li  class="active"><a href="/system">System Status</a></li>
+            <li><a href="/commands">Send Commands</a></li>
+            <li><a href="/payload">Payload Experiment Data</a></li>
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    Telemetry Data <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">HW Interfacing</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">CDH</a></li>
+                    <li><a href="#">Power</a></li>
+                </ul>
+            </li>
+            <li><a href="/config">Set Configurations</a></li>
+        </ul>
+    </div>
+    <div class="col-xs-1">
+        <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
+    </div>
+</div>
+
+<div class="row main system">
+    <div class="col-xs-4">
+        <div class="systembox leftedge">
+            <div class="sysheader">
+                <span class="title">RAM USAGE</span></br>
+                <small><i><span class="title" id="ram-usage-date">date</span></i></small>
+            </div>
+            <div class="sysbody long">
+                <center><canvas id="ram-usage-canvas" width="420%" height="180"></canvas></center>
+                <table class="table">
+                    <tr>
+                        <td><b>Used</b></td>
+                        <td id="ram-usage-used"></td>
+                    </tr>
+                    <tr>
+                        <td><b>Free</b></td>
+                        <td id="ram-usage-free"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="systembox leftedge">
+            <div class="sysheader">
+                <a href="#" id="ram-intens-proc-reload">
+                    <img class="reload" src="{{ static_url("img/reload.png") }}" data-alt-src="{{ static_url("img/reload_hover.png") }}">
+                </a>
+                <span class="title">RAM INTENSIVE PROCESSES</span></br>
+                <small><i><span class="title" id="ram-intens-proc-date">date</span></i></small>
+            </div>
+            <div class="sysbody short" id="ram-intens-proc-table"></div>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <div class="systembox middle">
+            <div class="sysheader">
+                <span class="title">CPU AVG LOAD</span></br>
+                <small><i><span class="title" id="cpu-avg-load-date">date</span></i></small></span>
+            </div>
+            <div class="sysbody long">
+                <center><canvas id="cpu-avg-load-canvas" width="420%" height="180"></canvas></center>
+                <table class="table">
+                    <tr>
+                        <td style="color:#C7002C"><b>1 min avg</b></td>
+                        <td id="avg-load-1-min"></td>
+                        <td style="color:#08876B"><b>5 min avg</b></td>
+                        <td id="avg-load-5-min"></td>
+                        <td style="color:#147AE0"><b>15 min avg</b></td>
+                        <td id="avg-load-15-min"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="systembox middle">
+            <div class="sysheader">
+                <a href="#" id="cpu-intens-proc-reload">
+                    <img class="reload" src="{{ static_url("img/reload.png") }}" data-alt-src="{{ static_url("img/reload_hover.png") }}">
+                </a>
+                <span class="title">CPU INTENSIVE PROCESSES</span></br>
+                <small><i><span class="title" id="cpu-intens-proc-date">date</span></i></small>
+            </div>
+            <div class="sysbody short" id="cpu-intens-proc-table"></div>
+        </div>
+    </div>
+    <div class="col-xs-4">
+        <div class="systembox rightedge">
+            <div class="sysheader">
+                <span class="title">CPU UTILIZATION</span></br>
+                <small><i><span class="title" id="cpu-utilization-date">date</span></i></small>
+            </div>
+            <div class="sysbody long">
+                <center><canvas id="cpu-util-canvas" width="420%" height="180"></canvas></center>
+                <table class="table">
+                    <tr>
+                        <td><b>Usage</b></td>
+                        <td id="cpu-utilization-percentage"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="systembox rightedge">
+            <div class="sysheader">
+                <a href="#" id="disk-partition-reload">
+                    <img class="reload" src="{{ static_url("img/reload.png") }}" data-alt-src="{{ static_url("img/reload_hover.png") }}">
+                </a>
+                <span class="title">DISK PARTITION</span></br>
+                <small><i><span class="title" id="disk-partition-date">date</span></i></small>
+            </div>
+            <div class="sysbody short" id="disk-partition-table"></div>
+        </div>
+    </div>
+</div>

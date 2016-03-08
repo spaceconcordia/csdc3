@@ -16,8 +16,6 @@ clients = []
 
 input_queue = multiprocessing.Queue()
 output_queue = multiprocessing.Queue()
-
-
  
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
