@@ -15,11 +15,18 @@ function updateDiskPartitionTable() {
 }
 
 function updateMemIntensiveProcesses() {
+/*
+    var socket = new WebSocket("ws://localhost:8080/sysdata");
+    socket.onopen = function (event) {
+        socket.send("Here's some text that the server is urgently awaiting!"); 
+    };
+*/
+    send(message.data);
     $.ajax({
         url: '/sysdata',
         type: 'get',
         cache: false,
-        data: {'data_name': 'cpuIntensProc'},
+        data = {'data_name': 'cpuIntensProc'},
         error: function() {
             $( '#error-dialog' ).dialog( "open" );
         },

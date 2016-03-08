@@ -14,12 +14,25 @@ import multiprocessing
 
 from gui_constants import *
 
-sys.path.insert(0, HANDLERS_PATH)
-from payloadhandler       import PayloadHandler
-from commandshandler      import CommandsHandler
-from systemhandler        import SystemHandler
-from telemetryhandler     import TelemetryHandler
-from confighandler        import ConfigHandler
+class TelemetryHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('index.html', section='telemetry')
+
+class SystemHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('index.html', section='system')
+
+class PayloadHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('index.html', section='payload')
+
+class ConfigHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('index.html', section='config')
+
+class CommandsHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('index.html', section='commands')
 
 sys.path.insert(0, SYSTEM_HANDLERS_PATH)
 from timehandler          import TimeHandler
@@ -44,8 +57,8 @@ settings = dict(
 )
 
 application = tornado.web.Application([
-#    (r"/", SystemHandler),
-#    (r"/system", SystemHandler),
+    (r"/", SystemHandler),
+    (r"/system", SystemHandler),
     (r"/commands", CommandsHandler),
 	(r"/payload", PayloadHandler),
 	(r"/telemetry", TelemetryHandler),
