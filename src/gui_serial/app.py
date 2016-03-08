@@ -31,6 +31,11 @@ from sysdatahandler       import SysdataHandler
 
 define("port", default=8080, help="run on the given port", type=int)
 
+clients = [] 
+
+input_queue = multiprocessing.Queue()
+output_queue = multiprocessing.Queue()
+
 settings = dict(
     template_path=os.path.join(os.path.dirname(__file__), "templates"),
     static_path=os.path.join(os.path.dirname(__file__), "static"),
