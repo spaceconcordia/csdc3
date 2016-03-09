@@ -4,7 +4,7 @@ from sensor_manager import SensorManager
 
 class PowerMonitor:
     def __init__(self):
-        self.controlStatus = True
+        self.controlStatus = False
 
     def check_health(self):
         # Get temperature inputs
@@ -55,3 +55,8 @@ class PowerMonitor:
 
     def is_battery_safe(self):
         return True
+
+
+if __name__ == '__main__':
+    powerMonitor = PowerMonitor()
+    powerMonitor.check_health()
