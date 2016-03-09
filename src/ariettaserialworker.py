@@ -29,8 +29,8 @@ END = "END"
 if __name__ == "__main__":
     sp = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=1)
     sp.flushInput()
-        while True:
-            if (sp.inWaiting() > 0):
-                data = sp.read()
-                print("reading data sent from pc: " + data)
-                sp.write(data + data)
+    while True:
+        if (sp.inWaiting() > 0):
+            data = sp.read()
+            print("reading data sent from pc: " + data)
+            sp.write(data + data)
