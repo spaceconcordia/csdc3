@@ -58,6 +58,9 @@ class SerialSysStatusProcess(multiprocessing.Process):
     pass
 
 if __name__ == "__main__":
-    sp = SerialProcess(input_queue, output_queue)
-    sp.daemon = True
-    sp.start()
+    sp = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=1)
+    sp.flushInput()
+        while True:
+            if (sp.inWaiting() > 0):
+                data = self.read()
+                print("reading from serial: " + data)
