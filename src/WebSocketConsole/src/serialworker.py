@@ -28,6 +28,8 @@ class SerialProcess(multiprocessing.Process):
         self.sp.flushInput()
         while True:
             # look for incoming tornado request
+            print(self.input_queue)
+            print(self.output_queue)
             if not self.input_queue.empty():
                 data = self.input_queue.get()
                 # send it to the serial device
