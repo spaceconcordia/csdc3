@@ -55,6 +55,7 @@ class SensorManager:
     @staticmethod
     def init_temp_sensor(sensorId):
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
+            print('Sensor Id: ' + str(sensorId))
             raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
         try:
@@ -99,7 +100,7 @@ class SensorManager:
     @staticmethod
     def init_power_sensor(sensorId):
         try:
-            addr = SensorEntropy.addr(sensorId)
+            addr = SensorEntropy.addr(POWER)
             power_reg = SensorEntropy.reg(POWER)
             # Set calibration
             calibration = 0x1000
@@ -107,8 +108,8 @@ class SensorManager:
             SensorManager.bus.write_byte_data(addr, \
             power_reg['REG_CALIBRATION'], calibration)
 
-            config = power_reg['CONFIG_BVOLTAGERANGE_32V'] | \
-				     power_reg['CONFIG_GAIN_8_320MV'] | \
+            config = power_reg['CONFIG_BVOLTAGERANGE_16V'] | \
+				     power_reg['CONFIG_GAIN_1_40MV'] | \
 				     power_reg['CONFIG_BADCRES_12BIT'] | \
 				     power_reg['CONFIG_SADCRES_12BIT_1S_532US'] | \
 				     power_reg['CONFIG_MODE_SANDBVOLT_CONTINUOUS']
@@ -247,6 +248,7 @@ class SensorManager:
         valY = SensorManager.twos_to_int(valY, 16);
         valZ = SensorManager.twos_to_int(valZ, 16);
 
+        """
         # Change valX and valY to radians
         radians = math.atan2(valY, valX)
         radians += -0.0197
@@ -262,6 +264,8 @@ class SensorManager:
 
         # Log data
         value = (radians, degrees)
+        """
+        value = (valX, valY, valZ)
         sub = SensorEntropy.subsystem(sensorId)
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
@@ -367,13 +371,25 @@ class SensorManager:
     def read_power_sensor(sensorId):
         SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
-        power_reg = SensorEntropy.reg(POWER)
+        power_reg = SensorEntropy.reg(sensorId)
         bus = SensorManager.bus
         try:
-            current = bus.read_byte_data(addr, power_reg['REG_CURRENT'])
-            bus_voltage = bus.read_byte_data(addr, power_reg['REG_BUSVOLTAGE'])
-            shunt_voltage = bus.read_byte_data(addr, power_reg['REG_SHUNTVOLTAGE'])
-            power = bus.read_byte_data(addr, power_reg['REG_POWER'])
+            calibration = 0x1000
+            SensorManager.bus.write_byte_data(addr, \
+            power_reg['REG_CALIBRATION'], calibration)
+
+            bus.write_byte(addr, power_reg['REG_CURRENT']) 
+            current = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr)))
+
+            bus.write_byte(addr, power_reg['REG_SHUNTVOLTAGE']) 
+            shunt_voltage = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr)))
+
+            bus.write_byte(addr, power_reg['REG_BUSVOLTAGE']) 
+            bus_voltage = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF8
+            bus_voltage = (bus_voltage >> 3) * 4
+
+            bus.write_byte(addr, power_reg['REG_POWER']) 
+            power = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr)))
         except IOError:
             print('[READ] Error reading from power sensor at address ' + \
                 str(addr))
@@ -381,7 +397,7 @@ class SensorManager:
 
         # Log data
         value = (current, shunt_voltage, bus_voltage, power)
-        sub = SensorEntropy.subsystem(sensorId)
+        sub = POWER
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
 
@@ -408,15 +424,18 @@ class SensorManager:
         led = Pin(pinId,'OUTPUT')
         if pinStatus == ON:
             led.on()
+            return True
         elif pinStatus == OFF:
             led.off()
+            return True
         else:
             raise Exception('Incorrect GPIO status')
+            return False
 
     def gpio_input(pinId, inputTime):
         pinId = SensorEntropy.get_gpio_pin(pinId)
         pin = Pin(pinId,'INPUT')
-        return pin.digitalRead() == 0
+        return pin.digitalRead() != 0
 
     """ -------------------- Other --------------------- """
 
@@ -425,21 +444,28 @@ class SensorManager:
         newChannel = None
         if sensorId in TEMP_IDENTIFIER_DICT:
             newChannel = TEMP_IDENTIFIER_DICT[sensorId][CH]
+            mux_address = TEMP_IDENTIFIER_DICT[sensorId][MUX]
         elif sensorId in RTC_IDENTIFIER_DICT:
             newChannel = RTC_IDENTIFIER_DICT[sensorId][CH]
+            mux_address = RTC_IDENTIFIER_DICT[sensorId][MUX]
         elif sensorId in GYRO_IDENTIFIER_DICT:
             newChannel = GYRO_IDENTIFIER_DICT[sensorId][CH]
+            mux_address = GYRO_IDENTIFIER_DICT[sensorId][MUX]
         elif sensorId in MAG_IDENTIFIER_DICT:
             newChannel = MAG_IDENTIFIER_DICT[sensorId][CH]
+            mux_address = MAG_IDENTIFIER_DICT[sensorId][MUX]
+        elif sensorId == POWER:
+            newChannel = I2C_DEVICES_LOOKUP_TABLE[POWER][CH][0]
+            mux_address = 0x71
         elif sensorId == ADC:
             newChannel = I2C_DEVICES_LOOKUP_TABLE[ADC][CH][0]
+            mux_address = 0x71
 
         if newChannel is None or newChannel < 0 or newChannel > 7:
             return False
 
         if newChannel != SensorManager.channel:
             SensorManager.channel = newChannel
-            mux_address = SensorEntropy.addr(MUX)
             SensorManager.bus.write_byte(mux_address, 1 << newChannel)
             return True
 
@@ -482,11 +508,13 @@ class SensorManager:
 
 def main():
     # I2C Example
-    ds1624 = [TEMP_PAYLOAD_A, TEMP_BAT_1]
-    for sensor in ds1624:
-        SensorManager.init_temp_sensor(sensor)
-        value = SensorManager.read_temp_sensor(sensor)
-        self.assertNotEqual(value, -1)
+    while True:
+        SensorManager.init_power_sensor(POWER)
+        value = SensorManager.read_power_sensor(POWER)
+        print("{0:b}".format(value[0]))
+        print(value)
+        print()
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
