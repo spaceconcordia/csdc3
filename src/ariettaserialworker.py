@@ -3,40 +3,45 @@ import time
 import multiprocessing
 
 ## Change this to match your local settings
-SERIAL_PORT = '/dev/ttyS0'
+SERIAL_PORT = '/dev/ttyUSB0'
 SERIAL_BAUDRATE = 115200
 
-input_queue = multiprocessing.Queue()
-output_queue = multiprocessing.Queue()
+class SerialProcess(multiprocessing.Process):
 
-RAM_INTENS_PROC = "RAMIP-"
-CPU_INTENS_PROC = "CPUIP-"
-DISK_PARTITION = "DISPA-"
-GET_TIME = "GETTI-"
-SET_TIME = "SETTI-"
-GET_LOGGED_DATA = "GETLO-"
-DEL_LOGGED_DATA = "DELLO-"
-a = "TIMTA-"
-b = "UPDBI-"
-c = "ROLBA-"
-DEPLOY_ANT = "DEPAN-"
-PAYLOAD_JOB = "PAYJO-"
-PAYLOAD_TELEMETRY = "PAYTE-"
-POWER_TELEMETRY = "POWTE-"
-HEALTH_MONITORING = "HEAMO-"
-END = "END"
+    def __init__(self, input_queue, output_queue):
+        multiprocessing.Process.__init__(self)
+        self.input_queue = input_queue
+        self.output_queue = output_queue
+        self.sp = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=1)
 
-if __name__ == "__main__":
-    sp = serial.Serial(
-       port='/dev/ttyS0',
-       baudrate = 115200,
-       parity=serial.PARITY_NONE,
-       stopbits=serial.STOPBITS_ONE,
-       bytesize=serial.EIGHTBITS,
-       timeout=1
-    )
-    sp.flushInput()
-    while True:
-        if sp.inWaiting() > 0:
-            data = sp.read()
-            sp.write(data+data)
+    def close(self):
+        self.sp.close()
+
+    def writeSerial(self, data):
+        self.sp.write(data)
+        # time.sleep(1)
+
+    def readSerial(self):
+        return self.sp.readline().replace("\n", "")
+
+    def run(self):
+        self.sp.flushInput()
+        while True:
+            # look for incoming tornado request
+            if not self.input_queue.empty():
+                data = self.input_queue.get()
+                # send it to the serial device
+                self.writeSerial(data)
+                print("writing to serial: " + data)
+            # look for incoming serial data
+            if (self.sp.inWaiting() > 0):
+                data = self.readSerial()
+                print("reading from serial: " + data)
+                # send it back to tornado
+                self.output_queue.put(data)
+
+if __name__ == '__main__':
+	## start the serial worker in background (as a deamon)
+	sp = serialworker.SerialProcess(input_queue, output_queue)
+	sp.daemon = True
+	sp.start()
