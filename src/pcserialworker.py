@@ -21,6 +21,5 @@ if __name__ == "__main__":
     sp.flushInput()
     while True:
         if (sp.inWaiting() > 0):
-            data = self.read()
+            data = sp.read()
             print("reading data sent from board: " + data)
-        time.sleep(5)
