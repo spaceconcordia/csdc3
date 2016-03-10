@@ -29,17 +29,17 @@ class StaticFileHandler(tornado.web.RequestHandler):
  
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
-        print 'new connection'
+        print('new connection')
         clients.append(self)
         self.write_message("connected")
  
     def on_message(self, message):
-        print 'tornado received from client: %s' % json.dumps(message)
+        print('tornado received from client: %s' % json.dumps(message))
         #self.write_message('ack')
         input_queue.put(message)
  
     def on_close(self):
-        print 'connection closed'
+        print('connection closed')
         clients.remove(self)
 
 
@@ -66,7 +66,7 @@ if __name__ == '__main__':
 	)
 	httpServer = tornado.httpserver.HTTPServer(app)
 	httpServer.listen(options.port)
-	print "Listening on port:", options.port
+	print("Listening on port:" + str(options.port))
 
 	mainLoop = tornado.ioloop.IOLoop.instance()
 	## adjust the scheduler_interval according to the frames sent by the serial port

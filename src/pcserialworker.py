@@ -19,7 +19,7 @@ if __name__ == "__main__":
        timeout=1
     )
     sp.flushInput()
+    count = 1000
     while True:
-        if (sp.inWaiting() > 0):
-            data = sp.read()
-            print("reading data sent from board: " + data)
+        sp.write("hello")
+        time.sleep(5)
