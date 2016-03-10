@@ -6,15 +6,6 @@ import multiprocessing
 SERIAL_PORT = '/dev/ttyS0'
 SERIAL_BAUDRATE = 115200
 
-class SerialProcess(multiprocessing.Process):
-
-    def __init__(self):
-        multiprocessing.Process.__init__(self)
-        self.sp = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=1)
-
-    def close(self):
-        self.sp.close()
-
     def writeSerial(self, data):
         self.sp.write(data+"\n")
         # time.sleep(1)
@@ -34,6 +25,10 @@ class SerialProcess(multiprocessing.Process):
 
 if __name__ == '__main__':
 	## start the serial worker in background (as a deamon)
-	sp = serialworker.SerialProcess()
-	sp.daemon = True
-	sp.start()
+    sp = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=1)
+    sp.flushInput()
+        while True:
+            # look for incoming tornado request
+            if (self.sp.inWaiting() > 0):
+                data = self.readSerial()
+                print("reading from serial: " + data)
