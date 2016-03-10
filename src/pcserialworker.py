@@ -3,14 +3,21 @@ import time
 import multiprocessing
 
 ## Change this to match your local settings
-SERIAL_PORT = '/dev/ttyS1'
+SERIAL_PORT = '/dev/ttyUSB0'
 SERIAL_BAUDRATE = 115200
 
 input_queue = multiprocessing.Queue()
 output_queue = multiprocessing.Queue()
 
 if __name__ == "__main__":
-    sp = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=1)
+    sp = serial.Serial(
+       port=SERIAL_PORT,
+       baudrate =SERIAL_BAUDRATE,
+       parity=serial.PARITY_NONE,
+       stopbits=serial.STOPBITS_ONE,
+       bytesize=serial.EIGHTBITS,
+       timeout=1
+    )
     sp.flushInput()
     while True:
         if (sp.inWaiting() > 0):
