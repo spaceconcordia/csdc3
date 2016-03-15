@@ -19,7 +19,11 @@ if __name__ == "__main__":
        timeout=1
     )
     sp.flushInput()
-    count = 1000
+    count = 1
     while True:
-        sp.write(str.encode("hello"))
-        time.sleep(5)
+        if count % 2 == 1:
+            sp.write(str.encode("hello"))
+        elif count % 2 == 0:
+            sp.write(str.encode("world"))
+        count += 1
+        time.sleep(1)

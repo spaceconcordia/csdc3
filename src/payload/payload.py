@@ -11,7 +11,7 @@ from sensor_entropy import *
 from sensor_manager import SensorManager
 
 class Payload():
-    PAYLOAD_MAX_TIME = 30
+    PAYLOAD_MAX_TIME = 500
     PAYLOAD_MAX_STRAIN = 9999
     PAYLOAD_SAMPLING_FREQ = 2
 
@@ -46,8 +46,8 @@ class Payload():
         if not self.check_initial_conditions():
             return False
         print("Starting payload...")
-        self.init_sensors()
         self.set_power(True)
+        self.init_sensors()
         start_time = time.time()
         self.set_heaters(self.experiment, True)
         while True:
@@ -87,6 +87,7 @@ class Payload():
             SensorManager.gpio_output(PAYLOAD_EN_GPIO, OFF)
         else:
             SensorManager.gpio_output(PAYLOAD_EN_GPIO, ON)
+            SensorManager.gpio_output(SENSORS_EN_GPIO, ON)
         return True
 
     def is_end_condition(self, strain, elapsed):

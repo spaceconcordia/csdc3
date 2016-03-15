@@ -34,7 +34,6 @@ class PowerMonitor:
         statusValues = []
         for iden in statusIdentifiers:
                 statusValues.append(SensorManager.gpio_input(iden,0))
-        print(statusValues)
         # Define manual heater identifiers
         heaterIdentifers = (PSS_HTR_EN_1_GPIO, PSS_HTR_EN_2_GPIO,\
         PSS_HTR_EN_3_GPIO, PSS_HTR_EN_4_GPIO)
@@ -77,7 +76,7 @@ class PowerMonitor:
 if __name__ == '__main__':
     powerMonitor = PowerMonitor()
     count = 0
-    while True:
+    while count < 15:
         count = count +1
         print('Count: ' + str(count))
         powerMonitor.check_health()
