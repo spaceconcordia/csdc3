@@ -91,7 +91,7 @@ class PowerMonitor:
         """
         Determines whether the payload experiment is running
         """
-        return not self.lock.isLocked()
+        return self.lock.isLocked()
 
 if __name__ == '__main__':
     powerMonitor = PowerMonitor()
