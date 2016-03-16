@@ -80,7 +80,10 @@ class SensorManager:
         bus = SensorManager.bus
         busy_reg = SensorManager.bus.read_byte_data(addr, \
         adc_reg['BUSY_STATUS_REG'])
-
+        """
+        while busy_reg:
+            time.sleep(1)
+        """
         try:
             # Use internal Vref
             bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x04)
@@ -396,7 +399,8 @@ class SensorManager:
             return -1
 
         # Log data
-        value = (current, shunt_voltage, bus_voltage, power)
+        #value = (current, shunt_voltage, bus_voltage, power)
+        value = (bus_voltage * 0.001)
         sub = POWER
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value

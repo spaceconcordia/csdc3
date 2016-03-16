@@ -26,10 +26,9 @@ class Tests(unittest.TestCase):
         for i in range(5):
             SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, ON)
             time.sleep(0.2)
-            SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, OFF)
+            retval = SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, OFF)
             time.sleep(0.2)
-
-        self.assertEqual(1, 1)
+            self.assertEqual(True, retval)
 
     def test_read_mag(self):
         """
@@ -38,6 +37,9 @@ class Tests(unittest.TestCase):
             x, y, z = SensorManager.read_magnetometer()
             print(x, y, z)
             time.sleep(1)
+            self.assertNotEqual(-1, x)
+            self.assertNotEqual(-1, y)
+            self.assertNotEqual(-1, z)
         """
         self.assertEqual(1, 1)
 
@@ -50,6 +52,22 @@ class Tests(unittest.TestCase):
         SensorManager.stop_power_sensor()
         """
         self.assertEqual(1, 1)
+
+    def test_power_init(self):
+        """
+        SensorManager.mux_select(POWER_0)
+        SensorManager.init_power_sensor(POWER_0)
+        addr = SensorEntropy.addr(POWER_0)
+        adc_reg = SensorEntropy.reg(POWER_0)
+        bus = SensorManager.bus
+
+        calibration = bus.read_byte_data(addr, power_reg['REG_CALIBRATION'])
+        config = bus.read_byte_data(addr, power_reg['REG_CONFIG'])
+
+        self.assertEqual(calibration, 0x1000)
+        self.assertEqual(config, 0x00)
+        """
+        pass
 
 if __name__ == "__main__":
     unittest.main()

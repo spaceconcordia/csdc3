@@ -90,15 +90,15 @@ def selectDebugLog(subsystem):
 
 def writeTelemetryLogs(sensor_id, value, subsystem, timestamp):
     with open(STATIC_LOGS_PATH + '/telemetry.log', 'a') as f:
-        f.write(' '.join([sensor_id, str(value), subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp))]) + '\n ')
+        f.write(' '.join([sensor_id, str(value), subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-5*60*60))]) + '\n ')
 
 def writeSyscallLogs(level, syscall, subsystem, timestamp, stderr):
     with open(STATIC_LOGS_PATH + '/syscall.log', 'a') as f:
-        f.write(' '.join([level, syscall, subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp)), stderr]) + '\n ')
+        f.write(' '.join([level, syscall, subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-5*60*60)), stderr]) + '\n ')
 
 def writeDebugLogs(level, log, subsystem, timestamp):
     with open(STATIC_LOGS_PATH + '/debuglogs.log', 'a') as f:
-        f.write(' '.join([level, log, subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp))]) + '\n ')
+        f.write(' '.join([level, log, subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-5*60*60))]) + '\n ')
 
 if __name__ == "__main__":
     # TelemetryLog SELECT & INSERT tests

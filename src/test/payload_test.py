@@ -37,7 +37,11 @@ class PayloadTests(unittest.TestCase):
         self.assertNotEqual(adc_temp, -1)
 
     def test_temp_sensor(self):
-        pass
+        ds1624 = [TEMP_PAYLOAD_A, TEMP_PAYLOAD_B, TEMP_PAYLOAD_BRD]
+        for sensor in ds1624:
+            SensorManager.init_temp_sensor(sensor)
+            value = SensorManager.read_temp_sensor(sensor)
+            self.assertNotEqual(value, -1)
 
     def test_payload_switches(self):
         SensorManager.gpio_output(PAYLOAD_EN_GPIO, ON)
@@ -45,6 +49,18 @@ class PayloadTests(unittest.TestCase):
         time.sleep(1)
         SensorManager.gpio_output(PAYLOAD_EN_GPIO, OFF)
         SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, OFF)
+
+    def test_adc_stop(self):
+        SensorManager.mux_select(ADC)
+        SensorManager.stop_adc_sensor(ADC)
+        SensorManager.mux_select(ADC)
+        SensorManager.init_adc(ADC)
+        addr = SensorEntropy.addr(ADC)
+        adc_reg = SensorEntropy.reg(ADC)
+        bus = SensorManager.bus
+
+        config = bus.read_byte_data(addr, adc_reg['CONFIG_REG'])
+        self.assertEqual(config, 0x00)
 
 if __name__ == "__main__":
     unittest.main()

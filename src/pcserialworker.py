@@ -3,7 +3,7 @@ import time
 import multiprocessing
 
 ## Change this to match your local settings
-SERIAL_PORT = '/dev/ttyUSB0'
+SERIAL_PORT = '/dev/ttyS0'
 SERIAL_BAUDRATE = 115200
 
 input_queue = multiprocessing.Queue()
@@ -19,7 +19,11 @@ if __name__ == "__main__":
        timeout=1
     )
     sp.flushInput()
-    count = 1000
+    count = 1
     while True:
-        sp.write("hello")
-        time.sleep(5)
+        if count % 2 == 1:
+            sp.write(str.encode("hello"))
+        elif count % 2 == 0:
+            sp.write(str.encode("world"))
+        count += 1
+        time.sleep(1)
