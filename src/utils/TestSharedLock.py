@@ -7,7 +7,7 @@ The goal of this file is to test the locking behaviour of SharedLock
 """
 
 def f(i):
-	l = Lock("/home/justin/Desktop/lock_name.tmp")
+	l = Lock("/home/justin/Desktop/lock.tmp")
 	l.acquire()
 	try:
 		print('Thread', i, 'has lock')
@@ -16,14 +16,14 @@ def f(i):
 		l.release()
 
 def checkLock():
-    l = Lock("/home/justin/Desktop/lock_name.tmp")
+    l = Lock("/home/justin/Desktop/lock.tmp")
     if l.isLocked():
         print("Lock is locked")
     else:
         print("Lock is NOT locked")
 
 if __name__ == '__main__':
-    l = Lock("/home/justin/Desktop/lock_name.tmp")
+    l = Lock("/home/justin/Desktop/lock.tmp")
     checkLock()
     sleep(1)
     Process(target=f, args=(1,)).start()
