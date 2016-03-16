@@ -9,8 +9,9 @@
         <ul class="nav nav-tabs">
             <li><a href="/system">System Status</a></li>
             <li><a href="/commands">Send Commands</a></li>
+            <li class="active"><a href="/batteryheating">Battery Heating Demo</a></li>
             <li><a href="/payload">Payload Experiment Data</a></li>
-            <li role="presentation" class="dropdown active">
+            <li role="presentation" class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
                     Telemetry Data <span class="caret"></span>
                 </a>
@@ -31,7 +32,11 @@
 
 <div class="row">
     <div class="col-xs-12">
-        <div class="main telemetry">
+        <div class="main batteryheating">
+        <img class="img-responsive batteryimg" src="{{ static_url("img/batteryimg.png") }}" alt="Battery #1">
+        <img class="img-responsive batteryimg" src="{{ static_url("img/batteryimg.png") }}" alt="Battery #2">
+        <img class="img-responsive batteryimg" src="{{ static_url("img/batteryimg.png") }}" alt="Battery #3">
+        <img class="img-responsive batteryimg" src="{{ static_url("img/batteryimg.png") }}" alt="Battery #4">
         </div>
     </div>
 </div>

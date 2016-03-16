@@ -7,20 +7,21 @@ import sys
 from gui_constants import *
 
 sys.path.insert(0, HANDLERS_PATH)
-from payloadhandler       import PayloadHandler
-from commandshandler      import CommandsHandler
-from systemhandler        import SystemHandler
-from telemetryhandler     import TelemetryHandler
-from confighandler        import ConfigHandler
+from payloadhandler         import PayloadHandler
+from commandshandler        import CommandsHandler
+from systemhandler          import SystemHandler
+from telemetryhandler       import TelemetryHandler
+from interfacinghandler     import InterfacingHandler
+from batteryheatinghandler  import BatteryHeatingHandler
 
 sys.path.insert(0, SYSTEM_HANDLERS_PATH)
-from timehandler          import TimeHandler
-from deployantennahandler import DeployAntennaHandler
-from startpayloadhandler  import StartPayloadHandler
-from logshandler          import LogsHandler
-from timetagcmdhandler    import TimetagcmdHandler
-from updatebinhandler     import UpdatebinHandler
-from sysdatahandler       import SysdataHandler
+from timehandler            import TimeHandler
+from deployantennahandler   import DeployAntennaHandler
+from startpayloadhandler    import StartPayloadHandler
+from logshandler            import LogsHandler
+from timetagcmdhandler      import TimetagcmdHandler
+from updatebinhandler       import UpdatebinHandler
+from sysdatahandler         import SysdataHandler
 
 settings = dict(
     template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -34,7 +35,8 @@ application = tornado.web.Application([
     (r"/commands", CommandsHandler),
 	(r"/payload", PayloadHandler),
 	(r"/telemetry", TelemetryHandler),
-    (r"/config", ConfigHandler),
+	(r"/interfacing", InterfacingHandler),
+	(r"/batteryheating", BatteryHeatingHandler),
 
 # system command handler
     (r"/time", TimeHandler),

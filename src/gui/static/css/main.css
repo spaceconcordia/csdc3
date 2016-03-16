@@ -127,5 +127,9 @@ tr, th {
 }
 
 /*
- *  system tables
+ *  Interface Image
  */
+.interfaceimg {
+    padding-top: 3.5%;
+    padding-bottom: 3.5%;
+}
