@@ -5,10 +5,12 @@ Application to run the three-point bending test payload
 '''
 import sys
 sys.path.append("/root/csdc3/src/sensors")
+sys.path.append("/root/csdc3/src/utils/")
 import time
 import os
 from sensor_entropy import *
 from sensor_manager import SensorManager
+from SharedLock import Lock
 
 class Payload():
     PAYLOAD_MAX_TIME = 500
@@ -23,6 +25,7 @@ class Payload():
         self.max_time = max_time
         self.max_strain = max_strain
         self.sampling_freq = sampling_freq
+        self.lock = Lock("/root/csdc3/src/utils/payloadLock.tmp")
 
     def check_initial_conditions(self):
         # Check battery voltage
@@ -46,6 +49,7 @@ class Payload():
         if not self.check_initial_conditions():
             return False
         print("Starting payload...")
+        self.lock.acquire()
         self.set_power(True)
         self.init_sensors()
         start_time = time.time()
@@ -60,8 +64,8 @@ class Payload():
 
             if self.is_end_condition(strain, elapsed):
                 break
-
         self.end()
+        self.lock.release()
         return True
 
     def end(self):
