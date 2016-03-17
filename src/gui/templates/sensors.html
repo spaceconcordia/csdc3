@@ -21,13 +21,13 @@
                 {
                     animationEnabled: true,
                     title:{
-                        text: "Strain Gauge"
+                        text: "Sensor 1"
                     },
                     axisX:{
                         title: "time",
                         intervalType: "second",        
                         interval:4,
-                        valueFormatString: "HH:mm:ss",
+                        valueFormatString: "DD-MM-YY",
                         labelAngle: -50
                     },
                     data: [
@@ -35,18 +35,18 @@
                     type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Strain Gauge",
+                    legendText: "Sensor type",
                     xValueType: "dateTime",
                     dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                        { x: 1099620204000, y: 44 },
-                        { x: 1099620208000, y: 35 },
-                        { x: 1099620212000, y: 45 },
-                        { x: 1099620216000, y: 75 },
-                        { x: 1099620220000, y: 58 },
-                        { x: 1099620224000, y: 18 },
-                        { x: 1099620228000, y: 30 },
-                        { x: 1099620232000, y: 11 }
+                        { x: 1199620200000, y: 21 },
+                        { x: 1199620204000, y: 44 },
+                        { x: 1199620208000, y: 35 },
+                        { x: 1199620212000, y: 45 },
+                        { x: 1199620216000, y: 75 },
+                        { x: 1199620220000, y: 58 },
+                        { x: 1199620224000, y: 18 },
+                        { x: 1199620228000, y: 30 },
+                        { x: 1199620232000, y: 11 }
                     ]
                 }
                     ],
@@ -63,53 +63,6 @@
                 }
                 });
                 chart.render();
-
-                var chart2 = new CanvasJS.Chart("chartContainer2",
-                {
-                    animationEnabled: true,
-                    title:{
-                        text: "Load Cell"
-                    },
-                    axisX:{
-                        title: "time",
-                        intervalType: "second",        
-                        interval:4,
-                        valueFormatString: "HH:mm:ss",
-                        labelAngle: -50
-                    },
-                    data: [
-                {
-                    type: "spline", //change type to bar, line, area, pie, etc
-                    showInLegend: true,
-                    name: "series1",
-                    legendText: "Load Cell",
-                    xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 51 },
-                        { x: 1099620204000, y: 45 },
-                        { x: 1099620208000, y: 50 },
-                        { x: 1099620212000, y: 62 },
-                        { x: 1099620216000, y: 95 },
-                        { x: 1099620220000, y: 66 },
-                        { x: 1099620224000, y: 24 },
-                        { x: 1099620228000, y: 32 },
-                        { x: 1099620232000, y: 16 }
-                    ]
-                }
-                    ],
-                legend: {
-                    cursor: "pointer",
-                    itemclick: function (e) {
-                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                            e.dataSeries.visible = false;
-                        } else {
-                            e.dataSeries.visible = true;
-                        }
-                        chart2.render();
-                    }
-                }
-                });
-                chart2.render();
             }
 </script>
 
@@ -151,8 +104,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="main payload">
-                        <div class="chartdatadivleft" id="chartContainer" style="height: 400px; width: 40%;"></div>
-                        <div class="chartdatadivright" id="chartContainer2" style="height: 400px; width: 40%;"></div>
+                        <div class="chartdatadiv center-block" id="chartContainer" style="height: 400px; width: 80%;"></div>
                     </div>
                 </div>
             </div>

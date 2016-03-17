@@ -12,7 +12,7 @@ from commandshandler        import CommandsHandler
 from systemhandler          import SystemHandler
 from telemetryhandler       import TelemetryHandler
 from interfacinghandler     import InterfacingHandler
-from batteryheatinghandler  import BatteryHeatingHandler
+from sensorshandler         import SensorsHandler
 
 sys.path.insert(0, SYSTEM_HANDLERS_PATH)
 from timehandler            import TimeHandler
@@ -36,7 +36,7 @@ application = tornado.web.Application([
 	(r"/payload", PayloadHandler),
 	(r"/telemetry", TelemetryHandler),
 	(r"/interfacing", InterfacingHandler),
-	(r"/batteryheating", BatteryHeatingHandler),
+	(r"/sensors", SensorsHandler),
 
 # system command handler
     (r"/time", TimeHandler),
