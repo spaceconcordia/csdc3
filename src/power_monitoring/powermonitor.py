@@ -10,12 +10,18 @@ import time
 class PowerMonitor:
     def __init__(self):
         self.controlStatus = False
-        self.lock = Lock("/root/csdc3/src/utils/lock.tmp")
+        self.payloadLock = Lock("/root/csdc3/src/utils/payloadLock.tmp")
+        self.sensorReadingLock = \
+        Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
 
     def check_health(self):
         """
         Determines whether battery chargers must be set manually
         """
+        # Check if sensors are reading data in the system
+        if areSensorsAcquiringData():
+            return
+            
         # Get temperature inputs
         tempIdentifiers = (TEMP_BAT_1, TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4)
         tempValues = []
@@ -91,7 +97,13 @@ class PowerMonitor:
         """
         Determines whether the payload experiment is running
         """
-        return self.lock.isLocked()
+        return self.payloadLock.isLocked()
+
+    def areSensorsAcquiringData(self):
+        """
+        Determines if there are sensor readings in progress
+        """
+        return self.sensorReadingLock.isLocked()
 
 if __name__ == '__main__':
     powerMonitor = PowerMonitor()
