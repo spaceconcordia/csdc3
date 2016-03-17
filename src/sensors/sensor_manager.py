@@ -8,6 +8,7 @@ from chomsky import *
 from time import sleep
 from sensor_entropy import *
 from sensor_constants import *
+import os
 import smbus
 import time
 import math
@@ -75,6 +76,7 @@ class SensorManager:
     @staticmethod
     def init_adc(sensorId):
         SensorManager.mux_select(sensorId)
+        print(SensorManager.channel)
         addr = SensorEntropy.addr(sensorId)
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
@@ -103,6 +105,19 @@ class SensorManager:
     @staticmethod
     def init_power_sensor(sensorId):
         try:
+            if not os.path.isdir(INA219_PATH):
+                SensorManager.mux_select(sensorId)
+                with open(I2C_DEVICE_PATH, "w") as f:
+                    f.write("ina219 0x40")
+
+            with open(INA219_RESISTOR, "w") as f:
+                f.write("2000")
+
+        except(IOError, OSError):
+            print('[INIT] Error reading from Power at address ' + str(addr))
+            return -1
+        """
+        try:
             addr = SensorEntropy.addr(POWER)
             power_reg = SensorEntropy.reg(POWER)
             # Set calibration
@@ -122,7 +137,7 @@ class SensorManager:
         except IOError:
             print('[INIT] Error reading from Power at address ' + str(addr))
             return -1
-        sleep(0.1)
+        """
 
     """ -------------------- Stop --------------------- """
 
@@ -376,6 +391,9 @@ class SensorManager:
         addr = SensorEntropy.addr(sensorId)
         power_reg = SensorEntropy.reg(sensorId)
         bus = SensorManager.bus
+        with open(INA219_VOLTAGE) as v, open(INA219_CURRENT) as a, open(INA219_POWER) as p:
+            value = (int(v.read()), int(a.read()), int(p.read()))
+        """
         try:
             calibration = 0x1000
             SensorManager.bus.write_byte_data(addr, \
@@ -399,8 +417,9 @@ class SensorManager:
             return -1
 
         # Log data
-        #value = (current, shunt_voltage, bus_voltage, power)
-        value = (bus_voltage * 0.001)
+        value = (current / 10., shunt_voltage * .01, bus_voltage * 0.001, power / 2.)
+        #value = (bus_voltage * 0.001)
+        """
         sub = POWER
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
@@ -512,10 +531,9 @@ class SensorManager:
 
 def main():
     # I2C Example
+    SensorManager.init_power_sensor(POWER)
     while True:
-        SensorManager.init_power_sensor(POWER)
         value = SensorManager.read_power_sensor(POWER)
-        print("{0:b}".format(value[0]))
         print(value)
         print()
         time.sleep(1)
