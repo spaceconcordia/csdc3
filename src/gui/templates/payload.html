@@ -1,36 +1,168 @@
-<div class="row">
-    <div class="col-xs-1">
-        <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
-    </div>
-    <div class="col-xs-10">
-        <br/>
-        <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
-        <br/>
-        <ul class="nav nav-tabs">
-            <li><a href="/system">System Status</a></li>
-            <li><a href="/commands">Send Commands</a></li>
-            <li class="active"><a href="/payload">Payload Experiment Data</a></li>
-            <li role="presentation" class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    Telemetry Data <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="/interfacing">HW Interfacing</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">CDH</a></li>
-                    <li><a href="#">Power</a></li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    <div class="col-xs-1">
-        <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
-    </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<div class="row">
-    <div class="col-xs-12">
-        <div class="main payload">
-        </div>
-    </div>
-</div>
+        <title>Aleksandr Dashboard</title>
+
+        <link rel="shortcut icon" href="{{ static_url("img/favicon.ico") }}"/>
+
+        <link rel="stylesheet" href="{{ static_url("css/main.css") }}">
+        <link rel="stylesheet" href="{{ static_url("node_modules/bootstrap/dist/css/bootstrap.min.css") }}">
+        <link rel="stylesheet" href="{{ static_url("node_modules/jquery-ui/jquery-ui.min.css") }}">
+        <link rel="stylesheet" href="{{ static_url("node_modules/jquery-ui/jquery-ui-timepicker-addon.min.css") }}">
+
+        <script type="text/javascript" src="{{ static_url("node_modules/canvasjs/canvasjs.min.js") }}"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                var chart = new CanvasJS.Chart("chartContainer",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: "Strain Gauge"
+                    },
+                    axisX:{
+                        title: "time",
+                        intervalType: "second",        
+                        interval:4,
+                        valueFormatString: "HH:mm:ss",
+                        labelAngle: -50
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Strain Gauge",
+                    xValueType: "dateTime",
+                    dataPoints: [
+                        { x: 1099620200000, y: 21 },
+                        { x: 1099620204000, y: 44 },
+                        { x: 1099620208000, y: 35 },
+                        { x: 1099620212000, y: 45 },
+                        { x: 1099620216000, y: 75 },
+                        { x: 1099620220000, y: 58 },
+                        { x: 1099620224000, y: 18 },
+                        { x: 1099620228000, y: 30 },
+                        { x: 1099620232000, y: 11 }
+                    ]
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chart.render();
+                    }
+                }
+                });
+                chart.render();
+
+                var chart2 = new CanvasJS.Chart("chartContainer2",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: "Load Cell"
+                    },
+                    axisX:{
+                        title: "time",
+                        intervalType: "second",        
+                        interval:4,
+                        valueFormatString: "HH:mm:ss",
+                        labelAngle: -50
+                    },
+                    data: [
+                {
+                    type: "spline", //change type to bar, line, area, pie, etc
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Load Cell",
+                    xValueType: "dateTime",
+                    dataPoints: [
+                        { x: 1099620200000, y: 51 },
+                        { x: 1099620204000, y: 45 },
+                        { x: 1099620208000, y: 50 },
+                        { x: 1099620212000, y: 62 },
+                        { x: 1099620216000, y: 95 },
+                        { x: 1099620220000, y: 66 },
+                        { x: 1099620224000, y: 24 },
+                        { x: 1099620228000, y: 32 },
+                        { x: 1099620232000, y: 16 }
+                    ]
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chart2.render();
+                    }
+                }
+                });
+                chart2.render();
+            }
+</script>
+
+
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-1">
+                    <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
+                </div>
+            <div class="col-xs-10">
+                <br/>
+                <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
+                <br/>
+                <ul class="nav nav-tabs">
+                    <li><a href="/system">System Status</a></li>
+                    <li><a href="/commands">Send Commands</a></li>
+                    <li class="active"><a href="/payload">Payload Experiment Data</a></li>
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            Telemetry Data <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/interfacing">HW Interfacing</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#">Sensor Data</a></li>
+                        </ul>
+                        </li>
+                </ul>
+            </div>
+        
+            <div class="col-xs-1">
+                <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
+            </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="main payload">
+                        <div class="chartdatadivleft" id="chartContainer" style="height: 400px; width: 40%;"></div>
+                        <div class="chartdatadivright" id="chartContainer2" style="height: 400px; width: 40%;"></div>
+                    </div>
+                </div>
+            </div>
+
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery/jquery.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui-timepicker-addon.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/bootstrap/dist/js/bootstrap.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/smoothie/smoothie.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("js/app.js") }}"></script>
+    </body>
+</html>
+

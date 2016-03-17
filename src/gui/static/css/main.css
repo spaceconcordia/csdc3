@@ -133,3 +133,22 @@ tr, th {
     padding-top: 3.5%;
     padding-bottom: 3.5%;
 }
+
+.payload {
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.chartdatadivleft {
+    float:left;
+    margin-top: 5%;
+    margin-left: 7.5%;
+    margin-bottom: 7.5%;
+}
+
+.chartdatadivright {
+    float:right;
+    margin-top: 5%;
+    margin-right: 7.5%;
+    margin-bottom: 7.5%;
+}
