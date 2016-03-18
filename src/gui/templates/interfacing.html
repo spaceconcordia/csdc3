@@ -10,9 +10,18 @@
             <li><a href="/system">System Status</a></li>
             <li><a href="/commands">Send Commands</a></li>
             <li><a href="/payload">Payload Experiment Data</a></li>
-            <li><a href="/telemetry">Telemetry Data</a></li>
-            <li  class="active"><a href="/config">Set Configurations</a></li>
+            <li role="presentation" class="dropdown active">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    HW Interfacing <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/interfacing">HW Interfacing</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/sensors">Sensor Data</a></li>
+                </ul>
+            </li>
         </ul>
+
     </div>
     <div class="col-xs-1">
         <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
@@ -21,9 +30,8 @@
 
 <div class="row">
     <div class="col-xs-12">
-        <div class="main configs">
-
+        <div class="main interfacing">
+            <img class="img-responsive center-block interfaceimg" src="{{ static_url("img/interfacing.png") }}" alt="HW Interfacing">
         </div>
     </div>
 </div>
-

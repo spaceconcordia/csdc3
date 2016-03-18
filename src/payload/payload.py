@@ -5,14 +5,16 @@ Application to run the three-point bending test payload
 '''
 import sys
 sys.path.append("/root/csdc3/src/sensors")
+sys.path.append("/root/csdc3/src/utils/")
 import time
 import os
 from sensor_entropy import *
 from sensor_manager import SensorManager
+from SharedLock import Lock
 
 class Payload():
-    PAYLOAD_MAX_TIME = 10
-    PAYLOAD_MAX_STRAIN = 2500
+    PAYLOAD_MAX_TIME = 500
+    PAYLOAD_MAX_STRAIN = 9999
     PAYLOAD_SAMPLING_FREQ = 2
 
     PAYLOAD_MIN_SPACE = 10440
@@ -23,6 +25,7 @@ class Payload():
         self.max_time = max_time
         self.max_strain = max_strain
         self.sampling_freq = sampling_freq
+        self.lock = Lock("/root/csdc3/src/utils/payloadLock.tmp")
 
     def check_initial_conditions(self):
         # Check battery voltage
@@ -40,11 +43,15 @@ class Payload():
         #SensorManager.init_temp_sensor()
 
     def start(self):
+        f = open("/var/tmp/payload.txt", "w")
+        f.close()
+
         if not self.check_initial_conditions():
             return False
         print("Starting payload...")
-        self.init_sensors()
+        self.lock.acquire()
         self.set_power(True)
+        self.init_sensors()
         start_time = time.time()
         self.set_heaters(self.experiment, True)
         while True:
@@ -57,26 +64,34 @@ class Payload():
 
             if self.is_end_condition(strain, elapsed):
                 break
-
         self.end()
+        self.lock.release()
         return True
 
     def end(self):
+        os.system("rm /var/tmp/payload.txt")
         print("Payload ending...")
         self.set_heaters(self.experiment, False)
         self.set_power(False)
         # Turn off ADC
-        addr = SensorEntropy.addr(ADC)
-        adc_reg = SensorEntropy.reg(ADC)
-        bus = SensorManager.bus
-        bus.write_byte_data(addr, adc_reg['CONFIG_REG'], 0x00)
+        SensorManager.stop_adc_sensor(ADC)
 
     def set_heaters(self, experiment=0, state=False):
         print("Turning heaters", state, "for experiment #", experiment)
+        if state == False:
+            SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, OFF)
+        else:
+            SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, ON)
+
         return True
 
     def set_power(self, isOn=False):
         print("Setting power for payload: ", isOn)
+        if isOn == False:
+            SensorManager.gpio_output(PAYLOAD_EN_GPIO, OFF)
+        else:
+            SensorManager.gpio_output(PAYLOAD_EN_GPIO, ON)
+            SensorManager.gpio_output(SENSORS_EN_GPIO, ON)
         return True
 
     def is_end_condition(self, strain, elapsed):
@@ -94,7 +109,7 @@ def get_disk_usage(path):
 
 
 def main():
-    payload = Payload(0)
+    payload = Payload(2)
     payload.start()
 
 if __name__ == "__main__":

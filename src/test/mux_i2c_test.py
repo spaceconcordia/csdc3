@@ -1,4 +1,5 @@
 import smbus
+import os
 
 MUX_ADDRESS = 0x71
 
@@ -13,8 +14,8 @@ def scan_mux():
     for i in range(8):
         muxselect(i)
         print("TCA Port:", i)
-        print("Check i2c devices...")
-        raw_input()
+        os.system("i2cdetect -y 0")
+        raw_input("\nPress any key to check the next channel...\n")
 
 def main():
     print("Scanning i2c multiplexer")

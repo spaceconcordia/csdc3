@@ -10,8 +10,16 @@
             <li><a href="/system">System Status</a></li>
             <li class="active"><a href="/commands">Send Commands</a></li>
             <li><a href="/payload">Payload Experiment Data</a></li>
-            <li><a href="/telemetry">Telemetry Data</a></li>
-            <li><a href="/config">Set Configurations</a></li>
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    Telemetry Data <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/interfacing">HW Interfacing</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/sensors">Sensor Data</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
     <div class="col-xs-1">
@@ -22,6 +30,7 @@
 <div class="row">
     <div class="col-xs-12">
         <div class="main commands">
+            </br>
             <div id="error-dialog" title="Error Dialog">An error occured while handling the command.</div>
             <div id="job-success-dialog" title="Success Dialog"><div id="job-success-text"></div></div>
 
@@ -70,13 +79,12 @@
             </div>
 			<button type="button" class="btn btn-primary" id="timetag-cmd-btn">Timetag Commands to Run</button>
 
-			</br></br>
-
-            <div id="deploy-antenna-dialog" title="Confirm Dialog">Are you sure you want to trigger the antenna deployment?</div>
+			</br>
+            <!--div id="deploy-antenna-dialog" title="Confirm Dialog">Are you sure you want to trigger the antenna deployment?</div>
 			<button type="button" class="btn btn-primary" id="deploy-antenna-btn">Deploy Antenna</button>
 
 			<div id="start-payload-dialog" title="Confirm Dialog">Are you sure you want to start the payload experiment?</div>
-			<button type="button" class="btn btn-primary" id="start-payload-btn">Run Payload Experiment</button>
+			<button type="button" class="btn btn-primary" id="start-payload-btn">Run Payload Experiment</button-->
         </div>
     </div>
 </div>

@@ -13,11 +13,11 @@ import math
 from sensor_manager import SensorManager
 
 def main():
-    ds1624 = [TEMP_EPS_BRD]
-    #ds18b20 = [PANEL0, PANEL1]
+    ds1624 = [TEMP_PAYLOAD_A, TEMP_BAT_1]
+    ds18b20 = [PANEL0, PANEL1]
     for temp_sensor in ds1624:
         SensorManager.init_temp_sensor(temp_sensor)
-    SensorManager.init_power_sensor(POWER)
+    SensorManager.gpio_output(PSS_HTR_EN_1_GPIO, ON)
     with open("/root/csdc3/src/sensors/temp_log.txt", "a") as f:
         for i in range(1):
             start = time.time()
@@ -26,14 +26,17 @@ def main():
                 value = SensorManager.read_temp_sensor(temp_sensor)
                 temperatures.append(value)
 
-            power = SensorManager.read_power_sensor(POWER)
-            temperatures.append(power)
-            print(temperatures)
+
+            for temp_sensor in ds18b20:
+                value = SensorManager.get_panel_data(temp_sensor)
+                temperatures.append(value)
+
 
             readtime = time.time() - start
             temperatures.append(readtime)
             f.write(str(temperatures) + '\n')
 
+    SensorManager.gpio_output(PSS_HTR_EN_1_GPIO, OFF)
     for temp_sensor in ds1624:
         SensorManager.stop_temp_sensor(temp_sensor)
 

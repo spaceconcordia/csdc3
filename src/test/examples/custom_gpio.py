@@ -4,7 +4,7 @@ from ablib_python3 import Pin
 from time import sleep
 
 
-led = Pin('J4.7','OUTPUT')
+led = Pin('J4.32','OUTPUT')
 
 while 1:
 	led.on()
