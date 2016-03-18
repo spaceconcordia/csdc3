@@ -18,7 +18,7 @@ def main():
     lock = Lock("/root/csdc3/src/utils/payloadLock.tmp")
     lock.acquire()
     print("Lock has been acquired by ShutAllBatteryHeaters.py")
-    sleep(60)
+    sleep(600)
     lock.release()
     print("Lock has been released by ShutAllBatteryHeaters.py")
     # ShutAllBatteryHeaters()

@@ -49,32 +49,40 @@ class PowerMonitor:
         PSS_HTR_EN_3_GPIO, PSS_HTR_EN_4_GPIO)
         print('Status value: ' + str(statusValues[0]))
 
+        print('Is analog:', SensorManager.gpio_input(PSS_HTR_MUX_SEL_GPIO, time.time()))
+
         # Check if payload is running
-        if isPayloadAcquiringData():
+        if self.isPayloadAcquiringData():
             # Shut all battery heaters off
+            print('Payload is running... shutting off all battery heaters')
             self.controlStatus = True
             SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
             for heater in heaterIdentifers:
                 SensorManager.gpio_output(heater, OFF)
+            return
 
         # Take control if required
         for i in range(0,len(tempValues)):
             if self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 0:
+                print('Case 1')
                 self.controlStatus = False
                 SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
                 return
             elif self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1:
+                print('Case 2')
                 self.controlStatus = True
                 SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
                 SensorManager.gpio_output(heaterIdentifers[i], OFF)
                 return
             elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0:
+                print('Case 3')
                 self.controlStatus = True
                 SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
                 if self.is_battery_safe():
                     SensorManager.gpio_output(heaterIdentifers[i], ON)
                 return
-            elif self.temp_threshold(tempValues[i] 'LT') and statusValues[i] == 1:
+            elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 1:
+                print('Case 4')
                 self.controlStatus = False
                 SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
                 return
@@ -122,3 +130,5 @@ if __name__ == '__main__':
     # time.sleep(3)
     # SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
     powerMonitor.check_health()
+    with open("/root/csdc3/src/power_monitoring/test.txt", "a") as myfile:
+        myfile.write(str(time.time()) + '\n')
