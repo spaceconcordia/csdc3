@@ -2,6 +2,14 @@
 File contains the constants used by the sensor modules.
 """
 
+#TODO rename this
+INA219_PATH = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/"
+INA219_CURRENT = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/curr1_input"
+INA219_RESISTOR = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/shunt_resistor"
+INA219_VOLTAGE = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/in1_input"
+INA219_POWER = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/power1_input"
+I2C_DEVICE_PATH = "/sys/class/i2c-adapter/i2c-0/new_device"
+
 # different sensor classes (Range: 0x00 - 0x02)
 I2C =        0x00
 GPIO =       0x01
