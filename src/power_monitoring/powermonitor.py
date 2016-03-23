@@ -12,6 +12,7 @@ class PowerMonitor:
         self.controlStatus = False
         self.payloadLock = Lock("/root/csdc3/src/utils/payloadLock.tmp")
         self.sensorReadingLock = Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
+        self.heaterShutDownLock = Lock("/root/csdc3/src/utils/heaterShutDownLock.tmp")
         self.pastReadingAboveThresh = True
 
     def check_health(self):
@@ -21,6 +22,16 @@ class PowerMonitor:
         # Check if sensors are reading data in the system
         # if areSensorsAcquiringData():
         #     return
+
+        # Check if ShutAllBatteryHeaters is running
+        if heaterShutDownLock.isLocked():
+            # Shut all battery heaters off
+            print('Battery heaters must remain shut off')
+            self.controlStatus = True
+            SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
+            for heater in heaterIdentifers:
+                SensorManager.gpio_output(heater, OFF)
+            return
 
         # Get temperature inputs
         tempIdentifiers = (TEMP_BAT_1,) # TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4)

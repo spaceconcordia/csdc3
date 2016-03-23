@@ -15,7 +15,7 @@ def ShutAllBatteryHeaters():
         SensorManager.gpio_output(heaterIdentifers[i], OFF)
 
 def main():
-    lock = Lock("/root/csdc3/src/utils/payloadLock.tmp")
+    lock = Lock("/root/csdc3/src/utils/heaterShutDownLock.tmp")
     lock.acquire()
     print("Lock has been acquired by ShutAllBatteryHeaters.py")
     sleep(600)
