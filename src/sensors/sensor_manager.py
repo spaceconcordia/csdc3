@@ -71,7 +71,7 @@ class SensorManager:
             print('[INIT] Error writing to temperature\
              sensor at address '+str(addr))
             return -1
-        time.sleep(0.1)
+        time.sleep(0.05)
 
     @staticmethod
     def init_adc(sensorId):
@@ -87,8 +87,8 @@ class SensorManager:
             time.sleep(1)
         """
         try:
-            # Use internal Vref
-            bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x04)
+            # Use external Vref
+            bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x05)
             # Set continuous mode
             bus.write_byte_data(addr, adc_reg['CONV_RATE_REG'], 0x01)
             # Enable all channels
@@ -336,7 +336,7 @@ class SensorManager:
         try:
             decValue = SensorManager.bus.read_byte(addr)
             fractValue = SensorManager.bus.read_byte(addr)
-            sleep(0.1)
+            #sleep(0.1)
         except IOError:
             print('[READ] Error reading from temperature sensor at address ' + \
                 str(addr))
@@ -482,7 +482,7 @@ class SensorManager:
             mux_address = 0x71
         elif sensorId == ADC:
             newChannel = I2C_DEVICES_LOOKUP_TABLE[ADC][CH][0]
-            mux_address = 0x71
+            mux_address = 0x70
 
         if newChannel is None or newChannel < 0 or newChannel > 7:
             return False
