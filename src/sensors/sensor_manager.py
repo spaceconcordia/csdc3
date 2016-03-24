@@ -18,6 +18,7 @@ class SensorManager:
     bus = smbus.SMBus(0)
     active_gpio_pins = {}
     channel = None
+    old_mux = None
 
     """ -------------------- Initialization --------------------- """
 
@@ -81,23 +82,24 @@ class SensorManager:
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
         busy_reg = SensorManager.bus.read_byte_data(addr, \
-        adc_reg['BUSY_STATUS_REG'])
+                                adc_reg['REG_BUSY_STATUS'])
         """
         while busy_reg:
             time.sleep(1)
         """
         try:
-            # Use external Vref
-            bus.write_byte_data(addr, adc_reg['ADV_CONFIG_REG'], 0x05)
-            # Set continuous mode
-            bus.write_byte_data(addr, adc_reg['CONV_RATE_REG'], 0x01)
-            # Enable all channels
-            bus.write_byte_data(addr, adc_reg['CHANNEL_DISABLE_REG'], 0x0)
-            # Set high limits
-            bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE'], 0x05)
-            bus.write_byte_data(addr, adc_reg['LIMIT_REG_BASE2'], 0x05)
-            # Start conversion without interrupts
-            bus.write_byte_data(addr, adc_reg['CONFIG_REG'], 0x01)
+            bus.write_byte_data(addr, adc_reg['REG_ADV_CONFIG'], \
+                                      adc_reg['CONFIG_EXTERNAL_VREF'])
+            bus.write_byte_data(addr, adc_reg['REG_CONV_RATE'], \
+                                      adc_reg['CONFIG_CONTINUOUS'])
+            bus.write_byte_data(addr, adc_reg['REG_CHANNEL_DISABLE'], \
+                                      adc_reg['CONFIG_ENABLE_ALL_CHANNELS'])
+            bus.write_byte_data(addr, adc_reg['REG_LIMIT_BASE'], \
+                                      adc_reg['CONFIG_LIMIT_BASE'])
+            bus.write_byte_data(addr, adc_reg['REG_LIMIT_BASE2'], \
+                                      adc_reg['CONFIG_LIMIT_BASE'])
+            bus.write_byte_data(addr, adc_reg['REG_CONFIG'], \
+                                      adc_reg['CONFIG_NO_INTERRUPTS'])
         except IOError:
             print('[INIT] Error writing to ADC at address ' + str(addr))
             return -1
@@ -116,28 +118,6 @@ class SensorManager:
         except(IOError, OSError):
             print('[INIT] Error reading from Power at address ' + str(addr))
             return -1
-        """
-        try:
-            addr = SensorEntropy.addr(POWER)
-            power_reg = SensorEntropy.reg(POWER)
-            # Set calibration
-            calibration = 0x1000
-            SensorManager.mux_select(sensorId)
-            SensorManager.bus.write_byte_data(addr, \
-            power_reg['REG_CALIBRATION'], calibration)
-
-            config = power_reg['CONFIG_BVOLTAGERANGE_16V'] | \
-				     power_reg['CONFIG_GAIN_1_40MV'] | \
-				     power_reg['CONFIG_BADCRES_12BIT'] | \
-				     power_reg['CONFIG_SADCRES_12BIT_1S_532US'] | \
-				     power_reg['CONFIG_MODE_SANDBVOLT_CONTINUOUS']
-
-            SensorManager.bus.write_byte_data(addr, \
-            power_reg['REG_CONFIG'], config)
-        except IOError:
-            print('[INIT] Error reading from Power at address ' + str(addr))
-            return -1
-        """
 
     """ -------------------- Stop --------------------- """
 
@@ -171,7 +151,7 @@ class SensorManager:
     def stop_adc_sensor(sensorId):
         SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
-        configReg = SensorEntropy.reg(ADC)['CONFIG_REG']
+        configReg = SensorEntropy.reg(ADC)['REG_CONFIG']
         try:
             SensorManager.bus.write_byte_data(addr, configReg, 0x00)
         except (IOError, OSError):
@@ -336,7 +316,7 @@ class SensorManager:
         try:
             decValue = SensorManager.bus.read_byte(addr)
             fractValue = SensorManager.bus.read_byte(addr)
-            #sleep(0.1)
+            sleep(0.02)
         except IOError:
             print('[READ] Error reading from temperature sensor at address ' + \
                 str(addr))
@@ -367,7 +347,11 @@ class SensorManager:
             bus.write_byte(addr, adc_reg['READ_REG_BASE'] + 7)
             temp = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFF80
             temp = temp >> 7
+            
+            temperature = DS18B20("000001aaf1cb")
+            heater_temp = temperature.getTemp()
         except IOError:
+            SensorManager.bus.write_byte(0x70, 1 << 0)
             print('[READ] Error reading from ADC at address ' + \
                 str(addr))
             return -1, -1, -1
@@ -380,7 +364,7 @@ class SensorManager:
         sleep(0.01)
 
         # Log data
-        value = (strain, force, temp)
+        value = (strain, force, temp, heater_temp)
         sub = SensorEntropy.subsystem(sensorId)
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
@@ -487,8 +471,9 @@ class SensorManager:
         if newChannel is None or newChannel < 0 or newChannel > 7:
             return False
 
-        if newChannel != SensorManager.channel:
+        if newChannel != SensorManager.channel or mux_address != SensorManager.old_mux:
             SensorManager.channel = newChannel
+            SensorManager.old_mux = mux_address
             SensorManager.bus.write_byte(mux_address, 1 << newChannel)
             return True
 

@@ -46,7 +46,7 @@ SIDE_PANEL_ONE_WIRE_DICT = {
     PANEL0: '000001885520',
     PANEL1: '000001aaf87d',
     PANEL2: '000001aaf9e5',
-    PANEL3: 'addr3'
+    PANEL3: '000001aaf1cb'
 }
 
 # i2c devices
@@ -237,15 +237,21 @@ I2C_DEVICES_LOOKUP_TABLE = {
         NAME: 'AD128D818',
         ADDR: 0x1D,
         REG: {
-            'CONFIG_REG'          : 0x00,
-            'CONV_RATE_REG'       : 0x07,
-            'CHANNEL_DISABLE_REG' : 0x08,
-            'ADV_CONFIG_REG'      : 0x0B,
-            'BUSY_STATUS_REG'     : 0x0C,
+            'REG_CONFIG'          : 0x00,
+            'REG_CONV_RATE'       : 0x07,
+            'REG_CHANNEL_DISABLE' : 0x08,
+            'REG_ADV_CONFIG'      : 0x0B,
+            'REG_BUSY_STATUS'     : 0x0C,
             'READ_REG_BASE'       : 0x20,
-            'LIMIT_REG_BASE'      : 0x2A,
-            'LIMIT_REG_BASE2'     : 0x2C,
-            'TEMP_REGISTER'       : 0x27
+            'REG_LIMIT_BASE'      : 0x2A,
+            'REG_LIMIT_BASE2'     : 0x2C,
+            'REG_TEMP'            : 0x27,
+            'CONFIG_INTERNAL_VREF': 0x04,
+            'CONFIG_EXTERNAL_VREF': 0x05,
+            'CONFIG_LIMIT_BASE'   : 0x05,
+            'CONFIG_CONTINUOUS'   : 0x01,
+            'CONFIG_ENABLE_ALL_CHANNELS'   : 0x0,
+            'CONFIG_NO_INTERRUPTS': 0x01
         },
         CH: [0]
     },
