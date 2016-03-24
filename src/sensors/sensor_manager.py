@@ -25,7 +25,7 @@ class SensorManager:
     @staticmethod
     def init_gyroscope(sensorId):
         insertDebugLog(NOTICE, "Initialized gyroscope: {}".format(sensorId,
-        CDH, int(time.time()))
+        CDH, int(time.time())))
 
         if not SensorManager.isCorrectSensor(sensorId, GYRO):
             raise Exception('Incorrect sensor specified')
@@ -41,7 +41,7 @@ class SensorManager:
     @staticmethod
     def init_magnetometer(sensorId):
         insertDebugLog(NOTICE, "Initialized magnetometer: {}".format(sensorId,
-        CDH, int(time.time()))
+        CDH, int(time.time())))
         if not SensorManager.isCorrectSensor(sensorId, MAG):
             raise Exception('Incorrect sensor specified')
         mag_reg = SensorEntropy.reg(MAG)
@@ -62,7 +62,7 @@ class SensorManager:
     @staticmethod
     def init_temp_sensor(sensorId):
         insertDebugLog(NOTICE, "Initialized temp sensor: {}".format(sensorId,
-        CDH, int(time.time()))
+        CDH, int(time.time())))
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             print('Sensor Id: ' + str(sensorId))
             raise Exception('Incorrect sensor specified')
@@ -84,7 +84,7 @@ class SensorManager:
     @staticmethod
     def init_adc(sensorId):
         insertDebugLog(NOTICE, "Initialized adc: {}".format(sensorId,
-        CDH, int(time.time()))
+        CDH, int(time.time())))
         SensorManager.mux_select(sensorId)
         print(SensorManager.channel)
         addr = SensorEntropy.addr(sensorId)
@@ -116,7 +116,7 @@ class SensorManager:
     @staticmethod
     def init_power_sensor(sensorId):
         insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorId,
-        CDH, int(time.time()))
+        CDH, int(time.time())))
         try:
             if not os.path.isdir(INA219_PATH):
                 SensorManager.mux_select(sensorId)
