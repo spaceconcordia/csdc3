@@ -24,6 +24,9 @@ class SensorManager:
 
     @staticmethod
     def init_gyroscope(sensorId):
+        insertDebugLog(NOTICE, "Initialized gyroscope: {}".format(sensorId,
+        CDH, int(time.time()))
+
         if not SensorManager.isCorrectSensor(sensorId, GYRO):
             raise Exception('Incorrect sensor specified')
         SensorManager.mux_select(sensorId)
@@ -37,6 +40,8 @@ class SensorManager:
 
     @staticmethod
     def init_magnetometer(sensorId):
+        insertDebugLog(NOTICE, "Initialized magnetometer: {}".format(sensorId,
+        CDH, int(time.time()))
         if not SensorManager.isCorrectSensor(sensorId, MAG):
             raise Exception('Incorrect sensor specified')
         mag_reg = SensorEntropy.reg(MAG)
@@ -56,6 +61,8 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor(sensorId):
+        insertDebugLog(NOTICE, "Initialized temp sensor: {}".format(sensorId,
+        CDH, int(time.time()))
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             print('Sensor Id: ' + str(sensorId))
             raise Exception('Incorrect sensor specified')
@@ -76,6 +83,8 @@ class SensorManager:
 
     @staticmethod
     def init_adc(sensorId):
+        insertDebugLog(NOTICE, "Initialized adc: {}".format(sensorId,
+        CDH, int(time.time()))
         SensorManager.mux_select(sensorId)
         print(SensorManager.channel)
         addr = SensorEntropy.addr(sensorId)
@@ -106,6 +115,8 @@ class SensorManager:
 
     @staticmethod
     def init_power_sensor(sensorId):
+        insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorId,
+        CDH, int(time.time()))
         try:
             if not os.path.isdir(INA219_PATH):
                 SensorManager.mux_select(sensorId)
@@ -347,7 +358,7 @@ class SensorManager:
             bus.write_byte(addr, adc_reg['READ_REG_BASE'] + 7)
             temp = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFF80
             temp = temp >> 7
-            
+
             temperature = DS18B20("000001aaf1cb")
             heater_temp = temperature.getTemp()
         except IOError:
@@ -383,17 +394,17 @@ class SensorManager:
             SensorManager.bus.write_byte_data(addr, \
             power_reg['REG_CALIBRATION'], calibration)
 
-            bus.write_byte(addr, power_reg['REG_CURRENT']) 
+            bus.write_byte(addr, power_reg['REG_CURRENT'])
             current = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr)))
 
-            bus.write_byte(addr, power_reg['REG_SHUNTVOLTAGE']) 
+            bus.write_byte(addr, power_reg['REG_SHUNTVOLTAGE'])
             shunt_voltage = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr)))
 
-            bus.write_byte(addr, power_reg['REG_BUSVOLTAGE']) 
+            bus.write_byte(addr, power_reg['REG_BUSVOLTAGE'])
             bus_voltage = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF8
             bus_voltage = (bus_voltage >> 3) * 4
 
-            bus.write_byte(addr, power_reg['REG_POWER']) 
+            bus.write_byte(addr, power_reg['REG_POWER'])
             power = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr)))
         except IOError:
             print('[READ] Error reading from power sensor at address ' + \
