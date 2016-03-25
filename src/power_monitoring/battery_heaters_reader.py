@@ -28,7 +28,7 @@ def BatteryHeatersReader():
     for iden in statusIdentifiers:
             statusValues.append(SensorManager.gpio_input(iden,0))
 
-    # Setup dict containing result
+    # Set up dict containing result
     result = {"control": "OBC", "batteries": []}
 
     # Populate battery heater list with acquired values
