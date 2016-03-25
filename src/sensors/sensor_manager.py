@@ -2,6 +2,7 @@ import sys
 sys.path.append('/root/csdc3/lib/ablib')
 sys.path.append('/root/csdc3/src/logs')
 sys.path.append('/root/csdc3/src/logs/config_setup')
+sys.path.append("/root/csdc3/src/utils/")
 from ablib_python3 import Pin
 from ablib_python3 import DS18B20
 from chomsky import *
@@ -12,6 +13,7 @@ import os
 import smbus
 import time
 import math
+from SharedLock import Lock
 
 class SensorManager:
 
@@ -19,11 +21,14 @@ class SensorManager:
     active_gpio_pins = {}
     channel = None
     old_mux = None
+    sensorReadingLock = Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
 
     """ -------------------- Initialization --------------------- """
 
     @staticmethod
     def init_gyroscope(sensorId):
+        SensorManager.sensorReadingLock.acquire()
+
         insertDebugLog(NOTICE, "Initialized gyroscope: {}".format(sensorId,
         CDH, int(time.time())))
 
@@ -42,6 +47,8 @@ class SensorManager:
 
     @staticmethod
     def init_magnetometer(sensorId):
+        # SensorManager.sensorReadingLock.acquire()
+
         insertDebugLog(NOTICE, "Initialized magnetometer: {}".format(sensorId,
         CDH, int(time.time())))
 
@@ -66,6 +73,8 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor(sensorId):
+        SensorManager.sensorReadingLock.acquire()
+
         insertDebugLog(NOTICE, "Initialized temp sensor: {}".format(sensorId,
         CDH, int(time.time())))
 
@@ -91,6 +100,8 @@ class SensorManager:
 
     @staticmethod
     def init_adc(sensorId):
+        SensorManager.sensorReadingLock.acquire()
+
         insertDebugLog(NOTICE, "Initialized adc: {}".format(sensorId,
         CDH, int(time.time())))
 
@@ -124,6 +135,8 @@ class SensorManager:
 
     @staticmethod
     def init_power_sensor(sensorId):
+        # SensorManager.sensorReadingLock.acquire()
+
         insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorId,
         CDH, int(time.time())))
 
@@ -147,6 +160,7 @@ class SensorManager:
         insertDebugLog(NOTICE, "Stop gyroscope: {}".format(sensorId,
         CDH, int(time.time())))
 
+        SensorManager.sensorReadingLock.release()
         if not SensorManager.isCorrectSensor(sensorId, GYRO):
             raise Exception('Incorrect sensor specified')
 
@@ -161,10 +175,17 @@ class SensorManager:
         time.sleep(0.1)
 
     @staticmethod
+    def stop_magnetometer(sensorId):
+        insertDebugLog(NOTICE, "Stop magnetometer: {}".format(sensorId,
+        CDH, int(time.time())))
+        SensorManager.sensorReadingLock.release()
+
+    @staticmethod
     def stop_temp_sensor(sensorId):
         insertDebugLog(NOTICE, "Stop temp sensor: {}".format(sensorId,
         CDH, int(time.time())))
 
+        SensorManager.sensorReadingLock.release()
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             raise Exception('Incorrect sensor specified')
 
@@ -183,6 +204,7 @@ class SensorManager:
         insertDebugLog(NOTICE, "Stop adc: {}".format(sensorId,
         CDH, int(time.time())))
 
+        SensorManager.sensorReadingLock.release()
         SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
         configReg = SensorEntropy.reg(ADC)['REG_CONFIG']
@@ -199,7 +221,9 @@ class SensorManager:
 
     @staticmethod
     def stop_power_sensor(sensorId):
-        pass
+        insertDebugLog(NOTICE, "Stop power sensor: {}".format(sensorId,
+        CDH, int(time.time())))
+        SensorManager.sensorReadingLock.release()
 
     """ -------------------- Reading --------------------- """
 
