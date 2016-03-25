@@ -6,18 +6,20 @@ import sqlite3
 import sys
 sys.path.insert(0, '/root/csdc3/src/logs/config_setup')
 from config_setup_constants import *
-from empty_table            import emptyTables 
+from empty_table            import emptyTables
 import time
 
 def insertTelemetryLog(sensor_id, value, subsystem, timestamp):
+    if value is None:
+        return
     copies = ["/copy1/", "/copy2/", "/copy3/"]
     for copy in copies:
         conn = sqlite3.connect(DATA_LOGS_PATH + copy + TELEMETRY_DB)
         c = conn.cursor()
-        c.execute("INSERT INTO tabolo VALUES ('"                       
-            + sensor_id + "','"           
-            + str(value) + "','"                    
-            + subsystem + "','" 
+        c.execute("INSERT INTO tabolo VALUES ('"
+            + sensor_id + "','"
+            + str(value) + "','"
+            + subsystem + "','"
             + str(timestamp)
             + "')")
         conn.commit()
@@ -40,10 +42,10 @@ def insertSystemCallLog(level, syscall, subsystem, timestamp, stderr):
     for copy in copies:
         conn = sqlite3.connect(SYSTEM_LOGS_PATH + copy + SYSTEM_CALLS_DB)
         c = conn.cursor()
-        c.execute("INSERT INTO tabolo VALUES ('"                       
-            + level + "','"           
-            + syscall + "','"                    
-            + subsystem + "','" 
+        c.execute("INSERT INTO tabolo VALUES ('"
+            + level + "','"
+            + syscall + "','"
+            + subsystem + "','"
             + str(timestamp) + "','"
             + stderr
             + "')")
@@ -67,10 +69,10 @@ def insertDebugLog(level, log, subsystem, timestamp):
     for copy in copies:
         conn = sqlite3.connect(SYSTEM_LOGS_PATH + copy + DEBUG_LOGS_DB)
         c = conn.cursor()
-        c.execute("INSERT INTO tabolo VALUES ('"                       
-            + level + "','"           
-            + log + "','"                    
-            + subsystem + "','" 
+        c.execute("INSERT INTO tabolo VALUES ('"
+            + level + "','"
+            + log + "','"
+            + subsystem + "','"
             + str(timestamp)
             + "')")
         conn.commit()

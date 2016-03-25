@@ -42,7 +42,7 @@ class SensorManager:
         except(IOError, OSError):
             print('[INIT] Error writing to gyroscope at address ' + \
                 str(SensorEntropy.addr(sensorId)))
-            return -1
+            return None
         time.sleep(0.1)
 
     @staticmethod
@@ -64,7 +64,7 @@ class SensorManager:
         except(IOError, OSError):
             print('[INIT] Error writing to magnetometer at address ' + \
                 str(SensorEntropy.addr(sensorId)))
-            return -1
+            return None
         time.sleep(0.1)
 
     @staticmethod
@@ -95,7 +95,7 @@ class SensorManager:
         except(IOError, OSError):
             print('[INIT] Error writing to temperature\
              sensor at address '+str(addr))
-            return -1
+            return None
         time.sleep(0.05)
 
     @staticmethod
@@ -131,7 +131,7 @@ class SensorManager:
                                       adc_reg['CONFIG_NO_INTERRUPTS'])
         except(IOError, OSError):
             print('[INIT] Error writing to ADC at address ' + str(addr))
-            return -1
+            return None
 
     @staticmethod
     def init_power_sensor(sensorId):
@@ -151,7 +151,7 @@ class SensorManager:
 
         except(IOError, OSError):
             print('[INIT] Error reading from Power at address ' + str(addr))
-            return -1
+            return None
 
     """ -------------------- Stop --------------------- """
 
@@ -171,7 +171,7 @@ class SensorManager:
             SensorManager.bus.write_byte(addr, 0x01)
         except(IOError, OSError):
             print('[STOP] Error writing to gyroscope at address ' + str(addr))
-            return -1
+            return None
         time.sleep(0.1)
 
     @staticmethod
@@ -197,7 +197,7 @@ class SensorManager:
             SensorManager.bus.write_byte_data(addr, stopReg, 0x01)
         except(IOError, OSError):
             print('[STOP] Error writing to temperature sensor at address ' + str(addr))
-            return -1
+            return None
 
     @staticmethod
     def stop_adc_sensor(sensorId):
@@ -213,7 +213,7 @@ class SensorManager:
             SensorManager.bus.write_byte_data(addr, configReg, 0x00)
         except (IOError, OSError):
             print('[STOP] Error writing to ADC at address ' + str(addr))
-            return -1
+            return None
 
     @staticmethod
     def stop_rtc(sensorId):
@@ -259,7 +259,7 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error reading from gyroscope at address ' + \
                 str(address))
-            return -1
+            return None
 
         # Apply two's complement
         valX = twos_to_int(valX)
@@ -305,7 +305,7 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error reading from magnetometer at address ' + \
                 str(address))
-            return -1
+            return None
 
         # Update the values to be of two compliment
         valX = SensorManager.twos_to_int(valX, 16);
@@ -362,7 +362,7 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error reading from RTC at address ' + \
                 str(SensorEntropy.addr(sensorId)))
-            return -1
+            return None
 
         # Log data
         value = (second, minute, hour, day, date, month, year)
@@ -386,7 +386,7 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error writing to temperature sensor at address ' + \
                 str(addr))
-            return -1
+            return None
         try:
             decValue = SensorManager.bus.read_byte(addr)
             fractValue = SensorManager.bus.read_byte(addr)
@@ -394,7 +394,7 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error reading from temperature sensor at address ' + \
                 str(addr))
-            return -1
+            return None
 
         # Log data
         value = SensorManager.conv_bin_to_int(decValue, fractValue)
@@ -431,7 +431,7 @@ class SensorManager:
             SensorManager.bus.write_byte(0x70, 1 << 0)
             print('[READ] Error reading from ADC at address ' + \
                 str(addr))
-            return -1, -1, -1
+            return None, None, None
 
         if temp & 0x100 == 0:
             temp /= 2.
@@ -485,7 +485,7 @@ class SensorManager:
             insertTelemetryLog(panelId, value, CDH, int(time.time()))
         except (IOError, OSError):
             print("[READ] Error reading from 1-wire DS18B20")
-            return -1
+            return None
         return value
 
     """ -------------------- GPIO --------------------- """
