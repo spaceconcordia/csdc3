@@ -1,14 +1,25 @@
 <div class="row">
     <div class="col-xs-1">
+        <br/>
         <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
     </div>
     <div class="col-xs-10">
         <br/>
         <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
         <br/>
-        <ul class="nav nav-tabs">
+    </div>
+    <div class="col-xs-1">
+        <br/>
+        <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <ul class="nav nav-pills nav-center">
             <li><a href="/system">System Status</a></li>
             <li><a href="/commands">Send Commands</a></li>
+            <li><a href="/battery">Battery Heaters Demo</a></li>
             <li><a href="/payload">Payload Experiment Data</a></li>
             <li role="presentation" class="dropdown active">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -21,10 +32,6 @@
                 </ul>
             </li>
         </ul>
-
-    </div>
-    <div class="col-xs-1">
-        <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
     </div>
 </div>
 

@@ -10,9 +10,9 @@ sys.path.insert(0, HANDLERS_PATH)
 from payloadhandler         import PayloadHandler
 from commandshandler        import CommandsHandler
 from systemhandler          import SystemHandler
-from telemetryhandler       import TelemetryHandler
 from interfacinghandler     import InterfacingHandler
 from sensorshandler         import SensorsHandler
+from batteryhandler         import BatteryHandler
 
 sys.path.insert(0, SYSTEM_HANDLERS_PATH)
 from timehandler            import TimeHandler
@@ -34,9 +34,9 @@ application = tornado.web.Application([
     (r"/system", SystemHandler),
     (r"/commands", CommandsHandler),
 	(r"/payload", PayloadHandler),
-	(r"/telemetry", TelemetryHandler),
 	(r"/interfacing", InterfacingHandler),
 	(r"/sensors", SensorsHandler),
+    (r"/battery", BatteryHandler),
 
 # system command handler
     (r"/time", TimeHandler),

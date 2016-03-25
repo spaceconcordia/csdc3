@@ -63,6 +63,76 @@
                 }
                 });
                 chart.render();
+                var chart2 = new CanvasJS.Chart("chartContainer2",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: "Sensor 2"
+                    },
+                    axisX:{
+                        title: "time",
+                        intervalType: "second",        
+                        interval:4,
+                        valueFormatString: "DD-MM-YY",
+                        labelAngle: -50
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Sensor type",
+                    xValueType: "dateTime",
+                    dataPoints: [
+                        { x: 1199620200000, y: 41 },
+                        { x: 1199620204000, y: 24 },
+                        { x: 1199620208000, y: 35 },
+                        { x: 1199620212000, y: 42 },
+                        { x: 1199620216000, y: 15 },
+                        { x: 1199620220000, y: 18 },
+                        { x: 1199620224000, y: 38 },
+                        { x: 1199620228000, y: 50 },
+                        { x: 1199620232000, y: 21 }
+                    ]
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chart2.render();
+                    }
+                }
+                });
+                chart2.render();
+
+                var pages = $('#container li'), current=0;
+                var currentPage,nextPage;
+
+                $('#container .button').click(function() {
+                    currentPage= pages.eq(current);
+                    if($(this).hasClass('prevButton')) {
+                        if (current <= 0) {
+                            current=pages.length-1;
+                        } else {
+                            current=current-1;
+                        }
+                    }
+                    else {
+                        if (current >= pages.length-1) {
+                            current=0;
+                        } else {
+                            current=current+1;
+                        }
+                    }
+                    nextPage = pages.eq(current);	
+                    currentPage.hide();	
+                    nextPage.show();		
+                });
             }
 </script>
 
@@ -70,45 +140,65 @@
     </head>
 
     <body>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-1">
-                    <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
-                </div>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xs-1">
+                <br/>
+                <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
+            </div>
             <div class="col-xs-10">
                 <br/>
                 <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
                 <br/>
-                <ul class="nav nav-tabs">
+            </div>
+            <div class="col-xs-1">
+                <br/>
+                <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <ul class="nav nav-pills nav-center">
                     <li><a href="/system">System Status</a></li>
                     <li><a href="/commands">Send Commands</a></li>
-                    <li class="active"><a href="/payload">Payload Experiment Data</a></li>
-                    <li role="presentation" class="dropdown">
+                    <li><a href="/battery">Battery Heaters Demo</a></li>
+                    <li><a href="/payload">Payload Experiment Data</a></li>
+                    <li role="presentation" class="dropdown active">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            Telemetry Data <span class="caret"></span>
+                            Sensor Data <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="/interfacing">HW Interfacing</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/sensors">Sensor Data</a></li>
                         </ul>
-                        </li>
+                    </li>
                 </ul>
             </div>
-        
-            <div class="col-xs-1">
-                <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
-            </div>
-            </div>
+        </div>
 
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="main payload">
-                        <div class="chartdatadiv center-block" id="chartContainer" style="height: 400px; width: 80%;"></div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main sensors">
+                    <div id="container">
+                    <ul>
+                        <li>
+                            <div class="chartdatadiv center-block" id="chartContainer" style="height: 453px; width: 100%;"></div>
+                        </li>
+                        <li>
+                            <div class="chartdatadiv center-block" id="chartContainer2" style="height: 453px; width: 100%;"></div>
+                        </li>
+                    <ul>
+                    <span class="button prevButton"></span>
+                    <span class="button nextButton"></span>
                     </div>
                 </div>
             </div>
+        </div>
 
+    </div>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery/jquery.min.js") }}"></script>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui.min.js") }}"></script>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui-timepicker-addon.min.js") }}"></script>

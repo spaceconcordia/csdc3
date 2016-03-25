@@ -1,0 +1,75 @@
+<div class="row">
+    <div class="col-xs-1">
+        <br/>
+        <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
+    </div>
+    <div class="col-xs-10">
+        <br/>
+        <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
+        <br/>
+    </div>
+    <div class="col-xs-1">
+        <br/>
+        <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <ul class="nav nav-pills nav-center">
+            <li><a href="/system">System Status</a></li>
+            <li><a href="/commands">Send Commands</a></li>
+            <li class="active"><a href="/battery">Battery Heaters Demo</a></li>
+            <li><a href="/payload">Payload Experiment Data</a></li>
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                    Telemetry Data <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="/interfacing">HW Interfacing</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/sensors">Sensor Data</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="main battery">
+    <div class="row">
+        <div class="col-xs-12">
+            <h2 id="pss-title" class="text-info text-center"> PSS Heaters Control with Temperature Changes </h2>
+        </div>
+    </div>
+    <div id="battery-row" class="row">
+        <div class="col-xs-3">
+            <h3 id="bat1-title" class="text-info text-center">Battery No.1</h3>
+            <img class="img-responsive center-block" src="{{ static_url("img/battery.png") }}" alt="Battery No.3">
+            <h2 class="text-info text-center"> -- °C </h2>
+            <h3 class="text-info text-center">Heaters: ---</h3>
+        </div>
+        <div class="col-xs-3">
+            <h3 id="bat2-title" class="text-info text-center">Battery No.2</h3>
+            <img class="img-responsive center-block" src="{{ static_url("img/battery.png") }}" alt="Battery No.3">
+            <h2 class="text-info text-center"> -- °C </h2>
+            <h3 class="text-info text-center">Heaters: ---</h3>
+        </div>
+        <div class="col-xs-3">
+            <h3 id="bat3-title" class="text-info text-center">Battery No.3</h3>
+            <img class="img-responsive center-block" src="{{ static_url("img/battery.png") }}" alt="Battery No.3">
+            <h2 class="text-info text-center"> -- °C </h2>
+            <h3 class="text-info text-center">Heaters: ---</h3>
+        </div>
+        <div class="col-xs-3">
+            <h3 id="bat4-title" class="text-info text-center">Battery No.4</h3>
+            <img class="img-responsive center-block" src="{{ static_url("img/battery.png") }}" alt="Battery No.3">
+            <h2 class="text-info text-center"> -- °C </h2>
+            <h3 class="text-info text-center">Heaters: ---</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+        	<button type="button" class="btn btn-primary" id="battery-demo-btn">Start Demo</button>
+        </div>
+    </div>
+</div>

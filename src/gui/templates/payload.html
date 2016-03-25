@@ -17,7 +17,7 @@
         <script type="text/javascript" src="{{ static_url("node_modules/canvasjs/canvasjs.min.js") }}"></script>
         <script type="text/javascript">
             window.onload = function () {
-                var chart = new CanvasJS.Chart("chartContainer",
+/*                var chart = new CanvasJS.Chart("chartContainer",
                 {
                     animationEnabled: true,
                     title:{
@@ -109,7 +109,90 @@
                     }
                 }
                 });
-                chart2.render();
+                chart2.render();*/
+
+var chart = new CanvasJS.Chart("chartContainer",
+	{
+		animationEnabled: true,
+		title:{
+			text: "Payload Experiment Data"
+		},
+                axisX:{
+        		title: "Time (minutes)"
+    		},
+    		axisY: {
+        		title: "Output (voltage)"
+    		},
+		data: [
+		{
+			type: "spline", //change type to bar, line, area, pie, etc
+			showInLegend: true,
+            name: "vout strain (v)",
+			dataPoints: [
+				{ x: 0,    y: 0.246 },
+				{ x: 0.34, y: 0.247},
+				{ x: 0.68, y: 0.258 },
+				{ x: 1.02, y: 0.282 },
+				{ x: 1.36, y: 0.295 },
+				{ x: 1.70, y: 0.320 },
+				{ x: 2.04, y: 0.352 },
+				{ x: 2.38, y: 0.369 },
+				{ x: 2.72, y: 0.386 },
+				{ x: 3.06, y: 0.395 },
+				{ x: 3.40, y: 0.407 },
+				{ x: 3.74, y: 0.425 },
+				{ x: 4.08, y: 0.434 },
+				{ x: 4.42, y: 0.445 },
+				{ x: 4.76, y: 0.457 },
+				{ x: 5.10, y: 0.475 },
+				{ x: 5.44, y: 0.492 },
+				{ x: 5.78, y: 0.521 },
+				{ x: 6.12, y: 0.523 },
+				{ x: 6.46, y: 0.550 }
+			]
+			},
+			{
+			type: "spline",
+			showInLegend: true,    
+            name: "vout load (v)",
+			dataPoints: [
+				{ x: 0,    y: 0.533 },
+				{ x: 0.34, y: 0.615 },
+				{ x: 0.68, y: 0.610 },
+				{ x: 1.02, y: 0.670 },
+				{ x: 1.36, y: 0.715 },
+				{ x: 1.70, y: 0.742 },
+				{ x: 2.04, y: 0.775 },
+				{ x: 2.38, y: 0.780 },
+				{ x: 2.72, y: 0.652 },
+				{ x: 3.06, y: 0.630 },
+				{ x: 3.40, y: 0.723 },
+				{ x: 3.74, y: 0.740 },
+				{ x: 4.08, y: 0.781 },
+				{ x: 4.42, y: 0.830 },
+				{ x: 4.76, y: 0.855 },
+				{ x: 5.10, y: 0.910 },
+				{ x: 5.44, y: 0.885 },
+				{ x: 5.78, y: 0.860 },
+				{ x: 6.12, y: 0.990 },
+				{ x: 6.46, y: 1.010 }
+			]
+			}
+		],
+		legend: {
+			cursor: "pointer",
+			itemclick: function (e) {
+				if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+					e.dataSeries.visible = false;
+				} else {
+					e.dataSeries.visible = true;
+			}
+			chart.render();
+			}
+		}
+	});
+
+	chart.render();
             }
 </script>
 
@@ -117,46 +200,56 @@
     </head>
 
     <body>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-1">
-                    <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
-                </div>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xs-1">
+                <br/>
+                <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
+            </div>
             <div class="col-xs-10">
                 <br/>
                 <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
                 <br/>
-                <ul class="nav nav-tabs">
+            </div>
+            <div class="col-xs-1">
+                <br/>
+                <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <ul class="nav nav-pills nav-center">
                     <li><a href="/system">System Status</a></li>
                     <li><a href="/commands">Send Commands</a></li>
+                    <li><a href="/battery">Battery Heaters Demo</a></li>
                     <li class="active"><a href="/payload">Payload Experiment Data</a></li>
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            Telemetry Data <span class="caret"></span>
+                            Sensor Data <span class="caret"></span>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="/interfacing">HW Interfacing</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="/sensors">Sensor Data</a></li>
                         </ul>
-                        </li>
+                    </li>
                 </ul>
             </div>
-        
-            <div class="col-xs-1">
-                <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
-            </div>
-            </div>
+        </div>
 
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="main payload">
-                        <div class="chartdatadivleft" id="chartContainer" style="height: 400px; width: 40%;"></div>
-                        <div class="chartdatadivright" id="chartContainer2" style="height: 400px; width: 40%;"></div>
-                    </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="main payload">
+                    <!--div class="chartdatadivleft" id="chartContainer" style="height: 400px; width: 40%;"></div-->
+                    <!--div class="" id="chartContainer2" style="height: 400px; width: 40%;"></div--><center>
+                    <div id="chartContainer" style="margin-top: 3%; margin-bottom:2%; height: 400px; width: 60%;"></div></center>
                 </div>
             </div>
+        </div>
 
+    </div>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery/jquery.min.js") }}"></script>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui.min.js") }}"></script>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui-timepicker-addon.min.js") }}"></script>

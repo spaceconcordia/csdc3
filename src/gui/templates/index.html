@@ -13,6 +13,10 @@
         <link rel="stylesheet" href="{{ static_url("node_modules/bootstrap/dist/css/bootstrap.min.css") }}">
         <link rel="stylesheet" href="{{ static_url("node_modules/jquery-ui/jquery-ui.min.css") }}">
         <link rel="stylesheet" href="{{ static_url("node_modules/jquery-ui/jquery-ui-timepicker-addon.min.css") }}">
+        <style>
+            #container .prevButton { background:url({{ static_url("img/buttons.png") }}) no-repeat; }
+            #container .nextButton { background:url({{ static_url("img/buttons.png") }}) no-repeat; }
+        </style>
 
         <script type="text/javascript" src="{{ static_url("node_modules/canvasjs/canvasjs.min.js") }}"></script>
     </head>
@@ -31,6 +35,8 @@
             {% module Template("interfacing.html")%}
         {% elif section == 'sensors' %}
             {% module Template("sensors.html")%}
+        {% elif section == 'battery' %}
+            {% module Template("battery.html")%}
         {% end %}
     </div>
 
