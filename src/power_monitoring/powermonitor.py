@@ -5,6 +5,7 @@ from sensor_manager import SensorManager
 from sensor_constants import *
 from statistics import median
 from SharedLock import Lock
+from battery_heaters_reader import BatteryHeatersReader
 import time
 
 class PowerMonitor:
@@ -33,27 +34,31 @@ class PowerMonitor:
                 SensorManager.gpio_output(heater, OFF)
             return
 
-        # Get temperature inputs
-        tempIdentifiers = (TEMP_BAT_1,) # TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4)
-        tempValues = []
-        for iden in tempIdentifiers:
-            SensorManager.init_temp_sensor(iden)
-            valueList = []
-            # Get median of 5 value readings to remove outliers
-            for i in range(0,5):
-                valueList.append(SensorManager.read_temp_sensor(iden))
-            tempValue = median(valueList)
-            print(tempValue)
-            SensorManager.stop_temp_sensor(iden)
-            # Keep final value of sensor
-            tempValues.append(tempValue)
+        # # Get temperature inputs
+        # tempIdentifiers = (TEMP_BAT_1,) # TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4)
+        # tempValues = []
+        # for iden in tempIdentifiers:
+        #     SensorManager.init_temp_sensor(iden)
+        #     valueList = []
+        #     # Get median of 5 value readings to remove outliers
+        #     for i in range(0,5):
+        #         valueList.append(SensorManager.read_temp_sensor(iden))
+        #     tempValue = median(valueList)
+        #     print(tempValue)
+        #     SensorManager.stop_temp_sensor(iden)
+        #     # Keep final value of sensor
+        #     tempValues.append(tempValue)
+        #
+        # # Get status identifiers
+        # statusIdentifiers = (PSS_HTR_STAT_1_GPIO, PSS_HTR_STAT_2_GPIO,\
+        # PSS_HTR_STAT_3_GPIO, PSS_HTR_STAT_4_GPIO)
+        # statusValues = []
+        # for iden in statusIdentifiers:
+        #         statusValues.append(SensorManager.gpio_input(iden,0))
 
-        # Get status identifiers
-        statusIdentifiers = (PSS_HTR_STAT_1_GPIO, PSS_HTR_STAT_2_GPIO,\
-        PSS_HTR_STAT_3_GPIO, PSS_HTR_STAT_4_GPIO)
-        statusValues = []
-        for iden in statusIdentifiers:
-                statusValues.append(SensorManager.gpio_input(iden,0))
+        batteryTempAndStatusDict = BatteryHeatersReader()
+        tempValues = [item["temp"] for item in batteryTempAndStatusDict]
+        statusValues = [item["heaters"] for item in batteryTempAndStatusDict]
 
         # Define manual heater identifiers
         heaterIdentifers = (PSS_HTR_EN_1_GPIO, PSS_HTR_EN_2_GPIO,\
