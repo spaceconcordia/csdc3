@@ -5,6 +5,7 @@ from sensor_manager import SensorManager
 from sensor_constants import *
 from statistics import median
 from SharedLock import Lock
+from battery_heaters_reader import BatteryHeatersReader
 import time
 
 class PowerMonitor:
@@ -33,33 +34,37 @@ class PowerMonitor:
                 SensorManager.gpio_output(heater, OFF)
             return
 
-        # Get temperature inputs
-        tempIdentifiers = (TEMP_BAT_1,) # TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4)
-        tempValues = []
-        for iden in tempIdentifiers:
-            SensorManager.init_temp_sensor(iden)
-            valueList = []
-            # Get median of 5 value readings to remove outliers
-            for i in range(0,5):
-                valueList.append(SensorManager.read_temp_sensor(iden))
-            tempValue = median(valueList)
-            print(tempValue)
-            SensorManager.stop_temp_sensor(iden)
-            # Keep final value of sensor
-            tempValues.append(tempValue)
+        # # Get temperature inputs
+        # tempIdentifiers = (TEMP_BAT_1,) # TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4)
+        # tempValues = []
+        # for iden in tempIdentifiers:
+        #     SensorManager.init_temp_sensor(iden)
+        #     valueList = []
+        #     # Get median of 5 value readings to remove outliers
+        #     for i in range(0,5):
+        #         valueList.append(SensorManager.read_temp_sensor(iden))
+        #     tempValue = median(valueList)
+        #     print(tempValue)
+        #     SensorManager.stop_temp_sensor(iden)
+        #     # Keep final value of sensor
+        #     tempValues.append(tempValue)
+        #
+        # # Get status identifiers
+        # statusIdentifiers = (PSS_HTR_STAT_1_GPIO, PSS_HTR_STAT_2_GPIO,\
+        # PSS_HTR_STAT_3_GPIO, PSS_HTR_STAT_4_GPIO)
+        # statusValues = []
+        # for iden in statusIdentifiers:
+        #         statusValues.append(SensorManager.gpio_input(iden,0))
 
-        # Get status identifiers
-        statusIdentifiers = (PSS_HTR_STAT_1_GPIO, PSS_HTR_STAT_2_GPIO,\
-        PSS_HTR_STAT_3_GPIO, PSS_HTR_STAT_4_GPIO)
-        statusValues = []
-        for iden in statusIdentifiers:
-                statusValues.append(SensorManager.gpio_input(iden,0))
+        batteryTempAndStatusDict = BatteryHeatersReader()
+        tempValues = [item["temp"] for item in batteryTempAndStatusDict]
+        statusValues = [item["heaters"] for item in batteryTempAndStatusDict]
 
         # Define manual heater identifiers
         heaterIdentifers = (PSS_HTR_EN_1_GPIO, PSS_HTR_EN_2_GPIO,\
         PSS_HTR_EN_3_GPIO, PSS_HTR_EN_4_GPIO)
-        print('Status value: ' + str(statusValues[0]))
 
+        print('Status value: ' + str(statusValues[0]))
         print('Is analog:', SensorManager.gpio_input(PSS_HTR_MUX_SEL_GPIO, time.time()))
 
         # Check if payload is running
@@ -72,31 +77,33 @@ class PowerMonitor:
                 SensorManager.gpio_output(heater, OFF)
             return
 
-        # Take control if required
+        # Find out if analog or OBC is in control
         for i in range(0,len(tempValues)):
-            if self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 0:
-                print('Case 1')
-                self.controlStatus = False
-                SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
-                return
-            elif self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1:
-                print('Case 2')
+            if (self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1)\
+             or (self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0):
+                # OBC will take control
                 self.controlStatus = True
                 SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
-                SensorManager.gpio_output(heaterIdentifers[i], OFF)
-                return
-            elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0:
-                print('Case 3')
-                self.controlStatus = True
-                SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
-                if self.is_battery_safe():
-                    SensorManager.gpio_output(heaterIdentifers[i], ON)
-                return
-            elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 1:
-                print('Case 4')
+                break
+            else:
+                # Analog will take control
                 self.controlStatus = False
                 SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
-                return
+
+        # Perform OBC control if required
+        if self.controlStatus == True:
+            for i in range(0,len(tempValues)):
+                if self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 0:
+                    print('Case 1: Temp > threshold, heaters off, no action required')
+                elif self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1:
+                    print('Case 2: Temp > threshold, heaters on, OBC must shut off heater')
+                    SensorManager.gpio_output(heaterIdentifers[i], OFF)
+                elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0:
+                    print('Case 3: Temp < threshold, heaters off, OBC must activate heater')
+                    if self.is_battery_safe():
+                        SensorManager.gpio_output(heaterIdentifers[i], ON)
+                elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 1:
+                    print('Case 4: Temp < threshold, heaters on, no action required')
 
     def temp_threshold(self, tempValue, sign):
         """
