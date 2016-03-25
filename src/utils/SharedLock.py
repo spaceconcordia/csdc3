@@ -10,6 +10,12 @@ class Lock:
         fcntl.flock(self.handle, fcntl.LOCK_EX)
         print("Acquired Lock")
 
+    def acquireNonBlocking(self):
+        if self.isLocked():
+            return False
+        self.acquire()
+        return True
+
     def isLocked(self):
         try:
             fcntl.flock(self.handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
