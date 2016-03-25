@@ -72,31 +72,46 @@ class PowerMonitor:
                 SensorManager.gpio_output(heater, OFF)
             return
 
-        # Take control if required
+
+        # Find out if analog or OBC is in control
         for i in range(0,len(tempValues)):
-            if self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 0:
-                print('Case 1')
+            if (self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1)\
+             or (self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0):
+                self.controlStatus = True
+                # OBC will take control
+                SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
+                break
+            else:
+                # Analog will take control
                 self.controlStatus = False
                 SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
-                return
-            elif self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1:
-                print('Case 2')
-                self.controlStatus = True
-                SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
-                SensorManager.gpio_output(heaterIdentifers[i], OFF)
-                return
-            elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0:
-                print('Case 3')
-                self.controlStatus = True
-                SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
-                if self.is_battery_safe():
-                    SensorManager.gpio_output(heaterIdentifers[i], ON)
-                return
-            elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 1:
-                print('Case 4')
-                self.controlStatus = False
-                SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
-                return
+
+        # Take control if required
+        if self.controlStatus == True:
+            for i in range(0,len(tempValues)):
+                if self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 0:
+                    print('Case 1: Temp > threshold, heaters off, no action required')
+                    # self.controlStatus = False
+                    # SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
+                    return
+                elif self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1:
+                    print('Case 2: Temp > threshold, heaters on, OBC must shut off heater')
+                    # self.controlStatus = True
+                    # SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
+                    SensorManager.gpio_output(heaterIdentifers[i], OFF)
+                    return
+                elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0:
+                    print('Case 3: Temp < threshold, heaters off, OBC must activate heater')
+                    # self.controlStatus = True
+                    # SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
+                    if self.is_battery_safe():
+                        SensorManager.gpio_output(heaterIdentifers[i], ON)
+                    return
+                elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 1:
+                    print('Case 4: Temp < threshold, heaters on, no action required')
+                    # self.controlStatus = False
+                    # SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, ON)
+                    return
 
     def temp_threshold(self, tempValue, sign):
         """
