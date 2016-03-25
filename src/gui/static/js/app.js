@@ -14,21 +14,6 @@ function updateDiskPartitionTable() {
     });
 }
 
-function updateBatteryInfo() {
-    $.ajax({
-        url: '/batteryinfo',
-        type: 'get',
-        cache: false,
-        error: function() {
-            $( '#error-dialog' ).dialog( "open" );
-        },
-        success: function(data) {
-            console.log(data);
-        }
-    });
-}
-
-
 function updateMemIntensiveProcesses() {
     $.ajax({
         url: '/sysdata',
@@ -61,6 +46,20 @@ function updateCpuIntensiveProcesses() {
     });
 }
 
+function updateBatteryInfo() {
+    $.ajax({
+        url: '/batteryinfo',
+        type: 'get',
+        cache: false,
+        error: function() {
+            console.log("error on call to /batteryinfo - GET")
+        },
+        success: function(data) {
+            console.log('1');
+        }
+    });
+}
+
 var smoothieRamUsage =       new SmoothieChart({maxValue:100,minValue:0});
 var smoothieCpuAvgLoad =     new SmoothieChart({maxValueScale:1.06});
 var smoothieCpuUtilization = new SmoothieChart({maxValue:100,minValue:0});
@@ -70,6 +69,8 @@ var cpuUtilizationLine =     new TimeSeries();
 var cpuAvgLoadLine1mins =    new TimeSeries();
 var cpuAvgLoadLine5mins =    new TimeSeries();
 var cpuAvgLoadLine15mins =   new TimeSeries();
+
+var intervalListener;
 
 function updateRamUsageCharts() {
     $.ajax({
@@ -161,9 +162,29 @@ $( document ).ready(function() {
     smoothieCpuAvgLoad.addTimeSeries(cpuAvgLoadLine15mins,
         {lineWidth:2,strokeStyle:'#147AE0'});
 
-    setInterval(function() {
-        updateBatteryInfo();
-    }, 2500);
+    $('#battery-demo-btn').click(function() {
+        var battery_btn_txt = ($(this).text());
+        console.log(battery_btn_txt);
+        if (battery_btn_txt == 'Start Demo') {
+            $(this).text('End Demo');
+            intervalListener = self.setInterval(
+                function () {
+                    updateBatteryInfo()
+                }, 3000
+            );
+        } else if (battery_btn_txt == 'End Demo') {
+            clearInterval(intervalListener);
+            $(this).text('Start Demo');
+            $('#bat1-temp').text(' -- °C ');
+            $('#bat2-temp').text(' -- °C ');
+            $('#bat3-temp').text(' -- °C ');
+            $('#bat4-temp').text(' -- °C ');
+            $('#bat1-heat').text('Heaters: ---');
+            $('#bat2-heat').text('Heaters: ---');
+            $('#bat3-heat').text('Heaters: ---');
+            $('#bat4-heat').text('Heaters: ---');
+        }
+    });
 
     var sourceSwap = function () {
         var $this = $(this);
