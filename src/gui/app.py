@@ -22,6 +22,7 @@ from logshandler            import LogsHandler
 from timetagcmdhandler      import TimetagcmdHandler
 from updatebinhandler       import UpdatebinHandler
 from sysdatahandler         import SysdataHandler
+from batteryinfohandler     import BatteryInfoHandler
 
 settings = dict(
     template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -46,6 +47,7 @@ application = tornado.web.Application([
     (r"/timetagcmd", TimetagcmdHandler),
     (r"/updatebin", UpdatebinHandler),
     (r"/sysdata", SysdataHandler),
+    (r"/batteryinfo", BatteryInfoHandler),
 
 # static logs handlers
     (r"/(.*)", tornado.web.StaticFileHandler, {'path': '/root/csdc3/src/logs/logs/'}),
