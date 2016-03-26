@@ -93,7 +93,7 @@ class PowerMonitor:
         # Perform OBC control if required
         if self.controlStatus == True:
             for i in range(0,len(tempValues)):
-                if tempValues[i] != -1:
+                if tempValues[i] != None:
                     if self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 0:
                         print('Case 1: Temp > threshold, heaters off, no action required')
                     elif self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1:
