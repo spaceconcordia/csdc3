@@ -55,7 +55,39 @@ function updateBatteryInfo() {
             console.log("error on call to /batteryinfo - GET")
         },
         success: function(data) {
-            console.log('1');
+            control = (data['data'])["control"];
+            console.log(control);
+            batteries = (data['data'])["batteries"];
+            for (idx in batteries) {
+                temp = (batteries[idx])['temp'];
+                if (temp != null) {
+                    var prev_value = $('#bat' + String(parseInt(idx) + 1) + '-temp').text();
+                    if (!isNaN(parseInt(prev_value))) {
+                        if (parseFloat(prev_value) > parseFloat(temp)) {
+                            $('#bat' + String(parseInt(idx) + 1) + '-temp').text(temp + '°C' + '\ufeff\u21e9');
+                            $('#bat' + String(parseInt(idx) + 1) + '-temp').removeClass("text-success text-info").addClass( "text-danger" );
+                        } else if (parseFloat(prev_value) < parseFloat(temp)) {
+                            $('#bat' + String(parseInt(idx) + 1) + '-temp').text(temp + '°C' + '\ufeff\u21e7');
+                            $('#bat' + String(parseInt(idx) + 1) + '-temp').removeClass("text-info text-danger").addClass( "text-success" );
+                        } else {
+                            $('#bat' + String(parseInt(idx) + 1) + '-temp').text(temp + '°C');
+                            $('#bat' + String(parseInt(idx) + 1) + '-temp').removeClass("text-success text-danger").addClass( "text-info" );
+                        }
+                    } else {
+                        $('#bat' + String(parseInt(idx) + 1) + '-temp').text(temp + '°C');
+                    }
+                }
+                heaters = (batteries[idx])['heaters'];
+                if (heaters != null) {
+                    if (heaters) {
+                        $('#bat' + String(parseInt(idx) + 1) + '-heat').text('Heaters: ON');
+                        $('#bat' + String(parseInt(idx) + 1) + '-heat').removeClass("text-info text-danger").addClass( "text-success" );
+                    } else {
+                        $('#bat' + String(parseInt(idx) + 1) + '-heat').text('Heaters: OFF');
+                        $('#bat' + String(parseInt(idx) + 1) + '-heat').removeClass("text-info text-success").addClass( "text-danger" );
+                    }
+                }
+            }
         }
     });
 }
@@ -164,7 +196,6 @@ $( document ).ready(function() {
 
     $('#battery-demo-btn').click(function() {
         var battery_btn_txt = ($(this).text());
-        console.log(battery_btn_txt);
         if (battery_btn_txt == 'Start Demo') {
             $(this).text('End Demo');
             intervalListener = self.setInterval(
@@ -175,14 +206,12 @@ $( document ).ready(function() {
         } else if (battery_btn_txt == 'End Demo') {
             clearInterval(intervalListener);
             $(this).text('Start Demo');
-            $('#bat1-temp').text(' -- °C ');
-            $('#bat2-temp').text(' -- °C ');
-            $('#bat3-temp').text(' -- °C ');
-            $('#bat4-temp').text(' -- °C ');
-            $('#bat1-heat').text('Heaters: ---');
-            $('#bat2-heat').text('Heaters: ---');
-            $('#bat3-heat').text('Heaters: ---');
-            $('#bat4-heat').text('Heaters: ---');
+            for (var idx = 1; idx < 5; ++idx) {
+                $('#bat' + String(parseInt(idx)) + '-temp').text(' -- °C ');
+                $('#bat' + String(parseInt(idx)) + '-temp').removeClass("text-danger text-success").addClass( "text-info" );
+                $('#bat' + String(parseInt(idx)) + '-heat').text('Heaters: ---');
+                $('#bat' + String(parseInt(idx)) + '-heat').removeClass("text-danger text-success").addClass( "text-info" );
+            }
         }
     });
 
