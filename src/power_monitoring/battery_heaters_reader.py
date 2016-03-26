@@ -34,34 +34,65 @@ def BatteryHeatersReader():
 
     randInt = returnRandInt(1, 10)
 
-    tempValues = []
-    if randInt > 5:
-        # Increase
-        tempValues.append(randInt)
-        tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
-        tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
-        tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
-    elif randInt == 5:
-        # Constant
-        tempValues.append(randInt)
-        tempValues.append(returnRandInt(5, 25))
-        tempValues.append(returnRandInt(5, 25))
-        tempValues.append(returnRandInt(5, 25))
-    else:
-        # Decrease
-        tempValues.append(randInt)
-        tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
-        tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
-        tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
+    # tempValues = []
+    # if randInt > 5:
+    #     # Increase
+    #     tempValues.append(randInt)
+    #     tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
+    #     tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
+    #     tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
+    # elif randInt == 5:
+    #     # Constant
+    #     tempValues.append(randInt)
+    #     tempValues.append(returnRandInt(5, 25))
+    #     tempValues.append(returnRandInt(5, 25))
+    #     tempValues.append(returnRandInt(5, 25))
+    # else:
+    #     # Decrease
+    #     tempValues.append(randInt)
+    #     tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
+    #     tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
+    #     tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
+    #
+    # # tempValues = [27.2, -1, 31.2, 33.2]
+    # statusValues = []
+    # for i in range(0,4):
+    #     randInt = returnRandInt(0, 1)
+    #     if randInt == 1:
+    #         statusValues.append(True)
+    #     else:
+    #         statusValues.append(False)
 
-    # tempValues = [27.2, -1, 31.2, 33.2]
-    statusValues = []
-    for i in range(0,4):
-        randInt = returnRandInt(0, 1)
-        if randInt == 1:
-            statusValues.append(True)
+    state0 = [23, 34, -32, 1]
+    state1 = [27, 21, 34, 24]
+    state2 = [30, 11, 22, 12]
+    state3 = [35, 2, 1, 15]
+    statusValues = [True, False, True, False]
+    tempValues = []
+    try:
+        f = open('state.tmp', 'r')
+        state = int(f.read())
+    except:
+        f = open('state.tmp', 'w')
+        f.write(str(0))
+        state = 1
+    finally:
+        f.close()
+
+        if state == 0:
+            tempValues = state0
+        elif state == 1:
+            tempValues = state1
+        elif state == 2:
+            tempValues = state2
         else:
-            statusValues.append(False)
+            tempValues = state3
+            state = -1
+    try:
+        f = open('state.tmp', 'w')
+        f.write(str(state + 1))
+    finally:
+        f.close()
 
     # Set up dict containing result
     result = {"control": "OBC", "batteries": []}
