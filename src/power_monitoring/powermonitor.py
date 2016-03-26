@@ -93,17 +93,18 @@ class PowerMonitor:
         # Perform OBC control if required
         if self.controlStatus == True:
             for i in range(0,len(tempValues)):
-                if self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 0:
-                    print('Case 1: Temp > threshold, heaters off, no action required')
-                elif self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1:
-                    print('Case 2: Temp > threshold, heaters on, OBC must shut off heater')
-                    SensorManager.gpio_output(heaterIdentifers[i], OFF)
-                elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0:
-                    print('Case 3: Temp < threshold, heaters off, OBC must activate heater')
-                    if self.is_battery_safe():
-                        SensorManager.gpio_output(heaterIdentifers[i], ON)
-                elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 1:
-                    print('Case 4: Temp < threshold, heaters on, no action required')
+                if tempValues[i] != -1:
+                    if self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 0:
+                        print('Case 1: Temp > threshold, heaters off, no action required')
+                    elif self.temp_threshold(tempValues[i], 'GT') and statusValues[i] == 1:
+                        print('Case 2: Temp > threshold, heaters on, OBC must shut off heater')
+                        SensorManager.gpio_output(heaterIdentifers[i], OFF)
+                    elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 0:
+                        print('Case 3: Temp < threshold, heaters off, OBC must activate heater')
+                        if self.is_battery_safe():
+                            SensorManager.gpio_output(heaterIdentifers[i], ON)
+                    elif self.temp_threshold(tempValues[i], 'LT') and statusValues[i] == 1:
+                        print('Case 4: Temp < threshold, heaters on, no action required')
 
     def temp_threshold(self, tempValue, sign):
         """
