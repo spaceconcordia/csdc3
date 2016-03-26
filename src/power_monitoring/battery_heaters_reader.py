@@ -36,8 +36,7 @@ def BatteryHeatersReader():
 
     # Populate battery heater list with acquired values
     for i in range(0,len(tempValues)):
-        if i < len(tempValues) and i < len(statusValues) \
-        and (tempValues[i] is not None) and (statusValues[i] is not None):
+        if i < len(tempValues) and i < len(statusValues):
             result["batteries"].append({"temp": tempValues[i], "heaters": statusValues[i]})
 
     return result
