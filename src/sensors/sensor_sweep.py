@@ -2,6 +2,7 @@ import sys
 sys.path.append('/root/csdc3/lib/ablib')
 sys.path.append('/root/csdc3/src/logs')
 sys.path.append('/root/csdc3/src/logs/config_setup')
+sys.path.append('/root/csdc3/src/utils')
 from ablib_python3 import Pin
 from chomsky import *
 from time import sleep
@@ -11,31 +12,77 @@ import smbus
 import time
 import math
 from sensor_manager import SensorManager
+from SharedLock import Lock
 
 def main():
-    ds1624 = [TEMP_EPS_BRD]
-    #ds18b20 = [PANEL0, PANEL1]
-    for temp_sensor in ds1624:
-        SensorManager.init_temp_sensor(temp_sensor)
-    SensorManager.init_power_sensor(POWER)
-    with open("/root/csdc3/src/sensors/temp_log.txt", "a") as f:
-        for i in range(1):
-            start = time.time()
-            temperatures = []
-            for temp_sensor in ds1624:
-                value = SensorManager.read_temp_sensor(temp_sensor)
-                temperatures.append(value)
+    lock = Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
 
-            power = SensorManager.read_power_sensor(POWER)
-            temperatures.append(power)
-            print(temperatures)
+    try:
+        lock.acquire()
 
-            readtime = time.time() - start
-            temperatures.append(readtime)
-            f.write(str(temperatures) + '\n')
+        # Create sensor lists
+        tempSensorList = [TEMP_EPS_BRD, TEMP_PAYLOAD_BRD]
+        magSensorList= [MAG_0, MAG_1, MAG_2]
+        powerSensorList = [POWER]
+        masterList = list(set(tempSensorList) | set(magSensorList)
+        | set(powerSensorList)
 
-    for temp_sensor in ds1624:
-        SensorManager.stop_temp_sensor(temp_sensor)
+        functionsDict = {}
+        # Declare functions used for initialization
+        functionsDict["init_temp"] = SensorManager.init_temp_sensor
+        functionsDict["init_mag"] = SensorManager.init_magnetometer
+        functionsDict["init_power"] = SensorManager.init_power_sensor
+
+        # Declare functions used for reading
+        functionsDict["read_temp"] = SensorManager.read_temp_sensor
+        functionsDict["read_mag"] = SensorManager.read_magnetometer
+        functionsDict["read_power"] = SensorManager.read_power_sensor
+
+        # Declare functions used for stopping
+        functionsDict["stop_temp"] = SensorManager.stop_temp_sensor
+        functionsDict["stop_mag"] = SensorManager.stop_magnetometer
+        functionsDict["stop_power"] = SensorManager.stop_power_sensor
+
+        # Initialize sensors
+        for sensor in masterList:
+            if sensor in tempSensorList:
+                functionsDict["init_temp"](sensor)
+            elif sensor in magSensorList:
+                functionsDict["init_mag"](sensor)
+            elif sensor in powerSensorList:
+                functionsDict["init_power"](sensor)
+
+        with open("/root/csdc3/src/sensors/temp_log.txt", "a") as f:
+            for i in range(5):
+                start = time.time()
+                sensorValueDict = {}
+
+                # Get sensor values
+                for sensor in masterList:
+                    if sensor in tempSensorList:
+                        result = functionsDict["read_temp"](sensor)
+                    elif sensor in magSensorList:
+                        result = functionsDict["read_mag"](sensor)
+                    elif sensor in powerSensorList:
+                        result = functionsDict["read_power"](sensor)
+                    sensorValueDict[sensor] = result
+
+                # Get time it took to complete operations
+                readtime = time.time() - start
+                sensorValueDict["Time"] = readtime
+                f.write(str(sensorValueDict) + '\n')
+
+        # Stop sensors
+        for sensor in masterList:
+            if sensor in tempSensorList:
+                functionsDict["stop_temp"](sensor)
+            elif sensor in magSensorList:
+                functionsDict["stop_mag"](sensor)
+            elif sensor in powerSensorList:
+                functionsDict["stop_power"](sensor)
+
+    finally:
+        lock.release()
 
 if __name__ == "__main__":
     main()

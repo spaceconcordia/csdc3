@@ -14,6 +14,7 @@ import smbus
 import time
 import math
 from SharedLock import Lock
+import Utility
 
 class SensorManager:
 
@@ -21,13 +22,13 @@ class SensorManager:
     active_gpio_pins = {}
     channel = None
     old_mux = None
-    sensorReadingLock = Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
+    # sensorReadingLock = Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
 
     """ -------------------- Initialization --------------------- """
 
     @staticmethod
     def init_gyroscope(sensorId):
-        SensorManager.sensorReadingLock.acquire()
+        # SensorManager.sensorReadingLock.acquire()
 
         insertDebugLog(NOTICE, "Initialized gyroscope: {}".format(sensorId),
         CDH, int(time.time()))
@@ -42,6 +43,8 @@ class SensorManager:
         except(IOError, OSError):
             print('[INIT] Error writing to gyroscope at address ' + \
                 str(SensorEntropy.addr(sensorId)))
+            insertDebugLog(NOTICE, "[INIT] Error writing to gyroscope: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
         time.sleep(0.1)
 
@@ -64,6 +67,8 @@ class SensorManager:
         except(IOError, OSError):
             print('[INIT] Error writing to magnetometer at address ' + \
                 str(SensorEntropy.addr(sensorId)))
+            insertDebugLog(NOTICE, "[INIT] Error writing to magnetometer: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
         time.sleep(0.1)
 
@@ -73,9 +78,9 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor(sensorId):
-        SensorManager.sensorReadingLock.acquire()
+        # SensorManager.sensorReadingLock.acquire()
 
-        insertDebugLog(NOTICE, "Initialized temp sensor: {}".format(sensorIdi),
+        insertDebugLog(NOTICE, "Initialized temp sensor: {}".format(sensorId),
         CDH, int(time.time()))
 
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
@@ -93,16 +98,17 @@ class SensorManager:
             # Enable continuous mode
             SensorManager.bus.write_byte_data(addr, configReg, 0x00)
         except(IOError, OSError):
-            print('[INIT] Error writing to temperature\
-             sensor at address '+str(addr))
+            print('[INIT] Error writing to temperature sensor at address '+str(addr))
+            insertDebugLog(NOTICE, "[INIT] Error writing to temperature sensor: {}".format(sensorId),
+             CDH, int(time.time()))
             return None
         time.sleep(0.05)
 
     @staticmethod
     def init_adc(sensorId):
-        SensorManager.sensorReadingLock.acquire()
+        # SensorManager.sensorReadingLock.acquire()
 
-        insertDebugLog(NOTICE, "Initialized adc: {}".format(sensorIdi),
+        insertDebugLog(NOTICE, "Initialized ADC: {}".format(sensorId),
         CDH, int(time.time()))
 
         SensorManager.mux_select(sensorId)
@@ -131,13 +137,15 @@ class SensorManager:
                                       adc_reg['CONFIG_NO_INTERRUPTS'])
         except(IOError, OSError):
             print('[INIT] Error writing to ADC at address ' + str(addr))
+            insertDebugLog(NOTICE, "[INIT] Error writing to ADC: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
 
     @staticmethod
     def init_power_sensor(sensorId):
         # SensorManager.sensorReadingLock.acquire()
 
-        insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorIdi),
+        insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorId),
         CDH, int(time.time()))
 
         try:
@@ -150,7 +158,9 @@ class SensorManager:
                 f.write("2000")
 
         except(IOError, OSError):
-            print('[INIT] Error reading from Power at address ' + str(addr))
+            print('[INIT] Error reading from Power sensor at address ' + str(addr))
+            insertDebugLog(NOTICE, "[INIT] Error reading from Power sensor: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
 
     """ -------------------- Stop --------------------- """
@@ -160,7 +170,6 @@ class SensorManager:
         insertDebugLog(NOTICE, "Stop gyroscope: {}".format(sensorId),
         CDH, int(time.time()))
 
-        SensorManager.sensorReadingLock.release()
         if not SensorManager.isCorrectSensor(sensorId, GYRO):
             raise Exception('Incorrect sensor specified')
 
@@ -171,21 +180,24 @@ class SensorManager:
             SensorManager.bus.write_byte(addr, 0x01)
         except(IOError, OSError):
             print('[STOP] Error writing to gyroscope at address ' + str(addr))
+            insertDebugLog(NOTICE, "[STOP] Error writing to gyroscope: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
+        # finally:
+        #     SensorManager.sensorReadingLock.release()
         time.sleep(0.1)
 
     @staticmethod
     def stop_magnetometer(sensorId):
         insertDebugLog(NOTICE, "Stop magnetometer: {}".format(sensorId),
         CDH, int(time.time()))
-        SensorManager.sensorReadingLock.release()
+        # SensorManager.sensorReadingLock.release()
 
     @staticmethod
     def stop_temp_sensor(sensorId):
         insertDebugLog(NOTICE, "Stop temp sensor: {}".format(sensorId),
         CDH, int(time.time()))
 
-        SensorManager.sensorReadingLock.release()
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             raise Exception('Incorrect sensor specified')
 
@@ -197,14 +209,17 @@ class SensorManager:
             SensorManager.bus.write_byte_data(addr, stopReg, 0x01)
         except(IOError, OSError):
             print('[STOP] Error writing to temperature sensor at address ' + str(addr))
+            insertDebugLog(NOTICE, "[STOP] Error writing to temperature sensor: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
+        # finally:
+        #     SensorManager.sensorReadingLock.release()
 
     @staticmethod
     def stop_adc_sensor(sensorId):
         insertDebugLog(NOTICE, "Stop adc: {}".format(sensorId),
         CDH, int(time.time()))
 
-        SensorManager.sensorReadingLock.release()
         SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
         configReg = SensorEntropy.reg(ADC)['REG_CONFIG']
@@ -213,7 +228,11 @@ class SensorManager:
             SensorManager.bus.write_byte_data(addr, configReg, 0x00)
         except (IOError, OSError):
             print('[STOP] Error writing to ADC at address ' + str(addr))
+            insertDebugLog(NOTICE, "[STOP] Error writing to ADC: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
+        # finally:
+        #     SensorManager.sensorReadingLock.release()
 
     @staticmethod
     def stop_rtc(sensorId):
@@ -223,7 +242,7 @@ class SensorManager:
     def stop_power_sensor(sensorId):
         insertDebugLog(NOTICE, "Stop power sensor: {}".format(sensorId),
         CDH, int(time.time()))
-        SensorManager.sensorReadingLock.release()
+        # SensorManager.sensorReadingLock.release()
 
     """ -------------------- Reading --------------------- """
 
@@ -259,12 +278,14 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error reading from gyroscope at address ' + \
                 str(address))
+            insertDebugLog(NOTICE, "[READ] Error reading from gyroscope: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
 
         # Apply two's complement
-        valX = twos_to_int(valX)
-        valY = twos_to_int(valY)
-        valZ = twos_to_int(valZ)
+        valX = Utility.twos_to_int(valX)
+        valY = Utility.twos_to_int(valY)
+        valZ = Utility.twos_to_int(valZ)
 
         sleep(0.1)
         # Log data
@@ -305,12 +326,14 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error reading from magnetometer at address ' + \
                 str(address))
+            insertDebugLog(NOTICE, "[READ] Error reading from magnetometer: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
 
         # Update the values to be of two compliment
-        valX = SensorManager.twos_to_int(valX, 16);
-        valY = SensorManager.twos_to_int(valY, 16);
-        valZ = SensorManager.twos_to_int(valZ, 16);
+        valX = Utility.twos_to_int(valX, 16);
+        valY = Utility.twos_to_int(valY, 16);
+        valZ = Utility.twos_to_int(valZ, 16);
 
         """
         # Change valX and valY to radians
@@ -362,6 +385,8 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error reading from RTC at address ' + \
                 str(SensorEntropy.addr(sensorId)))
+            insertDebugLog(NOTICE, "[READ] Error reading from RTC: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
 
         # Log data
@@ -377,6 +402,9 @@ class SensorManager:
 
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             raise Exception('Incorrect sensor specified')
+            insertDebugLog(NOTICE, "Incorrect sensor specified: {}".format(sensorId),
+            CDH, int(time.time()))
+            return None
 
         SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
@@ -386,6 +414,8 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error writing to temperature sensor at address ' + \
                 str(addr))
+            insertDebugLog(NOTICE, "[READ] Error writing to temperature sensor: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
         try:
             decValue = SensorManager.bus.read_byte(addr)
@@ -394,10 +424,12 @@ class SensorManager:
         except(IOError, OSError):
             print('[READ] Error reading from temperature sensor at address ' + \
                 str(addr))
+            insertDebugLog(NOTICE, "[READ] Error reading from temperature sensor: {}".format(sensorId),
+            CDH, int(time.time()))
             return None
 
         # Log data
-        value = SensorManager.conv_bin_to_int(decValue, fractValue)
+        value = Utility.conv_bin_to_float(decValue, fractValue)
         sub = SensorEntropy.subsystem(sensorId)
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
@@ -431,6 +463,8 @@ class SensorManager:
             SensorManager.bus.write_byte(0x70, 1 << 0)
             print('[READ] Error reading from ADC at address ' + \
                 str(addr))
+            insertDebugLog(NOTICE, "[READ] Error reading from ADC: {}".format(sensorId),
+            CDH, int(time.time()))
             return None, None, None
 
         if temp & 0x100 == 0:
@@ -447,26 +481,39 @@ class SensorManager:
         return value
 
     @staticmethod
-    def read_power_sensor(sensorId):
+    def read_power_sensor(sensorId, getRaw=False):
         insertDebugLog(NOTICE, "Read power sensor: {}".format(sensorId),
         CDH, int(time.time()))
 
         SensorManager.mux_select(sensorId)
 
-        with open(INA219_VOLTAGE) as v, open(INA219_CURRENT) as a, open(INA219_POWER) as p:
-            value = (int(v.read()), int(a.read()), int(p.read()))
-        sub = POWER
-        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        try:
+            with open(INA219_VOLTAGE) as v, open(INA219_CURRENT) as a, open(INA219_POWER) as p:
+                value = (int(v.read()), int(a.read()), int(p.read()))
+            """
+            if not getRaw:
+                value[0] = value[0] / 1000.
+                value[1] = value[1] / 1000.
+                value[2] = value[2] / 1000000.
+            """
+
+            sub = POWER
+            insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        except(IOError, OSError):
+            insertDebugLog(NOTICE, "[READ] Error reading from power sensor: {}".format(sensorId),
+            CDH, int(time.time()))
+
         return value
 
-    def read_switch_current(num, convert=False):
+    def read_switch_current(num, getRaw=False):
         with open(SWITCH_CURRENT_PATH + "in_voltage%d_raw" % num) as f:
             value = int(f.read())
 
         # Convert to millivolts
-        if convert:
+        if not getRaw:
             value = value * IN_VOLTAGE_SCALE / 1000.
             current = value*3.24*2/float(1024*3)
+            value = (value, current)
         return value
 
     """ -------------------- 1Wire --------------------- """
@@ -478,6 +525,8 @@ class SensorManager:
 
         if not panelId in SIDE_PANEL_ONE_WIRE_DICT:
             raise Exception('Incorrect sensor specified')
+            insertDebugLog(NOTICE, "Incorrect sensor specified: {}".format(panelId),
+            CDH, int(time.time()))
         try:
             addr = SIDE_PANEL_ONE_WIRE_DICT[panelId]
             sensor = DS18B20(addr)
@@ -485,13 +534,16 @@ class SensorManager:
             insertTelemetryLog(panelId, value, CDH, int(time.time()))
         except (IOError, OSError):
             print("[READ] Error reading from 1-wire DS18B20")
+            insertDebugLog(NOTICE, "[READ] Error reading: {}".format(panelId),
+            CDH, int(time.time()))
             return None
         return value
 
     """ -------------------- GPIO --------------------- """
 
     def gpio_output(pinId, pinStatus):
-        insertDebugLog(NOTICE, "GPIO output: {}".format(pinId),
+        """ Outputs a logic value on a GPIO pin """
+        insertDebugLog(NOTICE, "GPIO output from: {}".format(pinId),
         CDH, int(time.time()))
 
         pinId = SensorEntropy.get_gpio_pin(pinId)
@@ -507,10 +559,11 @@ class SensorManager:
             return False
 
     def gpio_input(pinId, inputTime):
+        """ Receive a logic value from a GPIO pin """
         """
         TODO: Don't change pin to input, but read file instead
         """
-        insertDebugLog(NOTICE, "GPIO input: {}".format(pinId),
+        insertDebugLog(NOTICE, "GPIO input from: {}".format(pinId),
         CDH, int(time.time()))
 
         pinId = SensorEntropy.get_gpio_pin(pinId)
@@ -552,37 +605,6 @@ class SensorManager:
             SensorManager.old_mux = mux_address
             SensorManager.bus.write_byte(mux_address, 1 << newChannel)
             return True
-
-    @staticmethod
-    def twos_to_int(val, len):
-        """
-        TODO: Add to utils file
-        """
-        if val & (1 << len - 1):
-          val = val - (1 << len)
-        return val
-
-    @staticmethod
-    def conv_bin_to_int(decimalBin, fractionalBin):
-        """
-        TODO: Add to utils file
-        """
-        result = 0
-        isNegative = (decimalBin >> 7) & 0x1
-        if isNegative:
-            result = (decimalBin ^ 0xff) + 1
-            result *= -1
-        else:
-            result = decimalBin
-        tempFract = fractionalBin
-        count = 1
-        fract = 0
-        while count <= 8:
-            fract += ((tempFract >> 7) & 0x1) * pow(2, -count)
-            tempFract = tempFract << 1
-            count += 1
-        result += fract
-        return result
 
     @staticmethod
     def isCorrectSensor(sensorId, SensorType):
