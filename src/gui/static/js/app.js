@@ -163,6 +163,18 @@ function updateCpuUtilizationCharts() {
     });
 }
 
+function updateBatteryDataDisplay(index) {
+    for (var i = 1; i < 5; ++i) {
+        if (i == index) {
+            $('#chartBatteryTemp' + i).css('display', 'inline');
+            $('#chartBatteryHeat' + i).css('display', 'inline');
+        } else {
+            $('#chartBatteryTemp' + i).css('display', 'none');
+            $('#chartBatteryHeat' + i).css('display', 'none');
+        }
+    }
+}
+
 $( document ).ready(function() {
 	$( '.dropdown-toggle' ).dropdown();
 
@@ -216,7 +228,25 @@ $( document ).ready(function() {
                 $('#bat' + String(parseInt(idx)) + '-heat').text('Heaters: ---');
                 $('#bat' + String(parseInt(idx)) + '-heat').removeClass("text-danger text-success").addClass( "text-info" );
             }
+            location.replace('/endbattery');
         }
+    });
+
+    $('#bat1-data').click(function(e) {
+        e.preventDefault();
+        updateBatteryDataDisplay(1);
+    });
+    $('#bat2-data').click(function(e) {
+        e.preventDefault();
+        updateBatteryDataDisplay(2);
+    });
+    $('#bat3-data').click(function(e) {
+        e.preventDefault();
+        updateBatteryDataDisplay(3);
+    });
+    $('#bat4-data').click(function(e) {
+        e.preventDefault();
+        updateBatteryDataDisplay(4);
     });
 
     var sourceSwap = function () {

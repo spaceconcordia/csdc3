@@ -13,6 +13,7 @@ from systemhandler          import SystemHandler
 from interfacinghandler     import InterfacingHandler
 from sensorshandler         import SensorsHandler
 from batteryhandler         import BatteryHandler
+from endbatteryinfohandler  import EndBatteryInfoHandler
 
 sys.path.insert(0, SYSTEM_HANDLERS_PATH)
 from timehandler            import TimeHandler
@@ -38,6 +39,7 @@ application = tornado.web.Application([
 	(r"/interfacing", InterfacingHandler),
 	(r"/sensors", SensorsHandler),
     (r"/battery", BatteryHandler),
+    (r"/endbattery", EndBatteryInfoHandler),
 
 # system command handler
     (r"/time", TimeHandler),

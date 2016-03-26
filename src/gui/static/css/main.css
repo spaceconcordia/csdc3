@@ -232,7 +232,7 @@ tr, th {
 	margin: 0 auto;
     margin-top: 2.5%;
     margin-bottom: 5.5%;
-}    
+}
 
 #battery-demo-btn{
 	display: block;
@@ -244,4 +244,18 @@ tr, th {
 
 #control-title{
     margin-bottom: 2.5%;
+}
+
+#batterydata {
+	margin-top: 4.5%;
+	margin-bottom: 4.5%;
+}
+
+#chartBatteryTemp1, #chartBatteryHeat1 {
+    display: inline;
+}
+#chartBatteryTemp2, #chartBatteryHeat2,
+#chartBatteryTemp3, #chartBatteryHeat3,
+#chartBatteryTemp4, #chartBatteryHeat4 {
+    display: none;
 }

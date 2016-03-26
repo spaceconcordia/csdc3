@@ -1,0 +1,2 @@
+23 True|34 False|-32 True|1 False|
+27 True|21 False|34 True|24 False|
