@@ -14,6 +14,21 @@ function updateDiskPartitionTable() {
     });
 }
 
+function updateBatteryInfo() {
+    $.ajax({
+        url: '/batteryinfo',
+        type: 'get',
+        cache: false,
+        error: function() {
+            $( '#error-dialog' ).dialog( "open" );
+        },
+        success: function(data) {
+            console.log(data);
+        }
+    });
+}
+
+
 function updateMemIntensiveProcesses() {
     $.ajax({
         url: '/sysdata',
@@ -145,6 +160,10 @@ $( document ).ready(function() {
         {lineWidth:2,strokeStyle:'#08876B'});
     smoothieCpuAvgLoad.addTimeSeries(cpuAvgLoadLine15mins,
         {lineWidth:2,strokeStyle:'#147AE0'});
+
+    setInterval(function() {
+        updateBatteryInfo();
+    }, 2500);
 
     var sourceSwap = function () {
         var $this = $(this);
