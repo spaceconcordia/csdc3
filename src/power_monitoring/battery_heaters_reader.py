@@ -4,6 +4,10 @@
 # from sensor_manager import SensorManager
 # from sensor_constants import *
 # from statistics import median
+import random
+
+def returnRandInt(minValue, maxValue):
+    return int(random.random()*(maxValue - minValue + 1)) % (maxValue + 1) + minValue
 
 def BatteryHeatersReader():
     # Get temperature inputs
@@ -28,8 +32,36 @@ def BatteryHeatersReader():
     # for iden in statusIdentifiers:
     #         statusValues.append(SensorManager.gpio_input(iden,0))
 
-    tempValues = [27.2, -1, 31.2, 33.2]
-    statusValues = [True, False, False, True]
+    randInt = returnRandInt(1, 10)
+
+    tempValues = []
+    if randInt > 5:
+        # Increase
+        tempValues.append(randInt)
+        tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
+        tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
+        tempValues.append(tempValues[len(tempValues)-1]+returnRandInt(0, 10))
+    elif randInt == 5:
+        # Constant
+        tempValues.append(randInt)
+        tempValues.append(returnRandInt(5, 25))
+        tempValues.append(returnRandInt(5, 25))
+        tempValues.append(returnRandInt(5, 25))
+    else:
+        # Decrease
+        tempValues.append(randInt)
+        tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
+        tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
+        tempValues.append(tempValues[len(tempValues)-1]-1*returnRandInt(0, 10))
+
+    # tempValues = [27.2, -1, 31.2, 33.2]
+    statusValues = []
+    for i in range(0,4):
+        randInt = returnRandInt(0, 1)
+        if randInt == 1:
+            statusValues.append(True)
+        else:
+            statusValues.append(False)
 
     # Set up dict containing result
     result = {"control": "OBC", "batteries": []}
