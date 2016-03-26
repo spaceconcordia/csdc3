@@ -431,7 +431,7 @@ class SensorManager:
             return None
 
         # Log data
-        value = Utility.conv_bin_to_int(decValue, fractValue)
+        value = Utility.conv_bin_to_float(decValue, fractValue)
         sub = SensorEntropy.subsystem(sensorId)
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
