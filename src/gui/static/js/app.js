@@ -56,7 +56,11 @@ function updateBatteryInfo() {
         },
         success: function(data) {
             control = (data['data'])["control"];
-            console.log(control);
+            if (control == 'OBC') {
+                $('#control-title').text('In Control: On-Board Computer(OBC)');
+            } else {
+                $('#control-title').text('In Control: Analog Circuit');
+            }
             batteries = (data['data'])["batteries"];
             for (idx in batteries) {
                 temp = (batteries[idx])['temp'];

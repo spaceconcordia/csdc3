@@ -250,9 +250,6 @@ tr, th {
 	width: 40%;
 }
 
-.bat1-icon, .bat2-icon, .bat3-icon, .bat4-icon {
-    /*background-image: url(path/to/my/icon.jpg);*/
-    background-position: left center;
-    background-repeat: no-repeat;
-    padding-left: 16px; /* Or size of icon + spacing */
+#control-title{
+    margin-bottom: 2.5%;
 }
