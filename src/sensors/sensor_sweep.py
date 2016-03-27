@@ -13,37 +13,43 @@ import time
 import math
 from sensor_manager import SensorManager
 from SharedLock import Lock
+import cProfile
 
 def main():
-    lock = Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
+    lock = Lock(SENSOR_LOCK)
 
     try:
-        #lock.acquire()
-        print("Creating sensor lists")
+        lock.acquire()
+
         # Create sensor lists
+        print("Creating sensor lists")
         tempSensorList = [TEMP_EPS_BRD, TEMP_PAYLOAD_BRD]
         magSensorList= [MAG_0, MAG_1, MAG_2]
         powerSensorList = [POWER]
         masterList = list(set(tempSensorList) | set(magSensorList)
         | set(powerSensorList))
-        print("Getting functions for initialization")
+
         functionsDict = {}
         # Declare functions used for initialization
+        print("Getting functions for initialization")
         functionsDict["init_temp"] = SensorManager.init_temp_sensor
         functionsDict["init_mag"] = SensorManager.init_magnetometer
         functionsDict["init_power"] = SensorManager.init_power_sensor
-        print("Getting functions for reading")
+
         # Declare functions used for reading
+        print("Getting functions for reading")
         functionsDict["read_temp"] = SensorManager.read_temp_sensor
         functionsDict["read_mag"] = SensorManager.read_magnetometer
         functionsDict["read_power"] = SensorManager.read_power_sensor
-        print("Getting functions for stopping")
+
         # Declare functions used for stopping
+        print("Getting functions for stopping")
         functionsDict["stop_temp"] = SensorManager.stop_temp_sensor
         functionsDict["stop_mag"] = SensorManager.stop_magnetometer
         functionsDict["stop_power"] = SensorManager.stop_power_sensor
-        print("Initializing sensors")
+
         # Initialize sensors
+        print("Initializing sensors")
         for sensor in masterList:
             if sensor in tempSensorList:
                 functionsDict["init_temp"](sensor)
@@ -56,8 +62,9 @@ def main():
             for i in range(5):
                 start = time.time()
                 sensorValueDict = {}
-                print("Getting sensor values")
+
                 # Get sensor values
+                print("Getting sensor values")
                 for sensor in masterList:
                     if sensor in tempSensorList:
                         result = functionsDict["read_temp"](sensor)
@@ -66,13 +73,15 @@ def main():
                     elif sensor in powerSensorList:
                         result = functionsDict["read_power"](sensor)
                     sensorValueDict[sensor] = result
+
                 # Get time it took to complete operations
                 readtime = time.time() - start
                 sensorValueDict["Time"] = readtime
                 print("Getting completion time: {}".format(readtime))
                 f.write(str(sensorValueDict) + '\n')
-        print("Stopping sensors")
+
         # Stop sensors
+        print("Stopping sensors")
         for sensor in masterList:
             if sensor in tempSensorList:
                 functionsDict["stop_temp"](sensor)
@@ -82,8 +91,9 @@ def main():
                 functionsDict["stop_power"](sensor)
 
     finally:
-        #lock.release()
+        lock.release()
         pass
 
 if __name__ == "__main__":
     main()
+    # cProfile.run("main()")
