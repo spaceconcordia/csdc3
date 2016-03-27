@@ -65,13 +65,13 @@ def selectPayloadData(start_time, end_time):
     payload_rows = []
     conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + TELEMETRY_DB)
     c = conn.cursor()
-    #for row in c.execute
-    print("SELECT * FROM tabolo WHERE " +
+    for row in c.execute("SELECT * FROM tabolo WHERE " +
         SENSORID  + " = " + ADC_0 + " AND " +
         TIMESTAMP + " >= " + str(start_time) + " AND " +
-        TIMESTAMP + " <= " + str(end_time))
-    #    payload_rows.append(row)
+        TIMESTAMP + " <= " + str(end_time)):
+        payload_rows.append(row)
     conn.close()
+    return payload_rows
     #return list(reversed(payload_rows))
 
 def insertSystemCallLog(level, syscall, subsystem, timestamp, stderr):
@@ -166,5 +166,5 @@ if __name__ == "__main__":
     """
 
     for experiment in list(reversed(selectPayloadLog())):
-        print(experiment)
+        print(selectPayloadData(experiment[0], experiment[1]))
     
