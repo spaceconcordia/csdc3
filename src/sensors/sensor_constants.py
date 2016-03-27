@@ -10,6 +10,10 @@ INA219_VOLTAGE = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hw
 INA219_POWER = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/power1_input"
 I2C_DEVICE_PATH = "/sys/class/i2c-adapter/i2c-0/new_device"
 
+# Paths for locks
+PAYLOAD_LOCK = "/root/csdc3/src/utils/payloadLock.tmp"
+SENSOR_LOCK = "/root/csdc3/src/utils/sensorReadingLock.tmp"
+
 # different sensor classes (Range: 0x00 - 0x02)
 I2C =        0x00
 GPIO =       0x01
