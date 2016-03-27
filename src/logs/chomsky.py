@@ -2,12 +2,15 @@
 Connect to each one of the DBs (3 copies) & create their tables.
 It does it for both data_logs and system_logs.
 """
+import time
 import sqlite3
+
 import sys
+sys.path.insert(0, '/root/csdc3/src/sensors')
+from sensor_constants       import *
 sys.path.insert(0, '/root/csdc3/src/logs/config_setup')
 from config_setup_constants import *
 from empty_table            import emptyTables
-import time
 
 def insertTelemetryLog(sensor_id, value, subsystem, timestamp):
     copies = ["/copy1/", "/copy2/", "/copy3/"]
@@ -58,15 +61,17 @@ def selectPayloadLog():
     conn.close()
     return list(reversed(payload_rows))
 
-def selectPayloadData():
-    pass
-    #payload_rows = []
-    #conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + TELEMETRY_DB)
-    #c = conn.cursor()
-    #for row in c.execute("SELECT * FROM tabolo WHERE " +
-    #    SENSORID + " = " + "ADC" + "AND" + "AND" + ):
+def selectPayloadData(start_time, end_time):
+    payload_rows = []
+    conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + TELEMETRY_DB)
+    c = conn.cursor()
+    #for row in c.execute
+    print("SELECT * FROM tabolo WHERE " +
+        SENSORID  + " = " + ADC_0 + " AND " +
+        TIMESTAMP + " >= " + str(start_time) + " AND " +
+        TIMESTAMP + " <= " + str(end_time))
     #    payload_rows.append(row)
-    #conn.close()
+    conn.close()
     #return list(reversed(payload_rows))
 
 def insertSystemCallLog(level, syscall, subsystem, timestamp, stderr):
@@ -159,7 +164,7 @@ if __name__ == "__main__":
     print(selectDebugLog(CDH))
 #    emptyTables()
     """
-    for i in range(5):
-        insertPayloadLog(int(time.time()), int(time.time()))
 
-    print(list(reversed(selectPayloadLog())))
+    for experiment in list(reversed(selectPayloadLog())):
+        print(experiment)
+    
