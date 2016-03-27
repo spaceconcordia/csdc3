@@ -17,6 +17,7 @@
         <script type="text/javascript" src="{{ static_url("node_modules/canvasjs/canvasjs.min.js") }}"></script>
         <script type="text/javascript">
             window.onload = function () {
+                console.log({{b1_temp}})
                 var charttemp1 = new CanvasJS.Chart("chartBatteryTemp1",
                 {
                     animationEnabled: true,
@@ -38,9 +39,7 @@
                     name: "series1",
                     legendText: "Battery 1 - Temperature",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                    ]
+                    dataPoints: {{b1_temp}}
                 }
                     ],
                 legend: {
@@ -78,9 +77,7 @@
                     name: "series1",
                     legendText: "Battery Heater 1 - State",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                    ]
+                    dataPoints: {{b1_heat}}
                 }
                     ],
                 legend: {
@@ -118,9 +115,7 @@
                     name: "series1",
                     legendText: "Battery 2 - Temperature",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                    ]
+                    dataPoints: {{b2_temp}}
                 }
                     ],
                 legend: {
@@ -158,9 +153,7 @@
                     name: "series1",
                     legendText: "Battery Heater 2 - State",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                    ]
+                    dataPoints: {{b2_heat}}
                 }
                     ],
                 legend: {
@@ -198,9 +191,7 @@
                     name: "series1",
                     legendText: "Battery 3 - Temperature",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                    ]
+                    dataPoints: {{b3_temp}}
                 }
                     ],
                 legend: {
@@ -238,9 +229,7 @@
                     name: "series1",
                     legendText: "Battery Heater 3 - State",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                    ]
+                    dataPoints: {{b3_heat}}
                 }
                     ],
                 legend: {
@@ -278,9 +267,7 @@
                     name: "series1",
                     legendText: "Battery 4 - Temperature",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                    ]
+                    dataPoints: {{b4_temp}}
                 }
                     ],
                 legend: {
@@ -318,9 +305,7 @@
                     name: "series1",
                     legendText: "Battery Heater 4 - State",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                    ]
+                    dataPoints: {{b4_heat}}
                 }
                     ],
                 legend: {
