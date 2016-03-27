@@ -11,12 +11,16 @@
 #
 # By default this script does nothing.
 
-#Set the on-board led as mmc0 activity 
-echo "timer" > /sys/class/leds/arietta_led/trigger 
-echo "2000" > /sys/class/leds/arietta_led/delay_on 
+#Set the on-board led as mmc0 activity
+echo "timer" > /sys/class/leds/arietta_led/trigger
+echo "2000" > /sys/class/leds/arietta_led/delay_on
 echo "1000" > /sys/class/leds/arietta_led/delay_off
 
-#echo ds3232 0x68 > /sys/class/i2c-adapter/i2c-0/new_device
-#hwclock -s
+python3 /root/csdc3/src/watchdog/watchdog.py &
+echo ds3232 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+hwclock -s
+python3 /root/csdc3/src/sensors/gpio.py &
+#python3 /root/csdc3/src/power_monitoring/ShutAllBatteryHeaters.py &
+#python3 /root/csdc3/src/payload/payload.py &
 
 exit 0

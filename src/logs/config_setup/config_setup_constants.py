@@ -14,6 +14,7 @@ NUM_REDUNDANT_COPIES = 3
 SYSTEM_CALLS_DB  =    "syscall.db"
 DEBUG_LOGS_DB =       "debuglogs.db"
 TELEMETRY_DB =        "telemetry.db"
+PAYLOAD_DB =          "payload.db"
 
 # constants for db and table names and value types
 SUBSYSTEM =           "Subsystem"
@@ -30,6 +31,8 @@ SENSORID =            "SensorIdentifier"
 VALUE =               "Val"
 TIMESTAMP =           "Timestamp"
 LEVEL =               "Level"
+START_TIME =          "Start"
+END_TIME =            "End"
 
 # debug levels
 NOTICE =              "NOTICE"
@@ -72,8 +75,14 @@ DEBUG_LOGS_COLS = [
 ,   (TIMESTAMP, INTEGER)
 ]
 
+PAYLOAD_COLS = [
+    (START_TIME, INTEGER)
+,   (END_TIME, INTEGER)
+]
+
 DB_TABLES_LIST = [
     (SYSTEM_CALLS_DB, SYSTEM_CALLS_COLS, SYSTEM_LOGS_PATH)
 ,   (DEBUG_LOGS_DB, DEBUG_LOGS_COLS, SYSTEM_LOGS_PATH)
 ,   (TELEMETRY_DB, TELEMETRY_COLS, DATA_LOGS_PATH)
+,   (PAYLOAD_DB, PAYLOAD_COLS, DATA_LOGS_PATH)
 ]

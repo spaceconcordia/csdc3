@@ -10,8 +10,6 @@ from empty_table            import emptyTables
 import time
 
 def insertTelemetryLog(sensor_id, value, subsystem, timestamp):
-    if value is None:
-        return
     copies = ["/copy1/", "/copy2/", "/copy3/"]
     for copy in copies:
         conn = sqlite3.connect(DATA_LOGS_PATH + copy + TELEMETRY_DB)
@@ -33,6 +31,30 @@ def selectTelemetryLog(sensor_id):
     for row in c.execute("SELECT * FROM tabolo WHERE "
         + SENSORID + "='" + sensor_id + "'"
         + " ORDER BY " + TIMESTAMP + " DESC"):
+        telemetry_rows.append(row)
+    conn.close()
+    return telemetry_rows
+
+def insertPayloadLog(start_time, end_time):
+    copies = ["/copy1/", "/copy2/", "/copy3/"]
+    for copy in copies:
+        conn = sqlite3.connect(DATA_LOGS_PATH + copy + PAYLOAD_DB)
+        c = conn.cursor()
+        c.execute("INSERT INTO tabolo VALUES ('"
+            + str(start_time) + "','"
+            + str(end_time)
+            + "')")
+        conn.commit()
+        conn.close()
+    writePayloadLogs(start_time, end_time)
+
+def selectPayloadLog(start_time, end_time):
+    telemetry_rows = []
+    conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + PAYLOAD_DB)
+    c = conn.cursor()
+    for row in c.execute("SELECT * FROM tabolo WHERE "
+        + START_TIME + " >= " + str(start_time) + " AND "
+        + END_TIME + " <= " + str(end_time)):
         telemetry_rows.append(row)
     conn.close()
     return telemetry_rows
@@ -92,18 +114,24 @@ def selectDebugLog(subsystem):
 
 def writeTelemetryLogs(sensor_id, value, subsystem, timestamp):
     with open(STATIC_LOGS_PATH + '/telemetry.log', 'a') as f:
-        f.write(' '.join([sensor_id, str(value), subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-5*60*60))]) + '\n ')
+        f.write(' '.join([sensor_id, str(value), subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-4*60*60))]) + '\n ')
 
 def writeSyscallLogs(level, syscall, subsystem, timestamp, stderr):
     with open(STATIC_LOGS_PATH + '/syscall.log', 'a') as f:
-        f.write(' '.join([level, syscall, subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-5*60*60)), stderr]) + '\n ')
+        f.write(' '.join([level, syscall, subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-4*60*60)), stderr]) + '\n ')
 
 def writeDebugLogs(level, log, subsystem, timestamp):
     with open(STATIC_LOGS_PATH + '/debuglogs.log', 'a') as f:
-        f.write(' '.join([level, log, subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-5*60*60))]) + '\n ')
+        f.write(' '.join([level, log, subsystem, time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-4*60*60))]) + '\n ')
+
+def writePayloadLogs(start_time, end_time):
+    timestamp = int(time.time())
+    with open(STATIC_LOGS_PATH + '/payload.log', 'a') as f:
+        f.write(' '.join([str(start_time), str(end_time), time.strftime('%m/%d/%Y %H:%M:%S',  time.gmtime(timestamp-4*60*60))]) + '\n ')
 
 if __name__ == "__main__":
     # TelemetryLog SELECT & INSERT tests
+    """
     for i in range(50):
         insertTelemetryLog("sensor_id", 5, PAYLOAD, i)
     print(selectTelemetryLog("sensor_id"))
@@ -120,3 +148,13 @@ if __name__ == "__main__":
         insertDebugLog(NOTICE, "FUCK IT DUDE", CDH , i)
     print(selectDebugLog(CDH))
 #    emptyTables()
+    """
+    start_time = int(time.time())
+    for i in range(5):
+        insertPayloadLog(int(time.time()), int(time.time()))
+    end_time = int(time.time())
+    test = "SELECT * FROM tabolo WHERE " \
+        + START_TIME + " <= " + str(start_time) + " AND " \
+        + END_TIME + " >= " + str(end_time)
+
+    print(selectPayloadLog(start_time, end_time))

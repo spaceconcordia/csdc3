@@ -8,77 +8,104 @@ sys.path.append("/root/csdc3/src/sensors")
 sys.path.append("/root/csdc3/src/utils/")
 sys.path.append("/root/csdc3/src/logs/")
 sys.path.append("/root/csdc3/src/logs/config_setup")
-import time
-import os
 from sensor_entropy import *
 from sensor_manager import SensorManager
 from SharedLock import Lock
 from chomsky import *
+import argparse
+import utility
+import time
+import os
 
 class Payload():
-    PAYLOAD_MAX_TIME = 180
-    PAYLOAD_ACTUATE_TIME = 60.0
-    PAYLOAD_MAX_STRAIN = 9999
+    PAYLOAD_MAX_TIME = 450
+    PAYLOAD_ACTUATE_TIME = 255.0
+    PAYLOAD_MAX_LOADCELL = 9999
     PAYLOAD_SAMPLING_FREQ = 3
 
     PAYLOAD_MIN_SPACE = 10440
-    PAYLOAD_MIN_VBAT = 3
+    PAYLOAD_MIN_VBAT = 3.0
+    MAX_ACTUATE_TEMP = 40.
     HEATER_ON_TIME = 3
     def __init__(self, experiment, max_time=PAYLOAD_MIN_SPACE, \
-                  max_strain=PAYLOAD_MAX_STRAIN, sampling_freq=PAYLOAD_SAMPLING_FREQ):
+                 max_loadcell=PAYLOAD_MAX_LOADCELL, sampling_freq=PAYLOAD_SAMPLING_FREQ, \
+                 max_temp=MAX_ACTUATE_TEMP, heater_period=HEATER_ON_TIME, actuate_time=PAYLOAD_ACTUATE_TIME):
         self.experiment = experiment
+        if self.experiment == 1:
+            self.heater = PAYLOAD_HTR_B_GPIO
+            self.temp_sensor = TEMP_PAYLOAD_B
+        else:
+            self.heater = PAYLOAD_HTR_A_GPIO
+            self.temp_sensor = TEMP_PAYLOAD_A
         self.max_time = max_time
-        self.max_strain = max_strain
+        self.max_loadcell = max_loadcell
         self.sampling_freq = sampling_freq
+        self.heater_period = heater_period
+        self.max_temp = max_temp
+        self.actuate_time = actuate_time
         self.lock = Lock("/root/csdc3/src/utils/payloadLock.tmp")
 
     def check_initial_conditions(self):
         # Check battery voltage
-        vbat = 3.3
+        SensorManager.init_power_sensor(POWER)
+        power = SensorManager.read_power_sensor(POWER)
+        vbat = power[0] / 1000.
         # Check available memory
-        free_space = get_disk_usage('/')
-        print("Free space", free_space)
+        free_space = utility.get_disk_usage('/')
+        #print("Free space", free_space)
         if free_space >= self.PAYLOAD_MIN_SPACE and vbat >= self.PAYLOAD_MIN_VBAT:
             return True
         else:
+            print("Experiment cancelled")
+            print(free_space, vbat)
+            insertDebugLog(NOTICE, "Cancelled. Free space: %d, vbat: %.2f" % \
+                (free_space, vbat, PAYLOAD, int(time.time())))
             return False
 
     def init_sensors(self):
         SensorManager.init_adc(ADC)
-        #SensorManager.init_temp_sensor()
+        SensorManager.init_temp_sensor(self.temp_sensor)
 
     def start(self):
         insertDebugLog(NOTICE, "Starting. Runtime: %ds, Actuate time: %ds, Max strain: %d, Sampling Freq: %d." % \
-            (self.PAYLOAD_MAX_TIME, self.PAYLOAD_ACTUATE_TIME, self.PAYLOAD_MAX_STRAIN, \
-             self.HEATER_ON_TIME), PAYLOAD, int(time.time()))
+            (self.max_time, self.actuate_time, self.max_loadcell, \
+             self.heater_period), PAYLOAD, int(time.time()))
+        print("Starting payload...")
+        print("Runtime: %ds, Actuate time: %ds, Max strain: %d, Sampling period: %ds" % \
+            (self.max_time, self.actuate_time, self.max_loadcell, \
+             self.heater_period))
 
         if not self.check_initial_conditions():
             return False
-        print("Starting payload...")
         self.lock.acquire()
         self.set_power(True)
         self.init_sensors()
         start_time = time.time()
         elapsed = 0
         while True:
-            if elapsed <= self.PAYLOAD_ACTUATE_TIME:
+            heater_temp = 0
+            if elapsed <= self.actuate_time or heater_temp < self.max_temp:
                 self.set_heaters(self.experiment, True)
-                time.sleep(self.HEATER_ON_TIME)
+                time.sleep(self.heater_period)
             else:
                 print("No longer turning heaters on")
-                time.sleep(self.HEATER_ON_TIME)
+                time.sleep(self.heater_period)
                 self.set_heaters(self.experiment, False)
             self.set_heaters(self.experiment, False)
             elapsed = time.time() - start_time
             off_time = time.time()
             print("[" + str(round(elapsed, 3)) + " s] ", end='')
-            strain, force, adc_temp, heater_temp = SensorManager.read_adc(self.experiment, ADC)
+            strain, force, adc_temp = SensorManager.read_adc(self.experiment, ADC)
+            if self.experiment:
+                heater_temp = SensorManager.read_temp_sensor(TEMP_PAYLOAD_B)
+            else:
+                heater_temp = SensorManager.read_temp_sensor(TEMP_PAYLOAD_A)
             print(strain, force, adc_temp, heater_temp)
             sleep_time = time.time() - off_time
             elapsed = time.time() - start_time
-            time.sleep(abs(self.HEATER_ON_TIME - sleep_time))
+            time.sleep(abs(self.heater_period - sleep_time))
             elapsed = time.time() - start_time
-            strain, force, adc_temp, heater_temp = SensorManager.read_adc(self.experiment, ADC)
+            strain, force, adc_temp = SensorManager.read_adc(self.experiment, ADC)
             print("[" + str(round(elapsed, 3)) + " s] ", end='')
             print(strain, force, adc_temp, heater_temp)
 
@@ -90,17 +117,19 @@ class Payload():
 
     def end(self):
         print("Payload ending...")
-        # Turn off ADC
+        insertDebugLog(NOTICE, "Ending", PAYLOAD, int(time.time()))
+
+        SensorManager.stop_temp_sensor(self.temp_sensor)
         SensorManager.stop_adc_sensor(ADC)
+
         self.set_heaters(self.experiment, False)
         self.set_power(False)
-        insertDebugLog(NOTICE, "Ending", PAYLOAD, int(time.time()))
 
     def set_heaters(self, experiment=0, state=False):
         if state == False:
-            SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, OFF)
+            SensorManager.gpio_output(self.heater, OFF)
         else:
-            SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, ON)
+            SensorManager.gpio_output(self.heater, ON)
 
         return True
 
@@ -115,21 +144,31 @@ class Payload():
         return True
 
     def is_end_condition(self, strain, elapsed):
-        if strain >= self.PAYLOAD_MAX_STRAIN or elapsed >= self.PAYLOAD_MAX_TIME:
+        if strain >= self.max_loadcell or elapsed >= self.max_time:
             return True
         else:
             return False
 
-def get_disk_usage(path):
-    st = os.statvfs(path)
-    free = (st.f_bavail * st.f_frsize)
-    total = (st.f_blocks * st.f_frsize)
-    used = (st.f_blocks - st.f_bfree) * st.f_frsize
-    return free
-
 def main():
-    #time.sleep(480)
-    payload = Payload(0)
+    parser = argparse.ArgumentParser(description="Payload experiment to perform a 3-point bending test on a self-healing material",
+                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument("-b", "--runb", action="store_true", help="Select second experiment to run")
+    parser.add_argument("-f", "--frequency", default=3, help="Period for sampling and heater pwm. E.g. -f 3 -> samples every 3 seconds")
+    parser.add_argument("-t", "--runtime", default=450, help="Total run time of experiment in seconds")
+    parser.add_argument("-a", "--actuatetime", default=250, help="Total run time to keep heaters on")
+    parser.add_argument("-l", "--loadcell", default=3000, help="Max load cell value to reach")
+    parser.add_argument("-m", "--maxtemp", default=40.0, help="Max temperature for heaters to be on")
+    args = parser.parse_args()
+    experiment_num = args.runb
+    frequency = args.frequency
+    runtime = args.runtime
+    actuatetime = args.actuatetime
+    loadcell = args.loadcell
+    maxtemp = args.maxtemp
+
+    payload = Payload(experiment=experiment_num, heater_period=frequency, \
+                      max_time=runtime, actuate_time=actuatetime, max_loadcell=loadcell)
     payload.start()
 
 if __name__ == "__main__":
