@@ -1,26 +1,20 @@
-# import sys
-# sys.path.append("/root/csdc3/src/sensors/")
-# sys.path.append("/root/csdc3/src/utils/")
-# from sensor_manager import SensorManager
-# from sensor_constants import *
-# from statistics import median
-import random
+import sys
+sys.path.append("/root/csdc3/src/sensors/")
+sys.path.append("/root/csdc3/src/utils/")
+from sensor_manager import SensorManager
+from sensor_constants import *
+from statistics import median
 
 def returnRandInt(minValue, maxValue):
     return int(random.random()*(maxValue - minValue + 1)) % (maxValue + 1) + minValue
 
 def BatteryHeatersReader():
-    Get temperature inputs
-    tempIdentifiers = (TEMP_BAT_1, TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4)
+    #Get temperature inputs
+    tempIdentifiers = (TEMP_BAT_4, TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_1)
     tempValues = []
     for iden in tempIdentifiers:
         SensorManager.init_temp_sensor(iden)
-        valueList = []
-        # Get median of 5 value readings to remove outliers
-        for i in range(0,5):
-            valueList.append(SensorManager.read_temp_sensor(iden))
-        tempValue = median(valueList)
-        print(tempValue)
+        tempValue = SensorManager.read_temp_sensor(iden)
         SensorManager.stop_temp_sensor(iden)
         # Keep final value of sensor
         tempValues.append(tempValue)
@@ -64,18 +58,24 @@ def BatteryHeatersReader():
     #     f.close()
 
     # Set up dict containing result
-    result = {"control": "OBC", "batteries": []}
+    result = {"control": "", "batteries": []}
 
     # Populate battery heater list with acquired values
     for i in range(0,len(tempValues)):
         if i < len(tempValues) and i < len(statusValues):
             result["batteries"].append({"temp": tempValues[i], "heaters": statusValues[i]})
 
-    return result
+    # Update control status
+    if SensorManager.gpio_input(PSS_HTR_MUX_SEL_GPIO,0):
+        result["control"] = "ANAL"
+    else:
+        result["control"] = "OBC"
 
-def main():
+    return result 
+
+def functionality():
     result = BatteryHeatersReader()
     print(result)
 
 if __name__ == '__main__':
-    main()
+    functionality()
