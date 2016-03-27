@@ -22,13 +22,13 @@ class SensorManager:
     active_gpio_pins = {}
     channel = None
     old_mux = None
-    sensorReadingLock = Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
+    # sensorReadingLock = Lock("/root/csdc3/src/utils/sensorReadingLock.tmp")
 
     """ -------------------- Initialization --------------------- """
 
     @staticmethod
     def init_gyroscope(sensorId):
-        SensorManager.sensorReadingLock.acquire()
+        # SensorManager.sensorReadingLock.acquire()
 
         insertDebugLog(NOTICE, "Initialized gyroscope: {}".format(sensorId),
         CDH, int(time.time()))
@@ -78,7 +78,7 @@ class SensorManager:
 
     @staticmethod
     def init_temp_sensor(sensorId):
-        SensorManager.sensorReadingLock.acquire()
+        # SensorManager.sensorReadingLock.acquire()
 
         insertDebugLog(NOTICE, "Initialized temp sensor: {}".format(sensorId),
         CDH, int(time.time()))
@@ -106,7 +106,7 @@ class SensorManager:
 
     @staticmethod
     def init_adc(sensorId):
-        SensorManager.sensorReadingLock.acquire()
+        # SensorManager.sensorReadingLock.acquire()
 
         insertDebugLog(NOTICE, "Initialized ADC: {}".format(sensorId),
         CDH, int(time.time()))
@@ -183,8 +183,8 @@ class SensorManager:
             insertDebugLog(NOTICE, "[STOP] Error writing to gyroscope: {}".format(sensorId),
             CDH, int(time.time()))
             return None
-        finally:
-            SensorManager.sensorReadingLock.release()
+        # finally:
+        #     SensorManager.sensorReadingLock.release()
 
         time.sleep(0.1)
 
@@ -192,7 +192,7 @@ class SensorManager:
     def stop_magnetometer(sensorId):
         insertDebugLog(NOTICE, "Stop magnetometer: {}".format(sensorId),
         CDH, int(time.time()))
-        SensorManager.sensorReadingLock.release()
+        # SensorManager.sensorReadingLock.release()
 
     @staticmethod
     def stop_temp_sensor(sensorId):
@@ -213,8 +213,8 @@ class SensorManager:
             insertDebugLog(NOTICE, "[STOP] Error writing to temperature sensor: {}".format(sensorId),
             CDH, int(time.time()))
             return None
-        finally:
-            SensorManager.sensorReadingLock.release()
+        # finally:
+        #     SensorManager.sensorReadingLock.release()
 
 
     @staticmethod
@@ -233,8 +233,8 @@ class SensorManager:
             insertDebugLog(NOTICE, "[STOP] Error writing to ADC: {}".format(sensorId),
             CDH, int(time.time()))
             return None
-        finally:
-            SensorManager.sensorReadingLock.release()
+        # finally:
+        #     SensorManager.sensorReadingLock.release()
 
     @staticmethod
     def stop_rtc(sensorId):
@@ -244,7 +244,7 @@ class SensorManager:
     def stop_power_sensor(sensorId):
         insertDebugLog(NOTICE, "Stop power sensor: {}".format(sensorId),
         CDH, int(time.time()))
-        SensorManager.sensorReadingLock.release()
+        # SensorManager.sensorReadingLock.release()
 
     """ -------------------- Reading --------------------- """
 
