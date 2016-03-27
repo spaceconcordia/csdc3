@@ -102,7 +102,7 @@ class SensorManager:
             insertDebugLog(NOTICE, "[INIT] Error writing to temperature sensor: {}".format(sensorId),
              CDH, int(time.time()))
             return None
-        time.sleep(0.05)
+        time.sleep(0.1)
 
     @staticmethod
     def init_adc(sensorId):
@@ -112,7 +112,6 @@ class SensorManager:
         CDH, int(time.time()))
 
         SensorManager.mux_select(sensorId)
-        print(SensorManager.channel)
         addr = SensorEntropy.addr(sensorId)
         adc_reg = SensorEntropy.reg(ADC)
         bus = SensorManager.bus
@@ -147,10 +146,10 @@ class SensorManager:
 
         insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorId),
         CDH, int(time.time()))
+        SensorManager.mux_select(sensorId)
 
         try:
             if not os.path.isdir(INA219_PATH):
-                SensorManager.mux_select(sensorId)
                 with open(I2C_DEVICE_PATH, "w") as f:
                     f.write("ina219 0x40")
 
@@ -158,10 +157,10 @@ class SensorManager:
                 f.write("2000")
 
         except(IOError, OSError):
-            print('[INIT] Error reading from Power sensor at address ' + str(addr))
+            print('[INIT] Error reading from Power sensor')
             insertDebugLog(NOTICE, "[INIT] Error reading from Power sensor: {}".format(sensorId),
             CDH, int(time.time()))
-            return None
+        return None
 
     """ -------------------- Stop --------------------- """
 
@@ -457,8 +456,6 @@ class SensorManager:
             temp = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFF80
             temp = temp >> 7
 
-            temperature = DS18B20("000001aaf1cb")
-            heater_temp = temperature.getTemp()
         except(IOError, OSError):
             SensorManager.bus.write_byte(0x70, 1 << 0)
             print('[READ] Error reading from ADC at address ' + \
@@ -475,27 +472,31 @@ class SensorManager:
         sleep(0.01)
 
         # Log data
-        value = (strain, force, temp, heater_temp)
+        value = (strain, force, temp)
         sub = SensorEntropy.subsystem(sensorId)
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
 
     @staticmethod
-    def read_power_sensor(sensorId, getRaw=False):
+    def read_power_sensor(sensorId, getRaw=True):
         insertDebugLog(NOTICE, "Read power sensor: {}".format(sensorId),
         CDH, int(time.time()))
 
         SensorManager.mux_select(sensorId)
+        value = 0, 0, 0
 
         try:
             with open(INA219_VOLTAGE) as v, open(INA219_CURRENT) as a, open(INA219_POWER) as p:
-                value = (int(v.read()), int(a.read()), int(p.read()))
-            """
+                voltage = int(v.read())
+                amps = int(a.read())
+                power  = int(p.read())
+
             if not getRaw:
-                value[0] = value[0] / 1000.
-                value[1] = value[1] / 1000.
-                value[2] = value[2] / 1000000.
-            """
+                voltage = voltage / 1000.
+                amps = amps / 1000.0
+                power = power/ 1000000.0
+
+            value = (voltage, amps, power)
 
             sub = POWER
             insertTelemetryLog(sensorId, value, sub, int(time.time()))
@@ -505,7 +506,7 @@ class SensorManager:
 
         return value
 
-    def read_switch_current(num, getRaw=False):
+    def read_switch_current(num, getRaw=True):
         with open(SWITCH_CURRENT_PATH + "in_voltage%d_raw" % num) as f:
             value = int(f.read())
 
@@ -596,6 +597,9 @@ class SensorManager:
         elif sensorId == ADC:
             newChannel = I2C_DEVICES_LOOKUP_TABLE[ADC][CH][0]
             mux_address = I2C_DEVICES_LOOKUP_TABLE[ADC][MUX]
+        else:
+            print('Could not find sensorId', sensorId)
+            insertDebugLog(NOTICE, "[mux_select] Could not find sensorId: {}".format(sensorId), CDH, int(time.time()))
 
         if newChannel is None or newChannel < 0 or newChannel > 7:
             return False
