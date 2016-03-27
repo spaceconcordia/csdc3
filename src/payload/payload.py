@@ -30,7 +30,8 @@ class Payload():
         self.max_time = max_time
         self.max_strain = max_strain
         self.sampling_freq = sampling_freq
-        self.lock = Lock("/root/csdc3/src/utils/payloadLock.tmp")
+        self.payloadLock = Lock(PAYLOAD_LOCK)
+        self.sensorLock = Lock(SENSOR_LOCK)
 
     def check_initial_conditions(self):
         # Check battery voltage
@@ -48,44 +49,54 @@ class Payload():
         #SensorManager.init_temp_sensor()
 
     def start(self):
-        insertDebugLog(NOTICE, "Starting. Runtime: %ds, Actuate time: %ds, Max strain: %d, Sampling Freq: %d." % \
-            (self.PAYLOAD_MAX_TIME, self.PAYLOAD_ACTUATE_TIME, self.PAYLOAD_MAX_STRAIN, \
-             self.HEATER_ON_TIME), PAYLOAD, int(time.time()))
+        try:
+            insertDebugLog(NOTICE, "Starting. Runtime: %ds, Actuate time: %ds, Max strain: %d, Sampling Freq: %d." % \
+                (self.PAYLOAD_MAX_TIME, self.PAYLOAD_ACTUATE_TIME, self.PAYLOAD_MAX_STRAIN, \
+                 self.HEATER_ON_TIME), PAYLOAD, int(time.time()))
 
-        if not self.check_initial_conditions():
-            return False
-        print("Starting payload...")
-        self.lock.acquire()
-        self.set_power(True)
-        self.init_sensors()
-        start_time = time.time()
-        elapsed = 0
-        while True:
-            if elapsed <= self.PAYLOAD_ACTUATE_TIME:
-                self.set_heaters(self.experiment, True)
-                time.sleep(self.HEATER_ON_TIME)
-            else:
-                print("No longer turning heaters on")
-                time.sleep(self.HEATER_ON_TIME)
+            if not self.check_initial_conditions():
+                return False
+            print("Starting payload...")
+            self.payloadLock.acquire()
+            self.sensorLock.acquire()
+            self.set_power(True)
+            self.init_sensors()
+            start_time = time.time()
+            elapsed = 0
+            while True:
+                if elapsed <= self.PAYLOAD_ACTUATE_TIME:
+                    self.set_heaters(self.experiment, True)
+                    time.sleep(self.HEATER_ON_TIME)
+                else:
+                    print("No longer turning heaters on")
+                    time.sleep(self.HEATER_ON_TIME)
+                    self.set_heaters(self.experiment, False)
                 self.set_heaters(self.experiment, False)
-            self.set_heaters(self.experiment, False)
-            elapsed = time.time() - start_time
-            off_time = time.time()
-            print("[" + str(round(elapsed, 3)) + " s] ", end='')
-            strain, force, adc_temp, heater_temp = SensorManager.read_adc(self.experiment, ADC)
-            print(strain, force, adc_temp, heater_temp)
-            sleep_time = time.time() - off_time
-            elapsed = time.time() - start_time
-            time.sleep(abs(self.HEATER_ON_TIME - sleep_time))
-            elapsed = time.time() - start_time
-            strain, force, adc_temp, heater_temp = SensorManager.read_adc(self.experiment, ADC)
-            print("[" + str(round(elapsed, 3)) + " s] ", end='')
-            print(strain, force, adc_temp, heater_temp)
+                elapsed = time.time() - start_time
+                off_time = time.time()
+                print("[" + str(round(elapsed, 3)) + " s] ", end='')
+                strain, force, adc_temp, heater_temp = SensorManager.read_adc(self.experiment, ADC)
+                print(strain, force, adc_temp, heater_temp)
+                sleep_time = time.time() - off_time
+                elapsed = time.time() - start_time
+                time.sleep(abs(self.HEATER_ON_TIME - sleep_time))
+                elapsed = time.time() - start_time
+                strain, force, adc_temp, heater_temp = SensorManager.read_adc(self.experiment, ADC)
+                print("[" + str(round(elapsed, 3)) + " s] ", end='')
+                print(strain, force, adc_temp, heater_temp)
 
-            if self.is_end_condition(strain, elapsed):
-                break
-        self.end()
-        self.lock.release()
+                if self.is_end_condition(strain, elapsed):
+                    break
+        except:
+            raise "Error running payload experiment"
+            insertDebugLog(NOTICE, "Error running payload experiment",
+            PAYLOAD, int(time.time()))
+        finally:
+            self.end()
+            self.payloadLock.release()
+            self.sensorLock.release()
+            return False
+
         return True
 
     def end(self):
