@@ -33,6 +33,7 @@ TIMESTAMP =           "Timestamp"
 LEVEL =               "Level"
 START_TIME =          "Start"
 END_TIME =            "End"
+A_OR_B =              "AorB"
 
 # debug levels
 NOTICE =              "NOTICE"
@@ -78,6 +79,7 @@ DEBUG_LOGS_COLS = [
 PAYLOAD_COLS = [
     (START_TIME, INTEGER)
 ,   (END_TIME, INTEGER)
+,   (A_OR_B, TEXT)
 ]
 
 DB_TABLES_LIST = [

@@ -35,29 +35,39 @@ def selectTelemetryLog(sensor_id):
     conn.close()
     return telemetry_rows
 
-def insertPayloadLog(start_time, end_time):
+def insertPayloadLog(start_time, end_time, a_or_b):
     copies = ["/copy1/", "/copy2/", "/copy3/"]
     for copy in copies:
         conn = sqlite3.connect(DATA_LOGS_PATH + copy + PAYLOAD_DB)
         c = conn.cursor()
         c.execute("INSERT INTO tabolo VALUES ('"
             + str(start_time) + "','"
-            + str(end_time)
+            + str(end_time) + "','"
+            + a_or_b
             + "')")
         conn.commit()
         conn.close()
     writePayloadLogs(start_time, end_time)
 
-def selectPayloadLog(start_time, end_time):
-    telemetry_rows = []
+def selectPayloadLog():
+    payload_rows = []
     conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + PAYLOAD_DB)
     c = conn.cursor()
-    for row in c.execute("SELECT * FROM tabolo WHERE "
-        + START_TIME + " >= " + str(start_time) + " AND "
-        + END_TIME + " <= " + str(end_time)):
-        telemetry_rows.append(row)
+    for row in c.execute("SELECT * FROM tabolo"):
+        payload_rows.append(row)
     conn.close()
-    return telemetry_rows
+    return list(reversed(payload_rows))
+
+def selectPayloadData():
+    pass
+    #payload_rows = []
+    #conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + TELEMETRY_DB)
+    #c = conn.cursor()
+    #for row in c.execute("SELECT * FROM tabolo WHERE " +
+    #    SENSORID + " = " + "ADC" + "AND" + "AND" + ):
+    #    payload_rows.append(row)
+    #conn.close()
+    #return list(reversed(payload_rows))
 
 def insertSystemCallLog(level, syscall, subsystem, timestamp, stderr):
     copies = ["/copy1/", "/copy2/", "/copy3/"]
@@ -149,12 +159,7 @@ if __name__ == "__main__":
     print(selectDebugLog(CDH))
 #    emptyTables()
     """
-    start_time = int(time.time())
     for i in range(5):
         insertPayloadLog(int(time.time()), int(time.time()))
-    end_time = int(time.time())
-    test = "SELECT * FROM tabolo WHERE " \
-        + START_TIME + " <= " + str(start_time) + " AND " \
-        + END_TIME + " >= " + str(end_time)
 
-    print(selectPayloadLog(start_time, end_time))
+    print(list(reversed(selectPayloadLog())))
