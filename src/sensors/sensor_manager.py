@@ -474,7 +474,7 @@ class SensorManager:
         # Log data
         value = (strain, force, temp)
         sub = SensorEntropy.subsystem(sensorId)
-        insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        insertTelemetryLog(ADC_0, value, sub, int(time.time()))
         return value
 
     @staticmethod

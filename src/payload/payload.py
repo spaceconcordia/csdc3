@@ -96,21 +96,24 @@ class Payload():
             off_time = time.time()
             print("[" + str(round(elapsed, 3)) + " s] ", end='')
             strain, force, adc_temp = SensorManager.read_adc(self.experiment, ADC)
-            if self.experiment:
-                heater_temp = SensorManager.read_temp_sensor(TEMP_PAYLOAD_B)
-            else:
-                heater_temp = SensorManager.read_temp_sensor(TEMP_PAYLOAD_A)
+            heater_temp = SensorManager.read_temp_sensor(self.temp_sensor)
             print(strain, force, adc_temp, heater_temp)
             sleep_time = time.time() - off_time
             elapsed = time.time() - start_time
             time.sleep(abs(self.heater_period - sleep_time))
             elapsed = time.time() - start_time
             strain, force, adc_temp = SensorManager.read_adc(self.experiment, ADC)
+            heater_temp = SensorManager.read_temp_sensor(self.temp_sensor)
             print("[" + str(round(elapsed, 3)) + " s] ", end='')
             print(strain, force, adc_temp, heater_temp)
 
             if self.is_end_condition(strain, elapsed):
                 break
+        if self.experiment:
+            exp = 'B'
+        else:
+            exp = 'A'
+        insertPayloadLog(int(start_time), int(time.time()), exp)
         self.end()
         self.lock.release()
         return True
@@ -138,8 +141,10 @@ class Payload():
         print("Setting power for payload: ", isOn)
         if isOn == False:
             SensorManager.gpio_output(PAYLOAD_EN_GPIO, OFF)
+            SensorManager.gpio_output(OLD_PAYLOAD_EN_GPIO, OFF)
         else:
             SensorManager.gpio_output(PAYLOAD_EN_GPIO, ON)
+            SensorManager.gpio_output(OLD_PAYLOAD_EN_GPIO, ON)
             SensorManager.gpio_output(SENSORS_EN_GPIO, ON)
         return True
 
@@ -154,11 +159,11 @@ def main():
                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument("-b", "--runb", action="store_true", help="Select second experiment to run")
-    parser.add_argument("-f", "--frequency", default=3, help="Period for sampling and heater pwm. E.g. -f 3 -> samples every 3 seconds")
-    parser.add_argument("-t", "--runtime", default=450, help="Total run time of experiment in seconds")
-    parser.add_argument("-a", "--actuatetime", default=250, help="Total run time to keep heaters on")
-    parser.add_argument("-l", "--loadcell", default=3000, help="Max load cell value to reach")
-    parser.add_argument("-m", "--maxtemp", default=40.0, help="Max temperature for heaters to be on")
+    parser.add_argument("-f", "--frequency", type=int, default=3, help="Period for sampling and heater pwm. E.g. -f 3 -> samples every 3 seconds")
+    parser.add_argument("-t", "--runtime", type=int, default=450, help="Total run time of experiment in seconds")
+    parser.add_argument("-a", "--actuatetime", type=int, default=250, help="Total run time to keep heaters on")
+    parser.add_argument("-l", "--loadcell", type=int, default=3000, help="Max load cell value to reach")
+    parser.add_argument("-m", "--maxtemp", type=float, default=40.0, help="Max temperature for heaters to be on")
     args = parser.parse_args()
     experiment_num = args.runb
     frequency = args.frequency

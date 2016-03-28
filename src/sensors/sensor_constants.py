@@ -9,6 +9,9 @@ INA219_RESISTOR = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/h
 INA219_VOLTAGE = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/in1_input"
 INA219_POWER = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/power1_input"
 I2C_DEVICE_PATH = "/sys/class/i2c-adapter/i2c-0/new_device"
+SWITCH_CURRENT_PATH = "/sys/bus/iio/devices/iio:device0/"
+PAYLOAD_SWITCH_ADC_ID = 0
+RADIO_SWITCH_ADC_ID = 1
 
 # Paths for locks
 PAYLOAD_LOCK = "/root/csdc3/src/utils/payloadLock.tmp"
@@ -69,8 +72,8 @@ TEMP_PAYLOAD_A =     'I2C0_mux1_ch0_48'
 TEMP_PAYLOAD_B =     'I2C0_mux1_ch0_49'
 TEMP_PAYLOAD_BRD =     'I2C0_mux1_ch1_48'
 TEMP_PWR_BRD =     'I2C0_mux1_ch4_49'
-TEMP_BAT_1 =     'I2C0_mux0_ch4_48'
-TEMP_BAT_2 =     'I2C0_mux0_ch4_49'
+TEMP_BAT_1 =     'I2C0_mux0_ch4_4e'
+TEMP_BAT_2 =     'I2C0_mux0_ch4_4f'
 TEMP_BAT_3 =     'I2C0_mux0_ch4_4a'
 TEMP_BAT_4 =     'I2C0_mux0_ch4_4b'
 TEMP_EPS_BRD =     'I2C0_mux0_ch4_4c'
@@ -100,6 +103,7 @@ RADIO_EN_GPIO = "PA5"
 PAYLOAD_HTR_A_GPIO = "PC31"
 PAYLOAD_HTR_B_GPIO = "PC27"
 PAYLOAD_EN_GPIO = "PC3"
+OLD_PAYLOAD_EN_GPIO = "PB13"
 PSS_HTR_EN_1_GPIO = "PC4"
 PSS_HTR_EN_2_GPIO = "PC28"
 PSS_HTR_EN_3_GPIO = "PA6"
@@ -123,6 +127,7 @@ GPIO_LOOKUP_TABLE = {
 	PAYLOAD_HTR_A_GPIO: {DIR: OUTPUT, PIN: 'J4.32'},
 	PAYLOAD_HTR_B_GPIO: {DIR: OUTPUT, PIN: 'J4.30'},
 	PAYLOAD_EN_GPIO: {DIR: OUTPUT, PIN: 'J4.33'},
+	OLD_PAYLOAD_EN_GPIO: {DIR: OUTPUT, PIN: 'J4.38'},
 	PSS_HTR_EN_1_GPIO: {DIR: OUTPUT, PIN: 'J4.31'},
 	PSS_HTR_EN_2_GPIO: {DIR: OUTPUT, PIN: 'J4.29'},
 	PSS_HTR_EN_3_GPIO: {DIR: OUTPUT, PIN: 'J4.27'},
@@ -142,8 +147,8 @@ TEMP_IDENTIFIER_DICT = {
     TEMP_PAYLOAD_B: {I2C: 0, MUX: 0x70, CH: 0, SUB: PAYLOAD, ADDR: 0x49},
     TEMP_PAYLOAD_BRD: {I2C: 0, MUX: 0x70, CH: 4, SUB: PAYLOAD, ADDR: 0x48},
     TEMP_PWR_BRD: {I2C: 0, MUX: 0x70, CH: 4, SUB: POWER, ADDR: 0x49},
-    TEMP_BAT_1: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x48},
-    TEMP_BAT_2: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x49},
+    TEMP_BAT_1: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4e},
+    TEMP_BAT_2: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4f},
     TEMP_BAT_3: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4a},
     TEMP_BAT_4: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4b},
     TEMP_EPS_BRD: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4c},
