@@ -7,7 +7,7 @@ class CronManager:
         Method for updating cron file, based on
         the contents of the list.
         """
-        f = open('/var/spool/cron/crontabs/cronfile', 'w')
+        f = open('/var/spool/cron/crontabs/root', 'w')
         for job in self.jobList:
             f.write(self.generate_command(job))
         f.close()

@@ -61,18 +61,33 @@ def selectPayloadLog():
     conn.close()
     return list(reversed(payload_rows))
 
-def selectPayloadData(start_time, end_time):
+def selectPayloadData(start_time, end_time, temp_payload_exp):
     payload_rows = []
+    temp_rows = []
     conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + TELEMETRY_DB)
     c = conn.cursor()
+    # Get strain and load values
     for row in c.execute("SELECT * FROM tabolo WHERE " +
-        SENSORID  + " = " + ADC_0 + " AND " +
+        SENSORID  + " = '" + ADC_0 + "' AND " +
         TIMESTAMP + " >= " + str(start_time) + " AND " +
         TIMESTAMP + " <= " + str(end_time)):
         payload_rows.append(row)
+
+    # Get temperature values
+    for row in c.execute("SELECT * FROM tabolo WHERE " +
+        SENSORID  + " = '" + temp_payload_exp + "' AND " +
+        TIMESTAMP + " >= " + str(start_time) + " AND " +
+        TIMESTAMP + " <= " + str(end_time)):
+        temp_rows.append(row)
+
+    strainList = [{"x":i[-1],"y":i[1][0]} for i in payload_rows]
+    loadList = [{"x":i[-1],"y":i[1][1]} for i in payload_rows]
+    tempList = [{"x":i[-1],"y":i[1]} for i in temp_rows]
+    result = {"strainList":strainList, "loadList":loadList,
+    "tempList":tempList, "startTime":start_time, "endTime":end_time}
+
     conn.close()
-    return payload_rows
-    #return list(reversed(payload_rows))
+    return strainList
 
 def insertSystemCallLog(level, syscall, subsystem, timestamp, stderr):
     copies = ["/copy1/", "/copy2/", "/copy3/"]
@@ -165,7 +180,6 @@ if __name__ == "__main__":
 #    emptyTables()
     """
 
-    print(selectTelemetryLog(TEMP_EPS_BRD))
-   # for experiment in list(reversed(selectPayloadLog())):
-   #     print(selectPayloadData(experiment[0], experiment[1]))
-    
+    print(selectPayloadLog())
+# for experiment in list(reversed(selectPayloadLog())):
+#       print(selectPayloadData(experiment[0], experiment[1]))
