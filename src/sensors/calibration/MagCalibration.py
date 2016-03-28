@@ -7,6 +7,9 @@ import smbus
 import time
 import math
 
+bus = smbus.SMBus(0)
+address = 0x1e
+
 def read_byte(adr):
     return bus.read_byte_data(address, adr)
 
@@ -61,7 +64,7 @@ def main():
     if (bearing < 0):
         bearing += 2 * math.pi
 
-    print "Bearing: ", math.degrees(bearing)
+    print("Bearing: {}".format(math.degrees(bearing)))
 
     """ ***************** """
 
