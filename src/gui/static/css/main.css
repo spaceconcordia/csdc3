@@ -154,14 +154,12 @@ tr, th {
 }
 
 .chartdatadiv {
+    float:left;
     margin-top: 5%;
+    margin-left: 30%;
+    margin-left: 30%;
     margin-bottom: 7.5%;
 }
-/*
-.payload {
-    margin-left: 1%;
-    margin-right: 1%;
-}*/
 
 /*
  *  Sensors Slide Show
@@ -189,7 +187,6 @@ tr, th {
 #container li {
 	position:absolute;
 }
-	display:none;
 
 #container .prevButton {
 	height:72px;
@@ -257,5 +254,17 @@ tr, th {
 #chartBatteryTemp2, #chartBatteryHeat2,
 #chartBatteryTemp3, #chartBatteryHeat3,
 #chartBatteryTemp4, #chartBatteryHeat4 {
+    display: none;
+}
+
+#sensorDataChart1 {
+    display: inline;
+}
+
+#sensorDataChart2,
+#sensorDataChart3,
+#sensorDataChart4,
+#sensorDataChart5,
+#sensorDataChart6 {
     display: none;
 }

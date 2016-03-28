@@ -165,6 +165,7 @@ if __name__ == "__main__":
 #    emptyTables()
     """
 
-    for experiment in list(reversed(selectPayloadLog())):
-        print(selectPayloadData(experiment[0], experiment[1]))
+    print(selectTelemetryLog(TEMP_EPS_BRD))
+   # for experiment in list(reversed(selectPayloadLog())):
+   #     print(selectPayloadData(experiment[0], experiment[1]))
     

@@ -173,6 +173,33 @@ function updateBatteryDataDisplay(index) {
             $('#chartBatteryHeat' + i).css('display', 'none');
         }
     }
+    $('bat-data-selec-btn').text('Battery Data: Battery ' + index);
+}
+
+function updateSensorDataDisplay(index) {
+    for (var i = 1; i < 7; ++i) {
+        if (i == index) {
+            $('#sensorDataChart' + i).css('display', 'inline');
+        } else {
+            $('#sensorDataChart' + i).css('display', 'none');
+        }
+    }
+    var sensorname;
+    if (index == 1) {
+        sensorname = 'Temp EPS Board';
+    } else if (index == 2) {
+        sensorname = 'Temp Payload Board';
+    } else if (index == 3) {
+        sensorname = 'Magnometer Data';
+    } else if (index == 4) {
+        sensorname = 'Batteries Power';
+    } else if (index == 5) {
+        sensorname = 'Batteries Current';
+    } else if (index == 6) {
+        sensorname = 'Batteries Voltage';
+    }
+
+    $('#sensor-data-selec-btn').text('Sensor Identifier: ' + sensorname);
 }
 
 $( document ).ready(function() {
@@ -247,6 +274,31 @@ $( document ).ready(function() {
     $('#bat4-data').click(function(e) {
         e.preventDefault();
         updateBatteryDataDisplay(4);
+    });
+
+    $('#sensorData1').click(function(e) {
+        e.preventDefault();
+        updateSensorDataDisplay(1);
+    });
+    $('#sensorData2').click(function(e) {
+        e.preventDefault();
+        updateSensorDataDisplay(2);
+    });
+    $('#sensorData3').click(function(e) {
+        e.preventDefault();
+        updateSensorDataDisplay(3);
+    });
+    $('#sensorData4').click(function(e) {
+        e.preventDefault();
+        updateSensorDataDisplay(4);
+    });
+    $('#sensorData5').click(function(e) {
+        e.preventDefault();
+        updateSensorDataDisplay(5);
+    });
+    $('#sensorData6').click(function(e) {
+        e.preventDefault();
+        updateSensorDataDisplay(6);
     });
 
     var sourceSwap = function () {
