@@ -19,7 +19,7 @@ class Sensors5Handler(tornado.web.RequestHandler):
             sensordata[2].append({"x": rawData[3], "y": data[2]})
 
         # Assign proper values
-        pwr_current = [{"x":i["x"], "y":i["y"]/1000} for i in sensordata[1][1]]
+        pwr_current = [{"x":i["x"], "y":i["y"]/1000} for i in sensordata[1]]
 
         self.render(
             'sensors5.html',

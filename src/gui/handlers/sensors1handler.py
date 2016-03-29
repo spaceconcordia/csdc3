@@ -6,7 +6,7 @@ from chomsky import *
 from sensor_constants import *
 
 class Sensors1Handler(tornado.web.RequestHandler):
-    def get_tmp(self):
+    def get(self):
         sensorData = []
         rawDataList = selectTelemetryLog(TEMP_EPS_BRD)
         for data in rawDataList:
