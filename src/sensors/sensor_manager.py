@@ -2,7 +2,7 @@ import sys
 sys.path.append('/root/csdc3/lib/ablib')
 sys.path.append('/root/csdc3/src/logs')
 sys.path.append('/root/csdc3/src/logs/config_setup')
-sys.path.append("/root/csdc3/src/utils/")
+sys.path.append("/root/csdc3/src/utils")
 from ablib_python3 import Pin
 from ablib_python3 import DS18B20
 from chomsky import *
@@ -14,7 +14,7 @@ import smbus
 import time
 import math
 from SharedLock import Lock
-import Utility
+import utility
 
 class SensorManager:
 
@@ -282,9 +282,9 @@ class SensorManager:
             return None
 
         # Apply two's complement
-        valX = Utility.twos_to_int(valX)
-        valY = Utility.twos_to_int(valY)
-        valZ = Utility.twos_to_int(valZ)
+        valX = utility.twos_to_int(valX)
+        valY = utility.twos_to_int(valY)
+        valZ = utility.twos_to_int(valZ)
 
         sleep(0.1)
         # Log data
@@ -330,9 +330,9 @@ class SensorManager:
             return None
 
         # Update the values to be of two compliment
-        valX = Utility.twos_to_int(valX, 16);
-        valY = Utility.twos_to_int(valY, 16);
-        valZ = Utility.twos_to_int(valZ, 16);
+        valX = utility.twos_to_int(valX, 16);
+        valY = utility.twos_to_int(valY, 16);
+        valZ = utility.twos_to_int(valZ, 16);
 
         """
         # Change valX and valY to radians
@@ -428,7 +428,7 @@ class SensorManager:
             return None
 
         # Log data
-        value = Utility.conv_bin_to_float(decValue, fractValue)
+        value = utility.conv_bin_to_float(decValue, fractValue)
         sub = SensorEntropy.subsystem(sensorId)
         insertTelemetryLog(sensorId, value, sub, int(time.time()))
         return value
