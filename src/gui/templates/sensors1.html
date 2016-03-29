@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Aleksandr Dashboard</title>
+
+        <link rel="shortcut icon" href="{{ static_url("img/favicon.ico") }}"/>
+
+        <link rel="stylesheet" href="{{ static_url("css/main.css") }}">
+        <link rel="stylesheet" href="{{ static_url("node_modules/bootstrap/dist/css/bootstrap.min.css") }}">
+        <link rel="stylesheet" href="{{ static_url("node_modules/jquery-ui/jquery-ui.min.css") }}">
+        <link rel="stylesheet" href="{{ static_url("node_modules/jquery-ui/jquery-ui-timepicker-addon.min.css") }}">
+
+        <script type="text/javascript" src="{{ static_url("node_modules/canvasjs/canvasjs.min.js") }}"></script>
+        <script type="text/javascript">
+            window.onload = function () {
+                var sensor_data = {% raw sensordata %};
+
+                var chartsensor1 = new CanvasJS.Chart("sensorDataChart1",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: "EPS Board Temp VS. Time"
+                    },
+                    axisX:{
+                        title: "time",
+                        intervalType: "second",
+                        valueFormatString: "DD-MMM hh:mm:ss",
+                        labelAngle: -50
+                    },
+                    axisY:{
+                        title: "Temperature °C"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "EPS Board Temperature",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chartsensor1.render();
+                    }
+                }
+                });
+                chartsensor1.render();
+            }
+</script>
+
+
+    </head>
+
+    <body>
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xs-1">
+                <br/>
+                <img class="img-responsive center-block logo-left" src="{{ static_url("img/SpacecraftDivisionLogo.png") }}" alt="Spacecraft division logo">
+            </div>
+            <div class="col-xs-10">
+                <br/>
+                <h1 class="text-primary text-center">Space Concordia - Aleksandr</h1>
+                <br/>
+            </div>
+            <div class="col-xs-1">
+                <br/>
+                <img class="img-responsive center-block logo-right" src="{{ static_url("img/AleksandrLogo.png") }}" alt="Aleksander mission patch">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <ul class="nav nav-pills nav-center">
+                    <li><a href="/system">System Status</a></li>
+                    <li><a href="/commands">Send Commands</a></li>
+                    <li><a href="/battery">Battery Heaters Demo</a></li>
+                    <li><a href="/payload">Payload Experiment Data</a></li>
+                    <li class="active" role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            Temp EPS Board <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/sensors1">Temp EPS Board</a></li>
+                            <li><a href="/sensors2">Temp Payload Board</a></li>
+                            <li><a href="/sensors3">Magnetometer Data</a></li>
+                            <li><a href="/sensors4">Batteries Power</a></li>
+                            <li><a href="/sensors5">Batteries Current</a></li>
+                            <li><a href="/sensors6">Batteries Voltage</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main sensors">
+            <div class="row">
+                <div class="chartdatadiv" id="sensorDataChart1" style="height: 400px; width: 40%;"></div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery/jquery.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui-timepicker-addon.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/bootstrap/dist/js/bootstrap.min.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("node_modules/smoothie/smoothie.js") }}"></script>
+    <script type="text/javascript" src="{{ static_url("js/app.js") }}"></script>
+    </body>
+</html>
+

@@ -52,15 +52,6 @@ class SensorsHandler(tornado.web.RequestHandler):
         pwr_power = [{"x":i["x"], "y":i["y"]/1000000} for i in tripleValueResults[1][2]]
 
         self.render(
-            'sensors.html',
-            sensordata = {
-                'temp_eps_brd': temp_eps_brd,
-                'temp_payload_brd': temp_payload_brd,
-                'mag0_x': mag0_x,
-                'mag0_y': mag0_y,
-                'mag0_z': mag0_z,
-                'pwr_volts': pwr_volts,
-                'pwr_current': pwr_current,
-                'pwr_power': pwr_power,
-            }
+            'sensors2.html',
+            sensordata = []
         )
