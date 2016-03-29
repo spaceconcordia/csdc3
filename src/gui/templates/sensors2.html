@@ -18,7 +18,7 @@
         <script type="text/javascript">
             window.onload = function () {
                 var sensor_data = {% raw sensordata %};
-
+                console.log(sensor_data);
                 var chartsensor2 = new CanvasJS.Chart("sensorDataChart2",
                 {
                     animationEnabled: true,

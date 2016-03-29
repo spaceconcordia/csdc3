@@ -18,6 +18,7 @@
         <script type="text/javascript">
             window.onload = function () {
                 var sensor_data = {% raw sensordata %};
+                console.log(sensor_data);
 
                 var chartsensor6 = new CanvasJS.Chart("sensorDataChart6",
                 {
@@ -109,7 +110,7 @@
 
         <div class="main sensors">
             <div class="row">
-                <div class="chartdatadiv" id="sensorDataChart1" style="height: 400px; width: 40%;"></div>
+                <div class="chartdatadiv" id="sensorDataChart6" style="height: 400px; width: 40%;"></div>
             </div>
         </div>
 
