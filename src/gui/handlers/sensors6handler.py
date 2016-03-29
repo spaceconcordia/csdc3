@@ -5,7 +5,7 @@ sys.path.append('/root/csdc3/src/sensors')
 from chomsky import *
 from sensor_constants import *
 
-class Sensors5Handler(tornado.web.RequestHandler):
+class Sensors6Handler(tornado.web.RequestHandler):
     def get(self):
         sensordata = [[], [], []]
 

@@ -42,7 +42,6 @@ application = tornado.web.Application([
     (r"/commands", CommandsHandler),
 	(r"/payload", PayloadHandler),
 	(r"/interfacing", InterfacingHandler),
-	(r"/sensors", SensorsHandler),
     (r"/battery", BatteryHandler),
     (r"/endbattery", EndBatteryInfoHandler),
     (r"/sensors1", Sensors1Handler),

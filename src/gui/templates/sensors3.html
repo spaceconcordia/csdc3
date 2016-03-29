@@ -39,9 +39,25 @@
                     type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Magnetometer (X,Y,Z) Magnitude",
+                    legendText: "Magnetometer X Magnitude",
                     xValueType: "dateTime",
-                    dataPoints: sensor_data
+                    dataPoints: sensor_data[0]
+                },
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Magnetometer Y Magnitude",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data[1]
+                },
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Magnetometer Z Magnitude",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data[2]
                 }
                     ],
                 legend: {
