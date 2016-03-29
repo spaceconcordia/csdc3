@@ -230,17 +230,17 @@ $( document ).ready(function() {
         if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
             updateCpuAvgLoadCharts();
         }
-    }, 1500);
+    }, 2500);
     setInterval(function() {
         if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
             updateRamUsageCharts();
         }
-    }, 1500);
+    }, 2500);
     setInterval(function() {
         if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
             updateCpuUtilizationCharts();
         }
-    }, 1500);
+    }, 2500);
 
     smoothieRamUsage.addTimeSeries(ramUsageLine,
         {lineWidth:2,strokeStyle:'#0000ff',fillStyle:'rgba(0,128,255,0.30)'});
