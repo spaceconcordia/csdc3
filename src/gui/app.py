@@ -11,7 +11,12 @@ from payloadhandler         import PayloadHandler
 from commandshandler        import CommandsHandler
 from systemhandler          import SystemHandler
 from interfacinghandler     import InterfacingHandler
-from sensorshandler         import SensorsHandler
+from sensors1handler        import Sensors1Handler
+from sensors2handler        import Sensors2Handler
+from sensors3handler        import Sensors3Handler
+from sensors4handler        import Sensors4Handler
+from sensors5handler        import Sensors5Handler
+from sensors6handler        import Sensors6Handler
 from batteryhandler         import BatteryHandler
 from endbatteryinfohandler  import EndBatteryInfoHandler
 
@@ -40,6 +45,12 @@ application = tornado.web.Application([
 	(r"/sensors", SensorsHandler),
     (r"/battery", BatteryHandler),
     (r"/endbattery", EndBatteryInfoHandler),
+    (r"/sensors1", Sensors1Handler),
+    (r"/sensors2", Sensors2Handler),
+    (r"/sensors3", Sensors3Handler),
+    (r"/sensors4", Sensors4Handler),
+    (r"/sensors5", Sensors5Handler),
+    (r"/sensors6", Sensors6Handler),
 
 # system command handler
     (r"/time", TimeHandler),

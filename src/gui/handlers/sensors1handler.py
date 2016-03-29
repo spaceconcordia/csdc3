@@ -4,13 +4,8 @@ sys.path.append('/root/csdc3/src/logs')
 sys.path.append('/root/csdc3/src/sensors')
 from chomsky import *
 from sensor_constants import *
-import cProfile
-import re
 
-class SensorsHandler(tornado.web.RequestHandler):
-    def get(self):
-        cProfile.run('re.self.get_tmp()')
-
+class Sensors1Handler(tornado.web.RequestHandler):
     def get_tmp(self):
         # Include results lists for sensors from sensor sweep
         # temp_eps_brd = []
