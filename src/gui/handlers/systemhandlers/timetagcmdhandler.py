@@ -47,5 +47,6 @@ class TimetagcmdHandler(tornado.web.RequestHandler):
                                         '*',                      \
                                         TIMETAGGED_CMD_PATH + fname)
             cron_mana.update_cron_file()
+            os.chmod(TIMETAGGED_CMD_PATH + fname, 1)
             # render the index page again
             self.render('index.html', section='commands')

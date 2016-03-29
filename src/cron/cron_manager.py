@@ -1,3 +1,4 @@
+import os
 class CronManager:
     def __init__(self):
         self.jobList = []
@@ -7,10 +8,10 @@ class CronManager:
         Method for updating cron file, based on
         the contents of the list.
         """
-        f = open('/var/spool/cron/crontabs/cronfile', 'w')
-        for job in self.jobList:
-            f.write(self.generate_command(job))
-        f.close()
+        with open('/var/spool/cron/crontabs/root', 'w') as f:
+            for job in self.jobList:
+                f.write(self.generate_command(job))
+        os.system("touch /var/spool/cron/crontabs")
 
     def generate_command(self, job):
         return str(job['minute']) + ' ' + str(job['hour']) + ' ' + str(job['day']) + \

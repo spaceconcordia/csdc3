@@ -17,37 +17,30 @@
         <script type="text/javascript" src="{{ static_url("node_modules/canvasjs/canvasjs.min.js") }}"></script>
         <script type="text/javascript">
             window.onload = function () {
-/*                var chart = new CanvasJS.Chart("chartContainer",
+                var payload_data = {% raw payloaddata %};
+
+                var chartstrain0 = new CanvasJS.Chart("chartPayloadStrain0",
                 {
                     animationEnabled: true,
                     title:{
-                        text: "Strain Gauge"
+                        text: " 1. Strain VS. Time"
                     },
                     axisX:{
-                        title: "time",
+                        title: "time(sec)",
                         intervalType: "second",        
-                        interval:4,
-                        valueFormatString: "HH:mm:ss",
-                        labelAngle: -50
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Strain"
                     },
                     data: [
                 {
                     type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Strain Gauge",
+                    legendText: "Payload Exp 1 - Strain",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 21 },
-                        { x: 1099620204000, y: 44 },
-                        { x: 1099620208000, y: 35 },
-                        { x: 1099620212000, y: 45 },
-                        { x: 1099620216000, y: 75 },
-                        { x: 1099620220000, y: 58 },
-                        { x: 1099620224000, y: 18 },
-                        { x: 1099620228000, y: 30 },
-                        { x: 1099620232000, y: 11 }
-                    ]
+                    dataPoints: (payload_data['p0'])['strainConvList']
                 }
                     ],
                 legend: {
@@ -58,43 +51,34 @@
                         } else {
                             e.dataSeries.visible = true;
                         }
-                        chart.render();
+                        chartstrain0.render();
                     }
                 }
                 });
-                chart.render();
+                chartstrain0.render();
 
-                var chart2 = new CanvasJS.Chart("chartContainer2",
+                var chartload0 = new CanvasJS.Chart("chartPayloadLoad0",
                 {
                     animationEnabled: true,
                     title:{
-                        text: "Load Cell"
+                        text: " 1. Load(N) VS. Time"
                     },
                     axisX:{
-                        title: "time",
+                        title: "time(sec)",
                         intervalType: "second",        
-                        interval:4,
-                        valueFormatString: "HH:mm:ss",
-                        labelAngle: -50
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Load(N)"
                     },
                     data: [
                 {
-                    type: "spline", //change type to bar, line, area, pie, etc
+                    type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Load Cell",
+                    legendText: "Payload Exp 1 - Load",
                     xValueType: "dateTime",
-                    dataPoints: [
-                        { x: 1099620200000, y: 51 },
-                        { x: 1099620204000, y: 45 },
-                        { x: 1099620208000, y: 50 },
-                        { x: 1099620212000, y: 62 },
-                        { x: 1099620216000, y: 95 },
-                        { x: 1099620220000, y: 66 },
-                        { x: 1099620224000, y: 24 },
-                        { x: 1099620228000, y: 32 },
-                        { x: 1099620232000, y: 16 }
-                    ]
+                    dataPoints: (payload_data['p0'])['loadConvList']
                 }
                     ],
                 legend: {
@@ -105,98 +89,279 @@
                         } else {
                             e.dataSeries.visible = true;
                         }
-                        chart2.render();
+                        chartload0.render();
                     }
                 }
                 });
-                chart2.render();*/
+                chartload0.render();
 
-var chart = new CanvasJS.Chart("chartContainer",
-	{
-		animationEnabled: true,
-		title:{
-			text: "Payload Experiment Data"
-		},
-                axisX:{
-        		title: "Time (minutes)"
-    		},
-    		axisY: {
-        		title: "Output (voltage)"
-    		},
-		data: [
-		{
-			type: "spline", //change type to bar, line, area, pie, etc
-			showInLegend: true,
-            name: "vout strain (v)",
-			dataPoints: [
-				{ x: 0,    y: 0.246 },
-				{ x: 0.34, y: 0.247},
-				{ x: 0.68, y: 0.258 },
-				{ x: 1.02, y: 0.282 },
-				{ x: 1.36, y: 0.295 },
-				{ x: 1.70, y: 0.320 },
-				{ x: 2.04, y: 0.352 },
-				{ x: 2.38, y: 0.369 },
-				{ x: 2.72, y: 0.386 },
-				{ x: 3.06, y: 0.395 },
-				{ x: 3.40, y: 0.407 },
-				{ x: 3.74, y: 0.425 },
-				{ x: 4.08, y: 0.434 },
-				{ x: 4.42, y: 0.445 },
-				{ x: 4.76, y: 0.457 },
-				{ x: 5.10, y: 0.475 },
-				{ x: 5.44, y: 0.492 },
-				{ x: 5.78, y: 0.521 },
-				{ x: 6.12, y: 0.523 },
-				{ x: 6.46, y: 0.550 }
-			]
-			},
-			{
-			type: "spline",
-			showInLegend: true,    
-            name: "vout load (v)",
-			dataPoints: [
-				{ x: 0,    y: 0.533 },
-				{ x: 0.34, y: 0.615 },
-				{ x: 0.68, y: 0.610 },
-				{ x: 1.02, y: 0.670 },
-				{ x: 1.36, y: 0.715 },
-				{ x: 1.70, y: 0.742 },
-				{ x: 2.04, y: 0.775 },
-				{ x: 2.38, y: 0.780 },
-				{ x: 2.72, y: 0.652 },
-				{ x: 3.06, y: 0.630 },
-				{ x: 3.40, y: 0.723 },
-				{ x: 3.74, y: 0.740 },
-				{ x: 4.08, y: 0.781 },
-				{ x: 4.42, y: 0.830 },
-				{ x: 4.76, y: 0.855 },
-				{ x: 5.10, y: 0.910 },
-				{ x: 5.44, y: 0.885 },
-				{ x: 5.78, y: 0.860 },
-				{ x: 6.12, y: 0.990 },
-				{ x: 6.46, y: 1.010 }
-			]
-			}
-		],
-		legend: {
-			cursor: "pointer",
-			itemclick: function (e) {
-				if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-					e.dataSeries.visible = false;
-				} else {
-					e.dataSeries.visible = true;
-			}
-			chart.render();
-			}
-		}
-	});
+                var charttemp0 = new CanvasJS.Chart("chartPayloadTemp0",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: " 1. Temp VS. Time"
+                    },
+                    axisX:{
+                        title: "time(sec)",
+                        intervalType: "second",        
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Temperature °C"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Payload Exp 1 - Temperature",
+                    xValueType: "dateTime",
+                    dataPoints: (payload_data['p0'])['tempList']
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        charttemp0.render();
+                    }
+                }
+                });
+                charttemp0.render();
 
-	chart.render();
+                var chartstrain1 = new CanvasJS.Chart("chartPayloadStrain1",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: " 2. Strain VS. Time"
+                    },
+                    axisX:{
+                        title: "time(sec)",
+                        intervalType: "second",        
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Strain"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Payload Exp 2 - Strain",
+                    xValueType: "dateTime",
+                    dataPoints: (payload_data['p1'])['strainConvList']
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chartstrain1.render();
+                    }
+                }
+                });
+                chartstrain1.render();
+
+                var chartload1 = new CanvasJS.Chart("chartPayloadLoad1",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: " 2. Load(N) VS. Time"
+                    },
+                    axisX:{
+                        title: "time(sec)",
+                        intervalType: "second",        
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Load(N)"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Payload Exp 2 - Load",
+                    xValueType: "dateTime",
+                    dataPoints: (payload_data['p1'])['loadConvList']
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chartload1.render();
+                    }
+                }
+                });
+                chartload1.render();
+
+                var charttemp1 = new CanvasJS.Chart("chartPayloadTemp1",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: " 2. Temp VS. Time"
+                    },
+                    axisX:{
+                        title: "time(sec)",
+                        intervalType: "second",        
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Temperature °C"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Payload Exp 2 - Temperature",
+                    xValueType: "dateTime",
+                    dataPoints: (payload_data['p1'])['tempList']
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        charttemp1.render();
+                    }
+                }
+                });
+                charttemp1.render();
+
+                var chartstrain2 = new CanvasJS.Chart("chartPayloadStrain2",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: " 3. Strain VS. Time"
+                    },
+                    axisX:{
+                        title: "time(sec)",
+                        intervalType: "second",        
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Strain"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Payload Exp 3 - Strain",
+                    xValueType: "dateTime",
+                    dataPoints: (payload_data['p2'])['strainConvList']
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chartstrain2.render();
+                    }
+                }
+                });
+                chartstrain2.render();
+
+                var chartload2 = new CanvasJS.Chart("chartPayloadLoad2",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: " 3. Load(N) VS. Time"
+                    },
+                    axisX:{
+                        title: "time(sec)",
+                        intervalType: "second",        
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Load(N)"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Payload Exp 3 - Load",
+                    xValueType: "dateTime",
+                    dataPoints: (payload_data['p2'])['loadConvList']
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chartload2.render();
+                    }
+                }
+                });
+                chartload2.render();
+
+                var charttemp2 = new CanvasJS.Chart("chartPayloadTemp2",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: " 3. Temp VS. Time"
+                    },
+                    axisX:{
+                        title: "time(sec)",
+                        intervalType: "second",        
+                        interval:6
+                    },
+                    axisY:{
+                        title: "Temperature °C"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Payload Exp 3 - Temperature",
+                    xValueType: "dateTime",
+                    dataPoints: (payload_data['p2'])['tempList']
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        charttemp2.render();
+                    }
+                }
+                });
+                charttemp2.render();
             }
-</script>
-
-
+        </script>
     </head>
 
     <body>
@@ -239,16 +404,38 @@ var chart = new CanvasJS.Chart("chartContainer",
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="main payload">
-                    <!--div class="chartdatadivleft" id="chartContainer" style="height: 400px; width: 40%;"></div-->
-                    <!--div class="" id="chartContainer2" style="height: 400px; width: 40%;"></div--><center>
-                    <div id="chartContainer" style="margin-top: 3%; margin-bottom:2%; height: 400px; width: 60%;"></div></center>
+        <div class="main payload">
+            <div class="row">
+                <div class="col-xs-5"></div>
+                <div class="col-xs-2">
+                <div id="batterydata" class="dropdown">
+                    <button id="bat-data-selec-btn" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Payload Experiment Data Num
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        <li><a id="pay1-data" href="#">Payload Experiment 1</a></li>
+                        <li><a id="pay2-data" href="#">Payload Experiment 2</a></li>
+                        <li><a id="pay3-data" href="#">Payload Experiment 3</a></li>
+                    </ul>
                 </div>
+                </div>
+                <div class="col-xs-5"></div>
+            </div>
+            <div id="payloadrow0" class="row">
+                <div class="col-xs-4"><div id="chartPayloadStrain0" style="height: 400px; width: 100%;"></div></div>
+                <div class="col-xs-4"><div id="chartPayloadLoad0" style="height: 400px; width: 100%;"></div></div>
+                <div class="col-xs-4"><div id="chartPayloadTemp0" style="height: 400px; width: 100%;"></div></div>
+            </div>
+            <div id="payloadrow1" class="row">
+                <div class="col-xs-4"><div id="chartPayloadStrain1" style="height: 400px; width: 100%;"></div></div>
+                <div class="col-xs-4"><div id="chartPayloadLoad1" style="height: 400px; width: 100%;"></div></div>
+                <div class="col-xs-4"><div id="chartPayloadTemp1" style="height: 400px; width: 100%;"></div></div>
+            </div>
+            <div id="payloadrow2" class="row">
+                <div class="col-xs-4"><div id="chartPayloadStrain2" style="height: 400px; width: 100%;"></div></div>
+                <div class="col-xs-4"><div id="chartPayloadLoad2" style="height: 400px; width: 100%;"></div></div>
+                <div class="col-xs-4"><div id="chartPayloadTemp2" style="height: 400px; width: 100%;"></div></div>
             </div>
         </div>
-
     </div>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery/jquery.min.js") }}"></script>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui.min.js") }}"></script>
@@ -258,4 +445,3 @@ var chart = new CanvasJS.Chart("chartContainer",
     <script type="text/javascript" src="{{ static_url("js/app.js") }}"></script>
     </body>
 </html>
-

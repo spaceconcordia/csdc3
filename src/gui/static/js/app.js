@@ -202,6 +202,16 @@ function updateSensorDataDisplay(index) {
     $('#sensor-data-selec-btn').text('Sensor Identifier: ' + sensorname);
 }
 
+function updatePayloadDataDisplay(index) {
+    for (var i = 0; i < 5; ++i) {
+        if (i == index) {
+            $('#payloadrow' + i).css('display', 'inline');
+        } else {
+            $('#payloadrow' + i).css('display', 'none');
+        }
+    }
+}
+
 $( document ).ready(function() {
 	$( '.dropdown-toggle' ).dropdown();
 
@@ -217,14 +227,20 @@ $( document ).ready(function() {
     smoothieCpuUtilization.streamTo(document.getElementById("cpu-util-canvas"));
 
     setInterval(function() {
-        updateCpuAvgLoadCharts();
-    }, 1500);
+        if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
+            updateCpuAvgLoadCharts();
+        }
+    }, 2500);
     setInterval(function() {
-        updateRamUsageCharts();
-    }, 1500);
+        if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
+            updateRamUsageCharts();
+        }
+    }, 2500);
     setInterval(function() {
-        updateCpuUtilizationCharts();
-    }, 1500);
+        if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
+            updateCpuUtilizationCharts();
+        }
+    }, 2500);
 
     smoothieRamUsage.addTimeSeries(ramUsageLine,
         {lineWidth:2,strokeStyle:'#0000ff',fillStyle:'rgba(0,128,255,0.30)'});
@@ -299,6 +315,27 @@ $( document ).ready(function() {
     $('#sensorData6').click(function(e) {
         e.preventDefault();
         updateSensorDataDisplay(6);
+    });
+
+    $('#pay1-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(0);
+    });
+    $('#pay2-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(1);
+    });
+    $('#pay3-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(2);
+    });
+    $('#pay4-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(3);
+    });
+    $('#pay5-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(4);
     });
 
     var sourceSwap = function () {
