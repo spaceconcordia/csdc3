@@ -227,13 +227,19 @@ $( document ).ready(function() {
     smoothieCpuUtilization.streamTo(document.getElementById("cpu-util-canvas"));
 
     setInterval(function() {
-        updateCpuAvgLoadCharts();
+        if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
+            updateCpuAvgLoadCharts();
+        }
     }, 1500);
     setInterval(function() {
-        updateRamUsageCharts();
+        if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
+            updateRamUsageCharts();
+        }
     }, 1500);
     setInterval(function() {
-        updateCpuUtilizationCharts();
+        if ($( '#cpu-avg-load-date' ).css('display') == 'inline') {
+            updateCpuUtilizationCharts();
+        }
     }, 1500);
 
     smoothieRamUsage.addTimeSeries(ramUsageLine,
