@@ -11,7 +11,7 @@ class Sensors2Handler(tornado.web.RequestHandler):
         rawDataList = selectTelemetryLog(TEMP_PAYLOAD_BRD)
         for data in rawDataList:
             finalData.append({"x": data[3], "y": data[1]})
-
+        print(type(rawDataList))
         self.render(
             'sensors2.html',
             sensordata = finalData

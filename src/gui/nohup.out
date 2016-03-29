@@ -1,0 +1,48 @@
+rm: cannot remove ‘/root/csdc3/src/gui/handlers/systemhandlers/battery_data.txt’: No such file or directory
+Traceback (most recent call last):
+  File "app.py", line 14, in <module>
+    from sensorshandler         import SensorsHandler
+  File "/root/csdc3/src/gui/handlers/sensorshandler.py", line 4, in <module>
+    from chomsky import *
+ImportError: No module named 'chomsky'
+Traceback (most recent call last):
+  File "app.py", line 14, in <module>
+    from sensorshandler         import SensorsHandler
+  File "/root/csdc3/src/gui/handlers/sensorshandler.py", line 4, in <module>
+    from chomsky import *
+ImportError: No module named 'chomsky'
+Traceback (most recent call last):
+  File "app.py", line 14, in <module>
+    from sensorshandler         import SensorsHandler
+  File "/root/csdc3/src/gui/handlers/sensorshandler.py", line 14
+    power_volts =
+                ^
+SyntaxError: invalid syntax
+ERROR:tornado.application:Uncaught exception GET /sensors (132.205.228.20)
+HTTPServerRequest(protocol='http', host='45.79.178.142:8889', method='GET', uri='/sensors', version='HTTP/1.1', remote_ip='132.205.228.20', headers={'Accept-Language': 'en-US,en;q=0.8', 'Upgrade-Insecure-Requests': '1', 'Cache-Control': 'max-age=0', 'Host': '45.79.178.142:8889', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Connection': 'keep-alive', 'If-None-Match': '"226a37dcca64496fd1323119c51a330506bb1024"', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36', 'Accept-Encoding': 'gzip, deflate, sdch'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.4/dist-packages/tornado/web.py", line 1443, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "/root/csdc3/src/gui/handlers/sensorshandler.py", line 19, in get
+    singleValueResults = [temp_eps_brd, temp_payload_brd, power_bat]
+NameError: name 'power_bat' is not defined
+ERROR:tornado.access:500 GET /sensors (132.205.228.20) 2.71ms
+WARNING:tornado.access:404 GET /favicon.ico (132.205.228.20) 2.29ms
+ERROR:tornado.application:Uncaught exception GET /sensors (132.205.228.20)
+HTTPServerRequest(protocol='http', host='45.79.178.142:8889', method='GET', uri='/sensors', version='HTTP/1.1', remote_ip='132.205.228.20', headers={'Accept-Language': 'en-US,en;q=0.8', 'Upgrade-Insecure-Requests': '1', 'Cache-Control': 'max-age=0', 'Host': '45.79.178.142:8889', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Connection': 'keep-alive', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36', 'Accept-Encoding': 'gzip, deflate, sdch'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.4/dist-packages/tornado/web.py", line 1443, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "/root/csdc3/src/gui/handlers/sensorshandler.py", line 19, in get
+    singleValueResults = [temp_eps_brd, temp_payload_brd, power_bat]
+NameError: name 'power_bat' is not defined
+ERROR:tornado.access:500 GET /sensors (132.205.228.20) 1.25ms
+ERROR:tornado.application:Uncaught exception GET /sensors (132.205.228.20)
+HTTPServerRequest(protocol='http', host='45.79.178.142:8889', method='GET', uri='/sensors', version='HTTP/1.1', remote_ip='132.205.228.20', headers={'Accept-Language': 'en-US,en;q=0.8', 'Accept-Encoding': 'gzip, deflate, sdch', 'Cache-Control': 'max-age=0', 'Connection': 'keep-alive', 'Host': '45.79.178.142:8889', 'Upgrade-Insecure-Requests': '1', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'})
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.4/dist-packages/tornado/web.py", line 1443, in _execute
+    result = method(*self.path_args, **self.path_kwargs)
+  File "/root/csdc3/src/gui/handlers/sensorshandler.py", line 31, in get
+    singleValueResults[i].append({"x": data[3], "y": data[1]})
+IndexError: list index out of range
+ERROR:tornado.access:500 GET /sensors (132.205.228.20) 22.85ms
