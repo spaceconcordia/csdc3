@@ -268,3 +268,13 @@ tr, th {
 #sensorDataChart6 {
     display: none;
 }
+
+#payloadrow0 {
+    display: inline;
+}
+#payloadrow1,
+#payloadrow2,
+#payloadrow3,
+#payloadrow4 {
+    display: none;
+}

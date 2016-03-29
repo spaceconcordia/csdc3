@@ -16,3 +16,5 @@
 
         <script type="text/javascript" src="{{ static_url("node_modules/canvasjs/canvasjs.min.js") }}"></script>
         <script type="text/javascript">
+            window.onload = function () {
+                var payload_data = {% raw payloaddata %};

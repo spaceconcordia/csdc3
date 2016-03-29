@@ -202,6 +202,16 @@ function updateSensorDataDisplay(index) {
     $('#sensor-data-selec-btn').text('Sensor Identifier: ' + sensorname);
 }
 
+function updatePayloadDataDisplay(index) {
+    for (var i = 0; i < 5; ++i) {
+        if (i == index) {
+            $('#payloadrow' + i).css('display', 'inline');
+        } else {
+            $('#payloadrow' + i).css('display', 'none');
+        }
+    }
+}
+
 $( document ).ready(function() {
 	$( '.dropdown-toggle' ).dropdown();
 
@@ -299,6 +309,27 @@ $( document ).ready(function() {
     $('#sensorData6').click(function(e) {
         e.preventDefault();
         updateSensorDataDisplay(6);
+    });
+
+    $('#pay1-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(0);
+    });
+    $('#pay2-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(1);
+    });
+    $('#pay3-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(2);
+    });
+    $('#pay4-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(3);
+    });
+    $('#pay5-data').click(function(e) {
+        e.preventDefault();
+        updatePayloadDataDisplay(4);
     });
 
     var sourceSwap = function () {

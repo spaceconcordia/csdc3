@@ -22,29 +22,29 @@ class EndBatteryInfoHandler(tornado.web.RequestHandler):
                         battery = battery.split(' ')
                         #print(battery)
                         if idx == 0:
-                            bat1_temp.append({'x': idxt*3, 'y': float(battery[0])})
+                            bat1_temp.append({'x': idxt*4, 'y': float(battery[0])})
                             if (battery[1] == 'True'):
-                                bat1_heat.append({'x': idxt*3, 'y': 1})
+                                bat1_heat.append({'x': idxt*4, 'y': 1})
                             elif (battery[1] == 'False'):
-                                bat1_heat.append({'x': idxt*3, 'y': 0})
+                                bat1_heat.append({'x': idxt*4, 'y': 0})
                         elif idx == 1:
-                            bat2_temp.append({'x': idxt*3, 'y': float(battery[0])})
+                            bat2_temp.append({'x': idxt*4, 'y': float(battery[0])})
                             if (battery[1] == 'True'):
-                                bat2_heat.append({'x': idxt*3, 'y': 1})
+                                bat2_heat.append({'x': idxt*4, 'y': 1})
                             elif (battery[1] == 'False'):
-                                bat2_heat.append({'x': idxt*3, 'y': 0})
+                                bat2_heat.append({'x': idxt*4, 'y': 0})
                         elif idx == 2:
-                            bat3_temp.append({'x': idxt*3, 'y': float(battery[0])})
+                            bat3_temp.append({'x': idxt*4, 'y': float(battery[0])})
                             if (battery[1] == 'True'):
-                                bat3_heat.append({'x': idxt*3, 'y': 1})
+                                bat3_heat.append({'x': idxt*4, 'y': 1})
                             elif (battery[1] == 'False'):
-                                bat3_heat.append({'x': idxt*3, 'y': 0})
+                                bat3_heat.append({'x': idxt*4, 'y': 0})
                         elif idx == 3:
-                            bat4_temp.append({'x': idxt*3, 'y': float(battery[0])})
+                            bat4_temp.append({'x': idxt*4, 'y': float(battery[0])})
                             if (battery[1] == 'True'):
-                                bat4_heat.append({'x': idxt*3, 'y': 1})
+                                bat4_heat.append({'x': idxt*4, 'y': 1})
                             elif (battery[1] == 'False'):
-                                bat4_heat.append({'x': idxt*3, 'y': 0})
+                                bat4_heat.append({'x': idxt*4, 'y': 0})
 
         #os.system('rm /root/csdc3/src/gui/handlers/systemhandlers/battery_data.txt')
         self.render(
