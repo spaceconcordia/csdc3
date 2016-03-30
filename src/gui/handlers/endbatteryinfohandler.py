@@ -11,7 +11,7 @@ class EndBatteryInfoHandler(tornado.web.RequestHandler):
         bat2_heat = []
         bat3_heat = []
         bat4_heat = []
-   
+
         with open(r"/root/csdc3/src/gui/handlers/systemhandlers/battery_data.txt", "r") as f:
             rawData = f.read()
             for idxt, data in enumerate(rawData.split('\n')):
@@ -20,7 +20,8 @@ class EndBatteryInfoHandler(tornado.web.RequestHandler):
                     data.pop(4)
                     for idx, battery in enumerate(data):
                         battery = battery.split(' ')
-                        #print(battery)
+                        if battery[0] == None:
+                            continue
                         if idx == 0:
                             bat1_temp.append({'x': idxt*4, 'y': float(battery[0])})
                             if (battery[1] == 'True'):
