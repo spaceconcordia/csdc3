@@ -19,9 +19,9 @@ class Sensors3Handler(tornado.web.RequestHandler):
             sensordata[2].append({"x": rawData[3], "y": data[2]})
 
         # Assign proper values
-        mag0_x = sensordata[0][0]
-        mag0_y = sensordata[0][1]
-        mag0_z = sensordata[0][2]
+        mag0_x = sensordata[0]
+        mag0_y = sensordata[1]
+        mag0_z = sensordata[2]
         magData = [mag0_x, mag0_y, mag0_z]
 
         self.render(
