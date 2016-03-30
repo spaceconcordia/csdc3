@@ -12,6 +12,8 @@ sys.path.insert(0, '/root/csdc3/src/logs/config_setup')
 from config_setup_constants import *
 from empty_table            import emptyTables
 from operator import itemgetter
+sys.path.insert(0, '/root/csdc3/src/Utility')
+from utility import *
 
 def insertTelemetryLog(sensor_id, value, subsystem, timestamp):
     copies = ["/copy1/", "/copy2/", "/copy3/"]
@@ -94,22 +96,6 @@ def selectPayloadData(start_time, end_time, temp_payload_exp):
 
     conn.close()
     return result
-
-def str2list(strArg):
-    return strArg.replace("(","").replace(")","").split(",")
-
-def convertLoad(inputVoltage):
-    inputVoltage = float(inputVoltage)
-    maxLoad = 600
-    maxVoltage = 1.61
-    return (inputVoltage/maxVoltage)*maxLoad
-
-def convertStrain(Vo):
-    Vo = float(Vo)
-    R = 350
-    Vs = 3.3
-    GF = 2.12
-    return ((4*R*Vo)/(Vs-2*Vo))/GF
 
 def insertSystemCallLog(level, syscall, subsystem, timestamp, stderr):
     copies = ["/copy1/", "/copy2/", "/copy3/"]

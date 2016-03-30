@@ -30,5 +30,21 @@ def conv_bin_to_int(decimalBin, fractionalBin):
     result += fract
     return result
 
+def str2list(strArg):
+    return strArg.replace("(","").replace(")","").split(",")
+
+def convertLoad(inputVoltage):
+    inputVoltage = float(inputVoltage*1.61)/(2**12)
+    maxLoad = 600
+    maxVoltage = 1.61
+    return (inputVoltage/maxVoltage)*maxLoad
+
+def convertStrain(Vo):
+    Vo = float(Vo*1.61)/(2**12)
+    R = 350
+    Vs = 3.3
+    GF = 2.12
+    return ((4*R*Vo)/(Vs-2*Vo))/GF
+
 if __name__ == "__main__":
     get_disk_usage('/')
