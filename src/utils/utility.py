@@ -12,7 +12,7 @@ def twos_to_int(val, len):
       val = val - (1 << len)
     return val
 
-def conv_bin_to_int(decimalBin, fractionalBin):
+def conv_bin_to_float(decimalBin, fractionalBin):
     result = 0
     isNegative = (decimalBin >> 7) & 0x1
     if isNegative:
