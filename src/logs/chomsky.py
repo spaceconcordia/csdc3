@@ -12,7 +12,7 @@ sys.path.insert(0, '/root/csdc3/src/logs/config_setup')
 from config_setup_constants import *
 from empty_table            import emptyTables
 from operator import itemgetter
-sys.path.insert(0, '/root/csdc3/src/Utility')
+sys.path.insert(0, '/root/csdc3/src/utils')
 from utility import *
 
 def insertTelemetryLog(sensor_id, value, subsystem, timestamp):
