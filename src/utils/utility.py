@@ -34,13 +34,13 @@ def str2list(strArg):
     return strArg.replace("(","").replace(")","").split(",")
 
 def convertLoad(inputVoltage):
-    inputVoltage = float(inputVoltage*1.61)/(2**12)
+    inputVoltage = (float(inputVoltage)*1.61)/(2**12)
     maxLoad = 600
     maxVoltage = 1.61
     return (inputVoltage/maxVoltage)*maxLoad
 
 def convertStrain(Vo):
-    Vo = float(Vo*1.61)/(2**12)
+    Vo = (float(Vo)*1.61)/(2**12)
     R = 350
     Vs = 3.3
     GF = 2.12
