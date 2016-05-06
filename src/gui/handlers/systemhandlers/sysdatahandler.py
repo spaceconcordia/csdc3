@@ -39,6 +39,7 @@ class SysdataHandler(tornado.web.RequestHandler):
                 content = f.read()
                 rows = content.split('\n')
                 rows.pop(0)
+                rows.pop(0)
                 rows.pop()
                 for row in rows:
                     row = row.split()
@@ -69,6 +70,7 @@ class SysdataHandler(tornado.web.RequestHandler):
             with open(GUI_PATH + '/out2.txt', 'r') as f:
                 content = f.read()
                 rows = content.split('\n')
+                rows.pop(0)
                 rows.pop(0)
                 rows.pop()
                 for row in rows:

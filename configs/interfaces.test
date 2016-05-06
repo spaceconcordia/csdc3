@@ -1,0 +1,18 @@
+auto lo
+
+iface lo inet loopback
+iface eth0 inet dhcp
+
+allow-hotplug wlan0
+iface wlan0 inet manual
+wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+
+iface school inet static
+address 192.168.1.209
+gateway 192.168.1.1
+netmask 255.255.255.0
+
+iface home inet static
+address 192.168.0.140
+gateway 192.168.0.1
+netmask 255.255.255.0

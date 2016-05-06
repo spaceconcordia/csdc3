@@ -1,0 +1,4 @@
+* * * * * /root/csdc3/src/test/stress.sh
+* * * * * python3 /root/csdc3/src/watchdog/watchcron.py
+* * * * * python3 /root/csdc3/src/sensors/sensor_sweep.py
+* * * * * python3 /root/csdc3/src/power_monitoring/powermonitor.py

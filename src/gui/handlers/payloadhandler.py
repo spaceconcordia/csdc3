@@ -9,7 +9,7 @@ class PayloadHandler(tornado.web.RequestHandler):
         result = {}
         for i,item in enumerate(list(reversed(selectPayloadLog()))):
             result["p{}".format(i)] = selectPayloadData(item[0], item[1], item[2])
-            if i == 4:
+            if i == 2:
                 break
         #num_experiments = len(result)
 

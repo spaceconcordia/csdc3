@@ -1,0 +1,25 @@
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+ap_scan=1
+
+network={
+    ssid="Sumdingdong"
+    psk="0505352401"
+    scan_ssid=1
+    proto=SN
+    key_mgmt=WPA-PSK
+    pairwise=CCMP
+    auth_alg=OPEN
+    id_str="home"
+}
+
+network={
+    ssid="Sputnik"
+    psk="werebetterthansae"
+    scan_ssid=1
+    proto=WPA RSN
+    key_mgmt=WPA-PSK
+    pairwise=CCMP TKIP
+    group=CCMP TKIP
+    id_str="school"
+}

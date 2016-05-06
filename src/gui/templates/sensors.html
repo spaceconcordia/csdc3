@@ -17,17 +17,19 @@
         <script type="text/javascript" src="{{ static_url("node_modules/canvasjs/canvasjs.min.js") }}"></script>
         <script type="text/javascript">
             window.onload = function () {
-                var bat_data = {% raw batterydata %};
-                var charttemp1 = new CanvasJS.Chart("chartBatteryTemp1",
+                var sensor_data = {% raw sensordata %};
+
+                var chartsensor1 = new CanvasJS.Chart("sensorDataChart1",
                 {
                     animationEnabled: true,
                     title:{
-                        text: "Battery 1 Temp VS. Time"
+                        text: "EPS Board Temp VS. Time"
                     },
                     axisX:{
-                        title: "time(sec)",
+                        title: "time",
                         intervalType: "second",
-                        interval:6
+                        valueFormatString: "DD-MMM hh:mm:ss",
+                        labelAngle: -50
                     },
                     axisY:{
                         title: "Temperature °C"
@@ -37,9 +39,9 @@
                     type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Battery 1 - Temperature",
-                    xValueType: "number",
-                    dataPoints: bat_data['b1_t']
+                    legendText: "EPS Board Temperature",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data['temp_eps_brd']
                 }
                     ],
                 legend: {
@@ -50,60 +52,23 @@
                         } else {
                             e.dataSeries.visible = true;
                         }
-                        charttemp1.render();
+                        chartsensor1.render();
                     }
                 }
                 });
-                charttemp1.render();
+                chartsensor1.render();
 
-                var chartheat1 = new CanvasJS.Chart("chartBatteryHeat1",
+                var chartsensor2 = new CanvasJS.Chart("sensorDataChart2",
                 {
                     animationEnabled: true,
                     title:{
-                        text: "Heater 1 State VS. Time"
+                        text: "Payload Board Temp VS. Time"
                     },
                     axisX:{
-                        title: "time(sec)",
+                        title: "time",
                         intervalType: "second",
-                        interval:6
-                    },
-                    axisY:{
-                        title: "ON(1) / OFF(0)"
-                    },
-                    data: [
-                {
-                    type: "stepLine",
-                    showInLegend: true,
-                    name: "series1",
-                    legendText: "Battery Heater 1 - State",
-                    xValueType: "number",
-                    dataPoints:  bat_data['b1_h']
-                }
-                    ],
-                legend: {
-                    cursor: "pointer",
-                    itemclick: function (e) {
-                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                            e.dataSeries.visible = false;
-                        } else {
-                            e.dataSeries.visible = true;
-                        }
-                        chartheat1.render();
-                    }
-                }
-                });
-                chartheat1.render();
-
-                var charttemp2 = new CanvasJS.Chart("chartBatteryTemp2",
-                {
-                    animationEnabled: true,
-                    title:{
-                        text: "Battery 2 Temp VS. Time"
-                    },
-                    axisX:{
-                        title: "time(sec)",
-                        intervalType: "second",
-                        interval:6
+                        valueFormatString: "DD-MMM hh:mm:ss",
+                        labelAngle: -50
                     },
                     axisY:{
                         title: "Temperature °C"
@@ -113,9 +78,9 @@
                     type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Battery 2 - Temperature",
-                    xValueType: "number",
-                    dataPoints:  bat_data['b2_t']
+                    legendText: "Payload Board Temperature",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data['temp_payload_brd']
                 }
                     ],
                 legend: {
@@ -126,72 +91,35 @@
                         } else {
                             e.dataSeries.visible = true;
                         }
-                        charttemp2.render();
+                        chartsensor2.render();
                     }
                 }
                 });
-                charttemp2.render();
+                chartsensor2.render();
 
-                var chartheat2 = new CanvasJS.Chart("chartBatteryHeat2",
+                var chartsensor3 = new CanvasJS.Chart("sensorDataChart3",
                 {
                     animationEnabled: true,
                     title:{
-                        text: "Heater 2 State VS. Time"
+                        text: "Magnetometer Data"
                     },
                     axisX:{
-                        title: "time(sec)",
+                        title: "time",
                         intervalType: "second",
-                        interval:6
+                        valueFormatString: "DD-MMM hh:mm:ss",
+                        labelAngle: -50
                     },
                     axisY:{
-                        title: "ON(1) / OFF(0)"
-                    },
-                    data: [
-                {
-                    type: "stepLine",
-                    showInLegend: true,
-                    name: "series1",
-                    legendText: "Battery Heater 2 - State",
-                    xValueType: "number",
-                    dataPoints: bat_data['b2_h']
-                }
-                    ],
-                legend: {
-                    cursor: "pointer",
-                    itemclick: function (e) {
-                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                            e.dataSeries.visible = false;
-                        } else {
-                            e.dataSeries.visible = true;
-                        }
-                        chartheat2.render();
-                    }
-                }
-                });
-                chartheat2.render();
-
-                var charttemp3 = new CanvasJS.Chart("chartBatteryTemp3",
-                {
-                    animationEnabled: true,
-                    title:{
-                        text: "Battery 3 Temp VS. Time"
-                    },
-                    axisX:{
-                        title: "time(sec)",
-                        intervalType: "second",
-                        interval:6
-                    },
-                    axisY:{
-                        title: "Temperature °C"
+                        title: "Magnitude Mag-X"
                     },
                     data: [
                 {
                     type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Battery 3 - Temperature",
-                    xValueType: "number",
-                    dataPoints: bat_data['b3_t']
+                    legendText: "Magnetometer (X,Y,Z) Magnitude",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data['mag0_x']
                 }
                     ],
                 legend: {
@@ -202,72 +130,35 @@
                         } else {
                             e.dataSeries.visible = true;
                         }
-                        charttemp3.render();
+                        chartsensor3.render();
                     }
                 }
                 });
-                charttemp3.render();
+                chartsensor3.render();
 
-                var chartheat3 = new CanvasJS.Chart("chartBatteryHeat3",
+                var chartsensor4 = new CanvasJS.Chart("sensorDataChart4",
                 {
                     animationEnabled: true,
                     title:{
-                        text: "Heater 3 State VS. Time"
+                        text: "Batteries Power VS. Time"
                     },
                     axisX:{
-                        title: "time(sec)",
+                        title: "time",
                         intervalType: "second",
-                        interval:6
+                        valueFormatString: "DD-MMM hh:mm:ss",
+                        labelAngle: -50
                     },
                     axisY:{
-                        title: "ON(1) / OFF(0)"
-                    },
-                    data: [
-                {
-                    type: "stepLine",
-                    showInLegend: true,
-                    name: "series1",
-                    legendText: "Battery Heater 3 - State",
-                    xValueType: "number",
-                    dataPoints: bat_data['b3_h']
-                }
-                    ],
-                legend: {
-                    cursor: "pointer",
-                    itemclick: function (e) {
-                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-                            e.dataSeries.visible = false;
-                        } else {
-                            e.dataSeries.visible = true;
-                        }
-                        chartheat3.render();
-                    }
-                }
-                });
-                chartheat3.render();
-
-                var charttemp4 = new CanvasJS.Chart("chartBatteryTemp4",
-                {
-                    animationEnabled: true,
-                    title:{
-                        text: "Battery 4 Temp VS. Time"
-                    },
-                    axisX:{
-                        title: "time(sec)",
-                        intervalType: "second",
-                        interval:6
-                    },
-                    axisY:{
-                        title: "Temperature °C"
+                        title: "Power (Watt)"
                     },
                     data: [
                 {
                     type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Battery 4 - Temperature",
-                    xValueType: "number",
-                    dataPoints: bat_data['b4_t']
+                    legendText: "Batteries Power",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data['pwr_power']
                 }
                     ],
                 legend: {
@@ -278,34 +169,35 @@
                         } else {
                             e.dataSeries.visible = true;
                         }
-                        charttemp4.render();
+                        chartsensor4.render();
                     }
                 }
                 });
-                charttemp4.render();
+                chartsensor4.render();
 
-                var chartheat4 = new CanvasJS.Chart("chartBatteryHeat4",
+                var chartsensor5 = new CanvasJS.Chart("sensorDataChart5",
                 {
                     animationEnabled: true,
                     title:{
-                        text: "Heater 4 State VS. Time"
+                        text: "Batteries Current VS. Time"
                     },
                     axisX:{
-                        title: "time(sec)",
+                        title: "time",
                         intervalType: "second",
-                        interval:6
+                        valueFormatString: "DD-MMM hh:mm:ss",
+                        labelAngle: -50
                     },
                     axisY:{
-                        title: "ON(1) / OFF(0)"
+                        title: "Current (Amp)"
                     },
                     data: [
                 {
-                    type: "stepLine",
+                    type: "spline",
                     showInLegend: true,
                     name: "series1",
-                    legendText: "Battery Heater 4 - State",
-                    xValueType: "number",
-                    dataPoints: bat_data['b4_h']
+                    legendText: "Batteries Current",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data['pwr_current']
                 }
                     ],
                 legend: {
@@ -316,13 +208,54 @@
                         } else {
                             e.dataSeries.visible = true;
                         }
-                        chartheat4.render();
+                        chartsensor5.render();
                     }
                 }
                 });
-                chartheat4.render();
+                chartsensor5.render();
+
+                var chartsensor6 = new CanvasJS.Chart("sensorDataChart6",
+                {
+                    animationEnabled: true,
+                    title:{
+                        text: "Batteries Voltage VS. Time"
+                    },
+                    axisX:{
+                        title: "time",
+                        intervalType: "second",
+                        valueFormatString: "DD-MMM hh:mm:ss",
+                        labelAngle: -50
+                    },
+                    axisY:{
+                        title: "Voltage (Volt)"
+                    },
+                    data: [
+                {
+                    type: "spline",
+                    showInLegend: true,
+                    name: "series1",
+                    legendText: "Batteries Voltage",
+                    xValueType: "dateTime",
+                    dataPoints: sensor_data['pwr_volts']
+                }
+                    ],
+                legend: {
+                    cursor: "pointer",
+                    itemclick: function (e) {
+                        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                            e.dataSeries.visible = false;
+                        } else {
+                            e.dataSeries.visible = true;
+                        }
+                        chartsensor6.render();
+                    }
+                }
+                });
+                chartsensor6.render();
             }
-        </script>
+</script>
+
+
     </head>
 
     <body>
@@ -349,11 +282,12 @@
                 <ul class="nav nav-pills nav-center">
                     <li><a href="/system">System Status</a></li>
                     <li><a href="/commands">Send Commands</a></li>
-                    <li class="active"><a href="/battery">Battery Data Post-Demo</a></li>
+                    <li><a href="/battery">Battery Heaters Demo</a></li>
                     <li><a href="/payload">Payload Experiment Data</a></li>
-                    <li role="presentation" class="dropdown">
+                    <li role="presentation" class="dropdown active">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                            Sensor Data <span class="caret"></span></a>
+                            Sensor Data <span class="caret"></span>
+                        </a>
                         <ul class="dropdown-menu">
                             <li><a href="/interfacing">HW Interfacing</a></li>
                             <li role="separator" class="divider"></li>
@@ -364,37 +298,35 @@
             </div>
         </div>
 
-        <div class="main payload">
+        <div class="main sensors">
             <div class="row">
                 <div class="col-xs-5"></div>
                 <div class="col-xs-2">
                 <div id="batterydata" class="dropdown">
-                    <button id="bat-data-selec-btn" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Battery Data: Battery 1
+                    <button id="sensor-data-selec-btn" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">Sensor Identifier: Temp EPS Board
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        <li><a id="bat1-data" href="#">Battery 1</a></li>
-                        <li><a id="bat2-data" href="#">Battery 2</a></li>
-                        <li><a id="bat3-data" href="#">Battery 3</a></li>
-                        <li><a id="bat4-data" href="#">Battery 4</a></li>
+                        <li><a id="sensorData1" href="#">Temp EPS Board</a></li>
+                        <li><a id="sensorData2" href="#">Temp Payload Board</a></li>
+                        <li><a id="sensorData3" href="#">Magnetometer Data</a></li>
+                        <li><a id="sensorData4" href="#">Batteries Power</a></li>
+                        <li><a id="sensorData5" href="#">Batteries Current</a></li>
+                        <li><a id="sensorData6" href="#">Batteries Voltage</a></li>
                     </ul>
                 </div>
                 </div>
                 <div class="col-xs-5"></div>
             </div>
             <div class="row">
-                <div class="chartdatadivleft" id="chartBatteryTemp1" style="height: 400px; width: 40%;"></div>
-                <div class="chartdatadivright" id="chartBatteryHeat1" style="height: 400px; width: 40%;"></div>
-
-                <div class="chartdatadivleft" id="chartBatteryTemp2" style="height: 400px; width: 40%;"></div>
-                <div class="chartdatadivright" id="chartBatteryHeat2" style="height: 400px; width: 40%;"></div>
-
-                <div class="chartdatadivleft" id="chartBatteryTemp3" style="height: 400px; width: 40%;"></div>
-                <div class="chartdatadivright" id="chartBatteryHeat3" style="height: 400px; width: 40%;"></div>
-
-                <div class="chartdatadivleft" id="chartBatteryTemp4" style="height: 400px; width: 40%;"></div>
-                <div class="chartdatadivright" id="chartBatteryHeat4" style="height: 400px; width: 40%;"></div>
+                <div class="chartdatadiv" id="sensorDataChart1" style="height: 400px; width: 40%;"></div>
+                <div class="chartdatadiv" id="sensorDataChart2" style="height: 400px; width: 40%;"></div>
+                <div class="chartdatadiv" id="sensorDataChart3" style="height: 400px; width: 40%;"></div>
+                <div class="chartdatadiv" id="sensorDataChart4" style="height: 400px; width: 40%;"></div>
+                <div class="chartdatadiv" id="sensorDataChart5" style="height: 400px; width: 40%;"></div>
+                <div class="chartdatadiv" id="sensorDataChart6" style="height: 400px; width: 40%;"></div>
             </div>
         </div>
+
     </div>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery/jquery.min.js") }}"></script>
     <script type="text/javascript" src="{{ static_url("node_modules/jquery-ui/jquery-ui.min.js") }}"></script>
@@ -404,3 +336,4 @@
     <script type="text/javascript" src="{{ static_url("js/app.js") }}"></script>
     </body>
 </html>
+
