@@ -15,8 +15,8 @@ from sensor_manager import SensorManager
 
 def main():
     while True:
-        payload_current = SensorManager.read_switch_current(PAYLOAD_SWITCH_CURR_SENSE, True)
-        radio_current = SensorManager.read_switch_current(RADIO_SWITCH_CURR_SENSE, True)
+        payload_current = SensorManager.read_switch_current(PAYLOAD_SWITCH_ADC_ID, True)
+        radio_current = SensorManager.read_switch_current(RADIO_SWITCH_ADC_ID, True)
         print(payload_current, radio_current, "volts")
         time.sleep(1)
 

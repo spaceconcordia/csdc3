@@ -25,7 +25,7 @@ class Lock:
         return False
 
     def release(self):
-        if isLocked():
+        if self.isLocked():
             fcntl.flock(self.handle, fcntl.LOCK_UN)
             print("Released Lock")
         else:

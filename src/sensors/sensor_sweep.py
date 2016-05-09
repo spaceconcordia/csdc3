@@ -23,7 +23,8 @@ def main():
 
         # Create sensor lists
         print("Creating sensor lists")
-        tempSensorList = [TEMP_EPS_BRD, TEMP_PAYLOAD_BRD]
+        tempSensorList = [TEMP_EPS_BRD, TEMP_CDH_BRD]
+        batteryTempSensorList = [TEMP_BAT_1, TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4]
         magSensorList= [MAG_0, MAG_1, MAG_2]
         powerSensorList = [POWER]
         masterList = list(set(tempSensorList) | set(magSensorList)
@@ -59,27 +60,27 @@ def main():
                 print(sensor)
                 functionsDict["init_power"](sensor)
 
-        with open("/root/csdc3/src/sensors/temp_log.txt", "a") as f:
-            for i in range(5):
-                start = time.time()
-                sensorValueDict = {}
+        #with open("/root/csdc3/src/sensors/temp_log.txt", "a") as f:
+        for i in range(5):
+            start = time.time()
+            sensorValueDict = {}
 
-                # Get sensor values
-                print("Getting sensor values")
-                for sensor in masterList:
-                    if sensor in tempSensorList:
-                        result = functionsDict["read_temp"](sensor)
-                    elif sensor in magSensorList:
-                        result = functionsDict["read_mag"](sensor)
-                    elif sensor in powerSensorList:
-                        result = functionsDict["read_power"](sensor)
-                    sensorValueDict[sensor] = result
+            # Get sensor values
+            print("Getting sensor values")
+            for sensor in masterList:
+                if sensor in tempSensorList:
+                    result = functionsDict["read_temp"](sensor)
+                elif sensor in magSensorList:
+                    result = functionsDict["read_mag"](sensor)
+                elif sensor in powerSensorList:
+                    result = functionsDict["read_power"](sensor)
+                sensorValueDict[sensor] = result
 
-                # Get time it took to complete operations
-                readtime = time.time() - start
-                sensorValueDict["Time"] = readtime
-                print("Getting completion time: {}".format(readtime))
-                f.write(str(sensorValueDict) + '\n')
+            # Get time it took to complete operations
+            readtime = time.time() - start
+            sensorValueDict["Time"] = readtime
+            print("Getting completion time: {}".format(readtime))
+        #f.write(str(sensorValueDict) + '\n')
 
         # Stop sensors
         print("Stopping sensors")

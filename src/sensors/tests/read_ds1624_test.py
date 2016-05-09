@@ -19,8 +19,8 @@ def main():
     TEMP_PWR_BRD, TEMP_BAT_1, TEMP_BAT_2, TEMP_BAT_3, TEMP_BAT_4, \
     TEMP_EPS_BRD, TEMP_CDH_BRD)
     """
-    #tempSensors = [TEMP_BAT_1,TEMP_BAT_2,TEMP_BAT_3,TEMP_BAT_4]
-    tempSensors = [TEMP_PAYLOAD_A, TEMP_PAYLOAD_B]
+    tempSensors = [TEMP_BAT_1,TEMP_BAT_2,TEMP_BAT_3,TEMP_BAT_4]
+    #tempSensors = [TEMP_PAYLOAD_A, TEMP_PAYLOAD_B]
 
     for sensor in tempSensors:
         SensorManager.init_temp_sensor(sensor)

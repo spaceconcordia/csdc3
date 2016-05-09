@@ -1,3 +1,0 @@
-/sys/class/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0
-echo ina219 0x40 > /sys/class/i2c-adapter/i2c-0/new_device
-cat /sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/curr1_input

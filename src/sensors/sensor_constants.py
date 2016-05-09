@@ -2,13 +2,15 @@
 File contains the constants used by the sensor modules.
 """
 
-#TODO rename this
+# Power sensor
 INA219_PATH = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/"
 INA219_CURRENT = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/curr1_input"
 INA219_RESISTOR = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/shunt_resistor"
 INA219_VOLTAGE = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/in1_input"
 INA219_POWER = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/power1_input"
 I2C_DEVICE_PATH = "/sys/class/i2c-adapter/i2c-0/new_device"
+
+# Analog-to-digital converter
 SWITCH_CURRENT_PATH = "/sys/bus/iio/devices/iio:device0/"
 PAYLOAD_SWITCH_ADC_ID = 0
 RADIO_SWITCH_ADC_ID = 1
@@ -66,50 +68,65 @@ ADC =        'ADC Payload'
 POWER =      'Power'
 W1TEMP =     'One-Wire Thermistor'
 
+PAYLOAD_MUX = 0x70
+CDH_MUX = 0x71
+
 # Unique Sensor Identifiers
-ADC_0 =      'I2C0_mux1_ch0_1D'
-TEMP_PAYLOAD_A =     'I2C0_mux1_ch0_48'
-TEMP_PAYLOAD_B =     'I2C0_mux1_ch0_49'
-TEMP_PAYLOAD_BRD =     'I2C0_mux1_ch1_48'
-TEMP_PWR_BRD =     'I2C0_mux1_ch4_49'
-TEMP_BAT_1 =     'I2C0_mux0_ch4_4e'
-TEMP_BAT_2 =     'I2C0_mux0_ch4_4f'
-TEMP_BAT_3 =     'I2C0_mux0_ch4_4a'
-TEMP_BAT_4 =     'I2C0_mux0_ch4_4b'
-TEMP_EPS_BRD =     'I2C0_mux0_ch4_4c'
-TEMP_CDH_BRD =     'I2C0_mux0_ch4_4d'
-RTC_0 =      'I2C0_mux0_ch0_68'
-RTC_1 =      'I2C1_68'
-GYRO_0 =     'I2C0_mux0_ch1_68'
-GYRO_1 =     'I2C0_mux0_ch2_68'
-GYRO_2 =     'I2C0_mux0_ch3_68'
-MAG_0 =      'I2C0_mux0_ch1_1E'
-MAG_1 =      'I2C0_mux0_ch2_1E'
-MAG_2 =      'I2C0_mux0_ch3_1E'
-POWER_0 =    'I2C0_mux0_ch4_0'
+ADC_0            =    'ADC'
+TEMP_PAYLOAD_A   =    'TEMP_A'
+TEMP_PAYLOAD_B   =    'TEMP_B'
+TEMP_PAYLOAD_BRD =    'TEMP_PAYLOAD_BRD'
+TEMP_PWR_BRD     =    'TEMP_PWR_BRD'
+TEMP_BAT_1       =    'TEMP_BAT_1'
+TEMP_BAT_2       =    'TEMP_BAT_2'
+TEMP_BAT_3       =    'TEMP_BAT_3'
+TEMP_BAT_4       =    'TEMP_BAT_4'
+TEMP_EPS_BRD     =    'TEMP_EPS_BRD'
+TEMP_CDH_BRD     =    'TEMP_CDH_BRD'
+RTC_0            =    'RTC_0'
+RTC_1            =    'RTC_1'
+GYRO_0           =    'GYRO_0'
+GYRO_1           =    'GYRO_1'
+GYRO_2           =    'GYRO_2'
+MAG_0            =    'MAG_0'
+MAG_1            =    'MAG_1'
+MAG_2            =    'MAG_2'
+POWER_0          =    'POWER'
 
 # GPIO Identifiers
-PSS_HTR_STAT_1_GPIO = "PA27"
-PSS_HTR_STAT_2_GPIO = "PA26"
-PSS_HTR_STAT_3_GPIO = "PA25"
-PSS_HTR_STAT_4_GPIO = "PA24"
-RADIO_TX_CURR_SENSE_GPIO = "PB11"
-PAYLOAD_CURR_SENSE_GPIO = "PB12"
-PSS_HTR_MUX_SEL_GPIO = "PA7"
-I2C_MUX_RESET_GPIO = "PA28"
-DEPLOYMENT_SW_A_GPIO = "PA22"
-DEPLOYMENT_SW_B_GPIO = "PA21"
-RADIO_EN_GPIO = "PA5"
-PAYLOAD_HTR_A_GPIO = "PC31"
-PAYLOAD_HTR_B_GPIO = "PC27"
-PAYLOAD_EN_GPIO = "PC3"
-OLD_PAYLOAD_EN_GPIO = "PB13"
-PSS_HTR_EN_1_GPIO = "PC4"
-PSS_HTR_EN_2_GPIO = "PC28"
-PSS_HTR_EN_3_GPIO = "PA6"
-PSS_HTR_EN_4_GPIO = "PA8"
-WATCHDOG_GPIO = "PA23"
-SENSORS_EN_GPIO = "PB14"
+PSS_HTR_STAT_1_GPIO       = "PA27"
+PSS_HTR_STAT_2_GPIO       = "PA26"
+PSS_HTR_STAT_3_GPIO       = "PA25"
+PSS_HTR_STAT_4_GPIO       = "PA24"
+RADIO_TX_CURR_SENSE_GPIO  = "PB11"
+PAYLOAD_CURR_SENSE_GPIO   = "PB12"
+PSS_HTR_MUX_SEL_GPIO      = "PA7"
+I2C_MUX_RESET_GPIO        = "PA28"
+DEPLOYMENT_SW_A_GPIO      = "PA22"
+DEPLOYMENT_SW_B_GPIO      = "PA21"
+RADIO_EN_GPIO             = "PA5"
+PAYLOAD_HTR_A_GPIO        = "PC31"
+PAYLOAD_HTR_B_GPIO        = "PC27"
+PAYLOAD_EN_GPIO           = "PC3"
+PSS_HTR_EN_1_GPIO         = "PC4"
+PSS_HTR_EN_2_GPIO         = "PC28"
+PSS_HTR_EN_3_GPIO         = "PA6"
+PSS_HTR_EN_4_GPIO         = "PA8"
+WATCHDOG_GPIO             = "PA23"
+SENSORS_EN_GPIO           = "PB14"
+"""
+---- New CDH PCB ----
+PAYLOAD_HTR_A_GPIO = "PB14"
+PAYLOAD_HTR_B_GPIO = "PB13"
+SENSORS_EN_GPIO = "PC27"
+RTC_INT_GPIO = "PC31"
+ADC_INT_GPIO = "PA29"
+SENSORS_EN_GPIO: {DIR: OUTPUT, PIN: 'J4.30'}
+PAYLOAD_HTR_A_GPIO: {DIR: OUTPUT, PIN: 'J4.40'},
+PAYLOAD_HTR_B_GPIO: {DIR: OUTPUT, PIN: 'J4.38'},
+RTC_INT_GPIO : {DIR: OUTPUT, PIN: 'J4.32'},
+ADC_INT_GPIO : {DIR: OUTPUT, PIN: 'J4.21'},
+"""
 
 GPIO_LOOKUP_TABLE = {
 	PSS_HTR_STAT_1_GPIO: {DIR: INPUT, PIN: 'J4.17'},
@@ -127,7 +144,6 @@ GPIO_LOOKUP_TABLE = {
 	PAYLOAD_HTR_A_GPIO: {DIR: OUTPUT, PIN: 'J4.32'},
 	PAYLOAD_HTR_B_GPIO: {DIR: OUTPUT, PIN: 'J4.30'},
 	PAYLOAD_EN_GPIO: {DIR: OUTPUT, PIN: 'J4.33'},
-	OLD_PAYLOAD_EN_GPIO: {DIR: OUTPUT, PIN: 'J4.38'},
 	PSS_HTR_EN_1_GPIO: {DIR: OUTPUT, PIN: 'J4.31'},
 	PSS_HTR_EN_2_GPIO: {DIR: OUTPUT, PIN: 'J4.29'},
 	PSS_HTR_EN_3_GPIO: {DIR: OUTPUT, PIN: 'J4.27'},
@@ -143,20 +159,20 @@ SOFTWARE =   'software'
 ACS = 		   'acs'
 
 TEMP_IDENTIFIER_DICT = {
-    TEMP_PAYLOAD_A: {I2C: 0, MUX: 0x70, CH: 0, SUB: PAYLOAD, ADDR: 0x48},
-    TEMP_PAYLOAD_B: {I2C: 0, MUX: 0x70, CH: 0, SUB: PAYLOAD, ADDR: 0x49},
-    TEMP_PAYLOAD_BRD: {I2C: 0, MUX: 0x70, CH: 4, SUB: PAYLOAD, ADDR: 0x48},
-    TEMP_PWR_BRD: {I2C: 0, MUX: 0x70, CH: 4, SUB: POWER, ADDR: 0x49},
-    TEMP_BAT_1: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4e},
-    TEMP_BAT_2: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4f},
-    TEMP_BAT_3: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4a},
-    TEMP_BAT_4: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4b},
-    TEMP_EPS_BRD: {I2C: 0, MUX: 0x71, CH: 4, SUB: POWER, ADDR: 0x4c},
-    TEMP_CDH_BRD: {I2C: 0, MUX: 0x71, CH: 4, SUB: CDH, ADDR: 0x4d}
+    TEMP_PAYLOAD_A: {I2C: 0, MUX: PAYLOAD_MUX, CH: 0, SUB: PAYLOAD, ADDR: 0x48},
+    TEMP_PAYLOAD_B: {I2C: 0, MUX: PAYLOAD_MUX, CH: 0, SUB: PAYLOAD, ADDR: 0x49},
+    TEMP_PAYLOAD_BRD: {I2C: 0, MUX: PAYLOAD_MUX, CH: 4, SUB: PAYLOAD, ADDR: 0x48},
+    TEMP_PWR_BRD: {I2C: 0, MUX: PAYLOAD_MUX, CH: 4, SUB: POWER, ADDR: 0x49},
+    TEMP_BAT_1: {I2C: 0, MUX: CDH_MUX, CH: 4, SUB: POWER, ADDR: 0x4e},
+    TEMP_BAT_2: {I2C: 0, MUX: CDH_MUX, CH: 4, SUB: POWER, ADDR: 0x4f},
+    TEMP_BAT_3: {I2C: 0, MUX: CDH_MUX, CH: 4, SUB: POWER, ADDR: 0x4a},
+    TEMP_BAT_4: {I2C: 0, MUX: CDH_MUX, CH: 4, SUB: POWER, ADDR: 0x4b},
+    TEMP_EPS_BRD: {I2C: 0, MUX: CDH_MUX, CH: 4, SUB: POWER, ADDR: 0x4c},
+    TEMP_CDH_BRD: {I2C: 0, MUX: CDH_MUX, CH: 4, SUB: CDH, ADDR: 0x4d}
 }
 
 RTC_IDENTIFIER_DICT = {
-    RTC_0: {I2C: 0, MUX: 0x71, CH: 0, SUB: CDH, ADDR: 0x68},
+    RTC_0: {I2C: 0, MUX: None, CH: None, SUB: CDH, ADDR: 0x68},
     RTC_1: {I2C: 1, MUX: None, CH: None, SUB: CDH, ADDR: 0x68}
 }
 
