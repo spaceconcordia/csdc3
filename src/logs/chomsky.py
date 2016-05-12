@@ -36,7 +36,17 @@ def selectTelemetryLog(sensor_id):
     c = conn.cursor()
     for row in c.execute("SELECT * FROM tabolo WHERE "
         + SENSORID + "='" + sensor_id + "'"
-        + " ORDER BY " + TIMESTAMP + " DESC"):
+        + " ORDER BY " + TIMESTAMP + " DESC LIMIT 1;"):
+        telemetry_rows.append(row)
+    conn.close()
+    return telemetry_rows
+
+def selectLastTelemetryLog(sensor_id):
+    telemetry_rows = []
+    conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + TELEMETRY_DB)
+    c = conn.cursor()
+    for row in c.execute("SELECT LAST("
+        + sensor_id + ") FROM tabolo"):
         telemetry_rows.append(row)
     conn.close()
     return telemetry_rows
@@ -188,6 +198,7 @@ if __name__ == "__main__":
 #    emptyTables()
     """
 
-    print(selectPayloadLog())
+#    print(selectTelemetryLog(POWER))
+
 # for experiment in list(reversed(selectPayloadLog())):
 #       print(selectPayloadData(experiment[0], experiment[1]))
