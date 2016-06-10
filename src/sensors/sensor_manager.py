@@ -9,10 +9,8 @@ from chomsky import *
 from time import sleep
 from sensor_entropy import *
 from sensor_constants import *
-import os
 import smbus
 import time
-import math
 from SharedLock import Lock
 import utility
 
@@ -336,6 +334,7 @@ class SensorManager:
 
         """
         # Change valX and valY to radians
+        import math
         radians = math.atan2(valY, valX)
         radians += -0.0197
 

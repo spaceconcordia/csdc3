@@ -1,16 +1,5 @@
-import sys
-sys.path.append('/root/csdc3/lib/ablib')
-sys.path.append('/root/csdc3/src/logs')
-sys.path.append('/root/csdc3/src/logs/config_setup')
-sys.path.append('/root/csdc3/src/utils')
-from ablib_python3 import Pin
-from chomsky import *
-from time import sleep
-from sensor_entropy import *
 from sensor_constants import *
-import smbus
-import time
-import math
+from time import time
 from sensor_manager import SensorManager
 from SharedLock import Lock
 import cProfile
@@ -62,7 +51,7 @@ def main():
 
         #with open("/root/csdc3/src/sensors/temp_log.txt", "a") as f:
         for i in range(3):
-            start = time.time()
+            start = time()
             sensorValueDict = {}
 
             # Get sensor values
@@ -77,7 +66,7 @@ def main():
                 sensorValueDict[sensor] = result
 
             # Get time it took to complete operations
-            readtime = time.time() - start
+            readtime = time() - start
             sensorValueDict["Time"] = readtime
             print("Getting completion time: {}".format(readtime))
         #f.write(str(sensorValueDict) + '\n')

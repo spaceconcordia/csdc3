@@ -1,5 +1,4 @@
 from sensor_constants import *
-import pprint
 
 class SensorEntropy:
     @staticmethod
