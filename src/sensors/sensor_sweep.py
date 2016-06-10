@@ -61,7 +61,7 @@ def main():
                 functionsDict["init_power"](sensor)
 
         #with open("/root/csdc3/src/sensors/temp_log.txt", "a") as f:
-        for i in range(5):
+        for i in range(3):
             start = time.time()
             sensorValueDict = {}
 

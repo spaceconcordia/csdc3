@@ -40,8 +40,8 @@ MUX =        'MUX'
 SUB =        'SUBSYSTEM'
 
 # GPIO Status
-ON = 'on'
-OFF = 'off'
+ON = 1
+OFF = 0
 DIR = 'direction'
 PIN = 'pin'
 
