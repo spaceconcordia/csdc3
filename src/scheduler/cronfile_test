@@ -1,2 +1,0 @@
-1 * * * * /root/csdc3/src/custom_gpio.py
-1 1 1 2 3 /root/csdc3/src/custom_i2c.py

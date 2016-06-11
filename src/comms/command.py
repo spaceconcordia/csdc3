@@ -1,7 +1,9 @@
 import sys
-import os
+sys.path.append('/root/csdc3/src/cron')
 from time import time
+from cron_manager import *
 import subprocess
+import os
 
 class Command:
     def __init__(self):
@@ -27,29 +29,85 @@ class SetTimeCommand(Command):
                 output = "[ERROR] Invalid time specified"
         except:
             output = "[ERROR] Invalid time specified"
+        print output
         return output
 
     def execute(self):
         print "[FIRE] SetTime command"
         if self.isArmed:
             print "[SUCCESS] SetTime command"
-            print "date -s @%d" % self.time
+            #print "date -s @%d" % self.time
             os.system("date -s @%d" % self.time)
             os.system("hwclock -w")
             output = subprocess.check_output("date", shell=True)
 
         else:
-            print "[ABORT] SetTime command was not armed. Failed to execute"
             output = "[ABORT] SetTime command was not armed. Failed to execute"
 
         self.isArmed = False
+        print output
         return output
 
     def cancel(self):
         print "[CANCEL] SetTime command"
         self.isArmed = False
 
-COMMANDS = {'settime': SetTimeCommand()}
+class SchedulePayloadCommand(Command):
+    def arm(self, *args):
+        try:
+            if None not in args:
+                self.args = args[0].split(':')
+                if len(self.args) == 4:
+                    runmin   = self.args[0]
+                    runhr    = self.args[1]
+                    runday   = self.args[2]
+                    runmonth = self.args[3]
+
+                    self.cron = CronManager()
+                    testpayload = "/root/csdc3/src/payload/payload.sh"
+
+                    self.cron.add_or_update_job('*',            \
+                                                '*',            \
+                                                '*',            \
+                                                '*',            \
+                                                '*',            \
+                                                'python /root/csdc3/src/sensors/sensor_sweep.py')
+
+                    self.cron.add_or_update_job(int(runmin),    \
+                                                int(runhr),     \
+                                                int(runday),    \
+                                                int(runmonth),  \
+                                                '*',            \
+                                                testpayload)
+
+                    output = "[ARM] \'%s\' scheduled at %s" % (testpayload, self.args)
+                    self.isArmed = True
+                else:
+                    output = "[ERROR] SchedulePayload has invalid parameters specified"
+            else:
+                output = "[ERROR] SchedulePayload needs parameters"
+        except:
+            output = "[ERROR] SchedulePayload invalid parameters specified"
+        print output
+        return output
+
+    def execute(self):
+        runmin   = self.cron.jobList[1]['minute']
+        runhr    = self.cron.jobList[1]['hour']
+        runday   = self.cron.jobList[1]['day']
+        runmonth = self.cron.jobList[1]['month']
+        output   = '[SUCCESS] Payload scheduled for %s-%s-%s-%s' % \
+                                  (runmin, runhr, runday, runmonth)
+        self.cron.update_cron_file()
+        print output
+        return output
+
+    def cancel(self):
+        print "[CANCEL] SetTime command"
+        self.isArmed = False
+
+COMMANDS = {'settime': SetTimeCommand(),
+            'schedpayload': SchedulePayloadCommand()}
 
 def main():
     command = None
