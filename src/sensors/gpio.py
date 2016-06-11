@@ -2,7 +2,6 @@ import sys
 sys.path.append('/root/csdc3/lib/ablib')
 sys.path.append('/root/csdc3/src/logs')
 sys.path.append('/root/csdc3/src/logs/config_setup')
-from ablib_python3 import Pin
 from sensor_constants import *
 from sensor_manager import SensorManager
 import argparse

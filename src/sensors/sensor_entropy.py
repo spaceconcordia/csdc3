@@ -34,6 +34,7 @@ class SensorEntropy:
             return I2C_DEVICES_LOOKUP_TABLE[POWER][ADDR]
         return None
 
+    @staticmethod
     def subsystem(sensorId):
         """
         returns the subsytems corresponding to the sensorId

@@ -3,8 +3,8 @@ sys.path.append('/root/csdc3/lib/ablib')
 sys.path.append('/root/csdc3/src/logs')
 sys.path.append('/root/csdc3/src/logs/config_setup')
 sys.path.append("/root/csdc3/src/utils")
-from ablib_python3 import Pin
-from ablib_python3 import DS18B20
+from ablib import Pin
+from ablib import DS18B20
 from chomsky import *
 from time import sleep
 from sensor_entropy import *
@@ -505,6 +505,7 @@ class SensorManager:
 
         return value
 
+    @staticmethod
     def read_switch_current(num, getRaw=True):
         with open(SWITCH_CURRENT_PATH + "in_voltage%d_raw" % num) as f:
             value = int(f.read())
@@ -541,6 +542,7 @@ class SensorManager:
 
     """ -------------------- GPIO --------------------- """
 
+    @staticmethod
     def gpio_output(pinId, pinStatus):
         """ Outputs a logic value on a GPIO pin """
         insertDebugLog(NOTICE, "GPIO output from: {}".format(pinId),
@@ -558,6 +560,7 @@ class SensorManager:
             raise Exception('Incorrect GPIO status')
             return False
 
+    @staticmethod
     def gpio_input(pinId, inputTime):
         """ Receive a logic value from a GPIO pin """
         """
