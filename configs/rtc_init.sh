@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 [ -e /dev/rtc1 ] && return 0;
 

@@ -5,6 +5,8 @@ from cron_manager import *
 import subprocess
 import os
 
+PREFIX = '[CDH]'
+
 class Command:
     def __init__(self):
         self.isArmed = False
@@ -29,8 +31,8 @@ class SetTimeCommand(Command):
                 output = "[ERROR] Invalid time specified"
         except:
             output = "[ERROR] Invalid time specified"
-        print output
-        return output
+        print PREFIX+output
+        return PREFIX+output
 
     def execute(self):
         print "[FIRE] SetTime command"
@@ -38,15 +40,16 @@ class SetTimeCommand(Command):
             print "[SUCCESS] SetTime command"
             #print "date -s @%d" % self.time
             os.system("date -s @%d" % self.time)
-            os.system("hwclock -w")
+            os.system("hwclock -w -f /dev/rtc1")
+            os.system("hwclock -w -f /dev/rtc2")
             output = subprocess.check_output("date", shell=True)
 
         else:
             output = "[ABORT] SetTime command was not armed. Failed to execute"
 
         self.isArmed = False
-        print output
-        return output
+        print PREFIX+output
+        return PREFIX+output
 
     def cancel(self):
         print "[CANCEL] SetTime command"
@@ -88,8 +91,8 @@ class SchedulePayloadCommand(Command):
                 output = "[ERROR] SchedulePayload needs parameters"
         except:
             output = "[ERROR] SchedulePayload invalid parameters specified"
-        print output
-        return output
+        print PREFIX+output
+        return PREFIX+output
 
     def execute(self):
         runmin   = self.cron.jobList[1]['minute']
@@ -99,8 +102,8 @@ class SchedulePayloadCommand(Command):
         output   = '[SUCCESS] Payload scheduled for %s-%s-%s-%s' % \
                                   (runmin, runhr, runday, runmonth)
         self.cron.update_cron_file()
-        print output
-        return output
+        print PREFIX+output
+        return PREFIX+output
 
     def cancel(self):
         print "[CANCEL] SetTime command"
@@ -125,7 +128,7 @@ def main():
                     params = cmd_parsed[1]
                 command.arm(params)
         except KeyError:
-            print "[ERROR] Command not found: %s" % cmd
+            print PREFIX+"[ERROR] Command not found: %s" % cmd
 
 if __name__ == "__main__":
     main()
