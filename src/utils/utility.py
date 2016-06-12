@@ -53,5 +53,14 @@ def convertStrain(Vo):
     GF = 2.12
     return ((4*R*Vo)/(Vs-2*Vo))/GF
 
+def median(lst):
+    lst = sorted(lst)
+    if len(lst) < 1:
+            return None
+    if len(lst) %2 == 1:
+            return lst[((len(lst)+1)/2)-1]
+    else:
+            return float(sum(lst[(len(lst)/2)-1:(len(lst)/2)+1]))/2.0
+
 if __name__ == "__main__":
     get_disk_usage('/')

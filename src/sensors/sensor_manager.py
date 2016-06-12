@@ -17,6 +17,7 @@ import utility
 class SensorManager:
 
     bus = smbus.SMBus(0)
+    payloadbus = smbus.SMBus(1)
     active_gpio_pins = {}
     channel = None
     old_mux = None
@@ -85,18 +86,25 @@ class SensorManager:
             print('Sensor Id: ' + str(sensorId))
             raise Exception('Incorrect sensor specified')
 
-        SensorManager.mux_select(sensorId)
+        addr = SensorEntropy.addr(sensorId)
+        reg = SensorEntropy.reg(TEMP)
+
+        if sensorId == TEMP_PAYLOAD_A or sensorId == TEMP_PAYLOAD_B:
+            bus = SensorManager.payloadbus
+
+        else:
+            SensorManager.mux_select(sensorId)
+            bus = SensorManager.bus
 
         try:
             # Start data conversion
-            addr = SensorEntropy.addr(sensorId)
-            startReg = SensorEntropy.reg(TEMP)[START]
-            configReg = SensorEntropy.reg(TEMP)[CONFIG]
-            SensorManager.bus.write_byte_data(addr, startReg, 0x01)
+            startReg = reg[START]
+            configReg = reg[CONFIG]
+            bus.write_byte_data(addr, startReg, 0x01)
             # Enable continuous mode
-            SensorManager.bus.write_byte_data(addr, configReg, 0x00)
+            bus.write_byte_data(addr, configReg, 0x00)
         except(IOError, OSError):
-            print('[INIT] Error writing to temperature sensor at address '+str(addr))
+            print("[INIT] Error writing to temperature sensor: {}".format(sensorId))
             insertDebugLog(NOTICE, "[INIT] Error writing to temperature sensor: {}".format(sensorId),
              CDH, int(time.time()))
             return None
@@ -109,11 +117,11 @@ class SensorManager:
         insertDebugLog(NOTICE, "Initialized ADC: {}".format(sensorId),
         CDH, int(time.time()))
 
-        SensorManager.mux_select(sensorId)
+        bus = SensorManager.payloadbus
+
         addr = SensorEntropy.addr(sensorId)
         adc_reg = SensorEntropy.reg(ADC)
-        bus = SensorManager.bus
-        busy_reg = SensorManager.bus.read_byte_data(addr, \
+        busy_reg = bus.read_byte_data(addr, \
                                 adc_reg['REG_BUSY_STATUS'])
         """
         while busy_reg:
@@ -198,12 +206,16 @@ class SensorManager:
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             raise Exception('Incorrect sensor specified')
 
-        SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
         stopReg = SensorEntropy.reg(TEMP)[STOP]
+        if sensorId == TEMP_PAYLOAD_A or sensorId == TEMP_PAYLOAD_B:
+            bus = SensorManager.payloadbus
+        else:
+            SensorManager.mux_select(sensorId)
+            bus = SensorManager.bus
 
         try:
-            SensorManager.bus.write_byte_data(addr, stopReg, 0x01)
+            bus.write_byte_data(addr, stopReg, 0x01)
         except(IOError, OSError):
             print('[STOP] Error writing to temperature sensor at address ' + str(addr))
             insertDebugLog(NOTICE, "[STOP] Error writing to temperature sensor: {}".format(sensorId),
@@ -222,7 +234,7 @@ class SensorManager:
         configReg = SensorEntropy.reg(ADC)['REG_CONFIG']
 
         try:
-            SensorManager.bus.write_byte_data(addr, configReg, 0x00)
+            SensorManager.payloadbus.write_byte_data(addr, configReg, 0x00)
         except (IOError, OSError):
             print('[STOP] Error writing to ADC at address ' + str(addr))
             insertDebugLog(NOTICE, "[STOP] Error writing to ADC: {}".format(sensorId),
@@ -404,20 +416,23 @@ class SensorManager:
             CDH, int(time.time()))
             return None
 
-        SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
+        if sensorId == TEMP_PAYLOAD_A or sensorId == TEMP_PAYLOAD_B:
+            bus = SensorManager.payloadbus
+        else:
+            SensorManager.mux_select(sensorId)
+            bus = SensorManager.bus
 
         try:
-            SensorManager.bus.write_byte(addr, SensorEntropy.reg(TEMP)[VAL])
+            bus.write_byte(addr, SensorEntropy.reg(TEMP)[VAL])
         except(IOError, OSError):
-            print('[READ] Error writing to temperature sensor at address ' + \
-                str(addr))
+            print("[READ] Error writing to temperature sensor: {}".format(sensorId))
             insertDebugLog(NOTICE, "[READ] Error writing to temperature sensor: {}".format(sensorId),
             CDH, int(time.time()))
             return None
         try:
-            decValue = SensorManager.bus.read_byte(addr)
-            fractValue = SensorManager.bus.read_byte(addr)
+            decValue = bus.read_byte(addr)
+            fractValue = bus.read_byte(addr)
             sleep(0.02)
         except(IOError, OSError):
             print('[READ] Error reading from temperature sensor at address ' + \
@@ -437,10 +452,9 @@ class SensorManager:
         insertDebugLog(NOTICE, "Read adc: {}".format(sensorId),
         CDH, int(time.time()))
 
-        SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
         adc_reg = SensorEntropy.reg(ADC)
-        bus = SensorManager.bus
+        bus = SensorManager.payloadbus
 
         try:
             bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment)
@@ -456,7 +470,6 @@ class SensorManager:
             temp = temp >> 7
 
         except(IOError, OSError):
-            SensorManager.bus.write_byte(0x70, 1 << 0)
             print('[READ] Error reading from ADC at address ' + \
                 str(addr))
             insertDebugLog(NOTICE, "[READ] Error reading from ADC: {}".format(sensorId),
@@ -507,14 +520,27 @@ class SensorManager:
 
     @staticmethod
     def read_switch_current(num, getRaw=True):
-        with open(SWITCH_CURRENT_PATH + "in_voltage%d_raw" % num) as f:
-            value = int(f.read())
+        insertDebugLog(NOTICE, "Read adc current switch: {}".format(num), CDH, int(time.time()))
 
-        # Convert to millivolts
-        if not getRaw:
-            value = value * IN_VOLTAGE_SCALE / 1000.
-            current = value*3.24*2/float(1024*3)
-            value = (value, current)
+        try:
+            with open(SWITCH_CURRENT_PATH + "in_voltage%d_raw" % num) as f:
+                value = int(f.read())
+
+            # Convert to millivolts
+            if not getRaw:
+                value = value * IN_VOLTAGE_SCALE / 1000.
+                current = value*3.24*2/float(1024*3)
+                value = (value, current)
+            sub = CDH
+            if num == 0:
+                sensorId = PAYLOAD_SWITCH
+            elif num == 1:
+                sensorId = RADIO_SWITCH
+            else:
+                sensorId = "Invalid Id"
+            insertTelemetryLog(sensorId, value, sub, int(time.time()))
+        except:
+            insertDebugLog(NOTICE, "[READ] Error reading from adc: {}".format(num), CDH, int(time.time()))
         return value
 
     """ -------------------- 1Wire --------------------- """

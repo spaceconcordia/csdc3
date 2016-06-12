@@ -12,10 +12,10 @@ def main():
     SensorManager.init_adc(ADC)
     start_time = time.time()
     while True:
-        strain, force, adc_temp, heater_temp = SensorManager.read_adc(0, ADC)
+        strain, force, adc_temp = SensorManager.read_adc(0, ADC)
         elapsed = time.time() - start_time
-        print("[" + str(round(elapsed, 3)) + " s] ", end='')
-        print(strain, force, adc_temp, heater_temp)
+        print("[" + str(round(elapsed, 3)) + " s] ")
+        print(strain, force, adc_temp)
         time.sleep(2)
 
 if __name__ == "__main__":

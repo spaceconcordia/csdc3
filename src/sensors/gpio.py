@@ -20,20 +20,23 @@ def main():
     payload = args.payload
     sensors = args.sensors
 
-    SensorManager.gpio_output(DEPLOYMENT_SW_B_GPIO, OFF)
-    SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, OFF)
-    SensorManager.gpio_output(PAYLOAD_HTR_B_GPIO, OFF)
-    SensorManager.gpio_output(PSS_HTR_EN_1_GPIO, OFF)
-    SensorManager.gpio_output(PSS_HTR_EN_2_GPIO, OFF)
-    SensorManager.gpio_output(PSS_HTR_EN_3_GPIO, OFF)
-    SensorManager.gpio_output(PSS_HTR_EN_4_GPIO, OFF)
-    SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
-    SensorManager.gpio_output(PSS_HTR_EN_1_GPIO, OFF)
-
     SensorManager.gpio_output(RADIO_EN_GPIO, radio)
     SensorManager.gpio_output(SENSORS_EN_GPIO, sensors)
     SensorManager.gpio_output(PAYLOAD_EN_GPIO, payload)
     SensorManager.gpio_output(DEPLOYMENT_SW_A_GPIO, deploy)
+
+    SensorManager.gpio_output(DEPLOYMENT_SW_B_GPIO, OFF)
+    SensorManager.gpio_output(PAYLOAD_HTR_A_GPIO, OFF)
+    SensorManager.gpio_output(PAYLOAD_HTR_B_GPIO, OFF)
+
+    SensorManager.gpio_output(PSS_HTR_EN_1_GPIO, OFF)
+    SensorManager.gpio_output(PSS_HTR_EN_2_GPIO, OFF)
+    SensorManager.gpio_output(PSS_HTR_EN_3_GPIO, OFF)
+    SensorManager.gpio_output(PSS_HTR_EN_4_GPIO, OFF)
+
+    SensorManager.gpio_output(PSS_HTR_MUX_SEL_GPIO, OFF)
+    SensorManager.gpio_output(PSS_HTR_EN_1_GPIO, OFF)
+
     """
     time.sleep(2)
     SensorManager.gpio_output(SENSORS_EN_GPIO, ON)
