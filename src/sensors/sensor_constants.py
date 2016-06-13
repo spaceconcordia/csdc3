@@ -9,6 +9,11 @@ INA219_RESISTOR = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/h
 INA219_VOLTAGE = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/in1_input"
 INA219_POWER = "/sys/class/i2c-dev/i2c-0/device/i2c-dev/i2c-0/device/0-0040/hwmon/hwmon0/power1_input"
 I2C_DEVICE_PATH = "/sys/class/i2c-adapter/i2c-0/new_device"
+I2C1_DEVICE_PATH = "/sys/class/i2c-adapter/i2c-1/new_device"
+
+# ADC
+ADC_PATH = "/sys/class/i2c-dev/i2c-1/device/1-001d/hwmon/hwmon1"
+ADC_TEMP = "/sys/class/i2c-dev/i2c-1/device/1-001d/hwmon/hwmon1/temp1_input"
 
 # Analog-to-digital converter
 SWITCH_CURRENT_PATH = "/sys/bus/iio/devices/iio:device0/"
@@ -96,6 +101,7 @@ MAG_2            =    'MAG_2'
 POWER_0          =    'POWER'
 RADIO_SWITCH     =    'RADIO_SWITCH'
 PAYLOAD_SWITCH   =    'PAYLOAD_SWITCH'
+PAYLOAD_ID       =    'PAYLOAD'
 
 # GPIO Identifiers
 PSS_HTR_STAT_1_GPIO       = "PA27"
@@ -159,8 +165,8 @@ ACS = 		   'acs'
 TEMP_IDENTIFIER_DICT = {
     TEMP_PAYLOAD_A: {I2C: 1, MUX: PAYLOAD_MUX, CH: 0, SUB: PAYLOAD, ADDR: 0x48},
     TEMP_PAYLOAD_B: {I2C: 1, MUX: PAYLOAD_MUX, CH: 0, SUB: PAYLOAD, ADDR: 0x49},
-    TEMP_PAYLOAD_BRD: {I2C: 0, MUX: PAYLOAD_MUX, CH: 4, SUB: PAYLOAD, ADDR: 0x48},
-    TEMP_PAYLOAD_CHASSIS: {I2C: 0, MUX: PAYLOAD_MUX, CH: 1, SUB: PAYLOAD, ADDR: 0x4d},
+    TEMP_PAYLOAD_BRD: {I2C: 0, MUX: PAYLOAD_MUX, CH: 4, SUB: CDH, ADDR: 0x48},
+    TEMP_PAYLOAD_CHASSIS: {I2C: 0, MUX: PAYLOAD_MUX, CH: 1, SUB: CDH, ADDR: 0x4d},
     TEMP_END_CAP: {I2C: 0, MUX: PAYLOAD_MUX, CH: 1, SUB: POWER, ADDR: 0x4c},
     TEMP_BAT_1: {I2C: 0, MUX: CDH_MUX, CH: 4, SUB: POWER, ADDR: 0x4e},
     TEMP_BAT_2: {I2C: 0, MUX: CDH_MUX, CH: 4, SUB: POWER, ADDR: 0x4f},

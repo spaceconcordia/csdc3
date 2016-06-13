@@ -72,10 +72,6 @@ class SensorManager:
         time.sleep(0.1)
 
     @staticmethod
-    def init_rtc():
-        pass
-
-    @staticmethod
     def init_temp_sensor(sensorId):
         # SensorManager.sensorReadingLock.acquire()
 
@@ -148,8 +144,6 @@ class SensorManager:
 
     @staticmethod
     def init_power_sensor(sensorId):
-        # SensorManager.sensorReadingLock.acquire()
-
         insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorId),
         CDH, int(time.time()))
         SensorManager.mux_select(sensorId)
@@ -166,6 +160,21 @@ class SensorManager:
             print('[INIT] Error reading from Power sensor')
             insertDebugLog(NOTICE, "[INIT] Error reading from Power sensor: {}".format(sensorId),
             CDH, int(time.time()))
+        return None
+
+    @staticmethod
+    def init_adc_driver():
+        insertDebugLog(NOTICE, "Initialized adc sensor",
+        PAYLOAD, int(time.time()))
+
+        try:
+            if not os.path.isdir(ADC_PATH):
+                with open(I2C1_DEVICE_PATH, "w") as f:
+                    f.write("adc128d818 0x1d")
+
+        except(IOError, OSError):
+            print('[INIT] Error initializing adc sensor')
+            insertDebugLog(NOTICE, "[INIT] Error initializing adc sensor", CDH, int(time.time()))
         return None
 
     """ -------------------- Stop --------------------- """
@@ -229,7 +238,6 @@ class SensorManager:
         insertDebugLog(NOTICE, "Stop adc: {}".format(sensorId),
         CDH, int(time.time()))
 
-        SensorManager.mux_select(sensorId)
         addr = SensorEntropy.addr(sensorId)
         configReg = SensorEntropy.reg(ADC)['REG_CONFIG']
 
@@ -242,10 +250,6 @@ class SensorManager:
             return None
         # finally:
         #     SensorManager.sensorReadingLock.release()
-
-    @staticmethod
-    def stop_rtc(sensorId):
-        pass
 
     @staticmethod
     def stop_power_sensor(sensorId):
@@ -368,44 +372,6 @@ class SensorManager:
         return value
 
     @staticmethod
-    def read_rtc(sensorId):
-        insertDebugLog(NOTICE, "Read rtc: {}".format(sensorId),
-        CDH, int(time.time()))
-
-        SensorManager.mux_select(sensorId)
-
-        # Set up registers
-        seconds_reg = rtc_reg['sec']
-        minute_reg = rtc_reg['min']
-        hour_reg = rtc_reg['hr']
-        day_reg = rtc_reg['day']
-        date_reg = rtc_reg['date']
-        month_reg = rtc_reg['month']
-        year_reg = rtc_reg['year']
-
-        # Retrieve time values
-        try:
-            second = bus.read_byte_data(addr, seconds_reg)
-            minute = bus.read_byte_data(addr, minute_reg)
-            hour = bus.read_byte_data(addr, hour_reg)
-            day = bus.read_byte_data(addr, day_reg)
-            date = bus.read_byte_data(addr, date_reg)
-            month = bus.read_byte_data(addr, month_reg)
-            year = bus.read_byte_data(addr, year_reg)
-        except(IOError, OSError):
-            print('[READ] Error reading from RTC at address ' + \
-                str(SensorEntropy.addr(sensorId)))
-            insertDebugLog(NOTICE, "[READ] Error reading from RTC: {}".format(sensorId),
-            CDH, int(time.time()))
-            return None
-
-        # Log data
-        value = (second, minute, hour, day, date, month, year)
-        sub = SensorEntropy.subsystem(sensorId)
-        insertTelemetryLog(sensorId, value, sub, int(time.time()))
-        return value
-
-    @staticmethod
     def read_temp_sensor(sensorId):
         insertDebugLog(NOTICE, "Read temp sensor: {}".format(sensorId),
         CDH, int(time.time()))
@@ -490,6 +456,73 @@ class SensorManager:
         return value
 
     @staticmethod
+    def read_payload(experiment, sensorId):
+        insertDebugLog(NOTICE, "Read PAYLOAD", PAYLOAD, int(time.time()))
+
+        addr = SensorEntropy.addr(ADC)
+        adc_reg = SensorEntropy.reg(ADC)
+        bus = SensorManager.payloadbus
+
+        try:
+            bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment)
+            strain = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
+            strain = strain >> 4
+
+            bus.write_byte(addr, adc_reg['READ_REG_BASE'] + experiment + 1)
+            force = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFFF0
+            force = force >> 4
+
+            bus.write_byte(addr, adc_reg['READ_REG_BASE'] + 7)
+            temp = ((bus.read_byte(addr) << 8) | (bus.read_byte(addr))) & 0xFF80
+            temp = temp >> 7
+
+        except(IOError, OSError):
+            print('[READ] Error reading payload')
+            insertDebugLog(NOTICE, "[READ] Error reading payload",
+            PAYLOAD, int(time.time()))
+            return None, None, None
+
+        if temp & 0x100 == 0:
+            temp /= 2.
+        else:
+            temp = -((512 - temp) / 2.)
+
+        sleep(0.01)
+
+        addr = SensorEntropy.addr(sensorId)
+        if sensorId == TEMP_PAYLOAD_A or sensorId == TEMP_PAYLOAD_B:
+            bus = SensorManager.payloadbus
+        else:
+            SensorManager.mux_select(sensorId)
+            bus = SensorManager.bus
+
+        try:
+            bus.write_byte(addr, SensorEntropy.reg(TEMP)[VAL])
+        except(IOError, OSError):
+            print("[READ] Error writing to temperature sensor: {}".format(sensorId))
+            insertDebugLog(NOTICE, "[READ] Error writing to temperature sensor: {}".format(sensorId),
+            PAYLOAD, int(time.time()))
+            return None
+        try:
+            decValue = bus.read_byte(addr)
+            fractValue = bus.read_byte(addr)
+            sleep(0.02)
+        except(IOError, OSError):
+            print('[READ] Error reading from temperature sensor at address ' + \
+                str(addr))
+            insertDebugLog(NOTICE, "[READ] Error reading from temperature sensor: {}".format(sensorId),
+            PAYLOAD, int(time.time()))
+            return None
+
+        # Log data
+        heater_temp = utility.conv_bin_to_float(decValue, fractValue)
+
+        # Log data
+        value = (strain, force, heater_temp, temp)
+        insertTelemetryLog(PAYLOAD_ID, value, PAYLOAD, int(time.time()))
+        return value
+
+    @staticmethod
     def read_power_sensor(sensorId, getRaw=True):
         insertDebugLog(NOTICE, "Read power sensor: {}".format(sensorId),
         CDH, int(time.time()))
@@ -515,6 +548,25 @@ class SensorManager:
         except(IOError, OSError):
             insertDebugLog(NOTICE, "[READ] Error reading from power sensor: {}".format(sensorId),
             CDH, int(time.time()))
+
+        return value
+
+    @staticmethod
+    def read_adc_driver(channel):
+        insertDebugLog(NOTICE, "Read adc sensor",
+        PAYLOAD, int(time.time()))
+
+        adc_file = ADC_PATH + '/in%d_input' % channel
+
+        try:
+            with open(adc_file) as adc:
+                value = int(adc.read())
+
+            sub = PAYLOAD
+            insertTelemetryLog(ADC_0, value, sub, int(time.time()))
+        except(IOError, OSError):
+            insertDebugLog(NOTICE, "[READ] Error reading from adc",
+            PAYLOAD, int(time.time()))
 
         return value
 
