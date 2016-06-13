@@ -18,13 +18,6 @@ PAYLOAD_DB =          "payload.db"
 
 # constants for db and table names and value types
 SUBSYSTEM =           "Subsystem"
-PAYLOAD =             "Payload"
-CDH =                 "C&DH"
-POWER =               "Power"
-ACS =                 "ACS"
-COMMS =               "Communications"
-
-SUBSYSTEM_LIST = [PAYLOAD, CDH, POWER, ACS, COMMS]
 
 LOG =                 "Log"
 SENSORID =            "SensorIdentifier"

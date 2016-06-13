@@ -28,9 +28,7 @@ class SensorManager:
     @staticmethod
     def init_gyroscope(sensorId):
         # SensorManager.sensorReadingLock.acquire()
-
-        insertDebugLog(NOTICE, "Initialized gyroscope: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Initialized gyroscope: {}".format(sensorId), CDH, int(time.time()))
 
         if not SensorManager.isCorrectSensor(sensorId, GYRO):
             raise Exception('Incorrect sensor specified')
@@ -50,9 +48,7 @@ class SensorManager:
     @staticmethod
     def init_magnetometer(sensorId):
         # SensorManager.sensorReadingLock.acquire()
-
-        insertDebugLog(NOTICE, "Initialized magnetometer: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Initialized magnetometer: {}".format(sensorId), CDH, int(time.time()))
 
         if not SensorManager.isCorrectSensor(sensorId, MAG):
             raise Exception('Incorrect sensor specified')
@@ -75,8 +71,7 @@ class SensorManager:
     def init_temp_sensor(sensorId):
         # SensorManager.sensorReadingLock.acquire()
 
-        insertDebugLog(NOTICE, "Initialized temp sensor: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Initialized temp sensor: {}".format(sensorId), CDH, int(time.time()))
 
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             print('Sensor Id: ' + str(sensorId))
@@ -110,8 +105,7 @@ class SensorManager:
     def init_adc(sensorId):
         # SensorManager.sensorReadingLock.acquire()
 
-        insertDebugLog(NOTICE, "Initialized ADC: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Initialized ADC: {}".format(sensorId), CDH, int(time.time()))
 
         bus = SensorManager.payloadbus
 
@@ -144,8 +138,7 @@ class SensorManager:
 
     @staticmethod
     def init_power_sensor(sensorId):
-        insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Initialized power sensor: {}".format(sensorId), CDH, int(time.time()))
         SensorManager.mux_select(sensorId)
 
         try:
@@ -164,8 +157,7 @@ class SensorManager:
 
     @staticmethod
     def init_adc_driver():
-        insertDebugLog(NOTICE, "Initialized adc sensor",
-        PAYLOAD, int(time.time()))
+        #insertDebugLog(NOTICE, "Initialized adc sensor", PAYLOAD, int(time.time()))
 
         try:
             if not os.path.isdir(ADC_PATH):
@@ -181,8 +173,7 @@ class SensorManager:
 
     @staticmethod
     def stop_gyroscope(sensorId):
-        insertDebugLog(NOTICE, "Stop gyroscope: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Stop gyroscope: {}".format(sensorId), CDH, int(time.time()))
 
         if not SensorManager.isCorrectSensor(sensorId, GYRO):
             raise Exception('Incorrect sensor specified')
@@ -203,14 +194,13 @@ class SensorManager:
 
     @staticmethod
     def stop_magnetometer(sensorId):
-        insertDebugLog(NOTICE, "Stop magnetometer: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Stop magnetometer: {}".format(sensorId), CDH, int(time.time()))
         # SensorManager.sensorReadingLock.release()
+        pass
 
     @staticmethod
     def stop_temp_sensor(sensorId):
-        insertDebugLog(NOTICE, "Stop temp sensor: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Stop temp sensor: {}".format(sensorId), CDH, int(time.time()))
 
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             raise Exception('Incorrect sensor specified')
@@ -226,7 +216,7 @@ class SensorManager:
         try:
             bus.write_byte_data(addr, stopReg, 0x01)
         except(IOError, OSError):
-            print('[STOP] Error writing to temperature sensor at address ' + str(addr))
+            print("[STOP] Error writing to temperature sensor: {}".format(sensorId))
             insertDebugLog(NOTICE, "[STOP] Error writing to temperature sensor: {}".format(sensorId),
             CDH, int(time.time()))
             return None
@@ -235,8 +225,7 @@ class SensorManager:
 
     @staticmethod
     def stop_adc_sensor(sensorId):
-        insertDebugLog(NOTICE, "Stop adc: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Stop adc: {}".format(sensorId), CDH, int(time.time()))
 
         addr = SensorEntropy.addr(sensorId)
         configReg = SensorEntropy.reg(ADC)['REG_CONFIG']
@@ -244,7 +233,7 @@ class SensorManager:
         try:
             SensorManager.payloadbus.write_byte_data(addr, configReg, 0x00)
         except (IOError, OSError):
-            print('[STOP] Error writing to ADC at address ' + str(addr))
+            print("[STOP] Error writing to ADC: {}".format(sensorId))
             insertDebugLog(NOTICE, "[STOP] Error writing to ADC: {}".format(sensorId),
             CDH, int(time.time()))
             return None
@@ -253,9 +242,9 @@ class SensorManager:
 
     @staticmethod
     def stop_power_sensor(sensorId):
-        insertDebugLog(NOTICE, "Stop power sensor: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Stop power sensor: {}".format(sensorId), CDH, int(time.time()))
         # SensorManager.sensorReadingLock.release()
+        pass
 
     """ -------------------- Reading --------------------- """
 
@@ -309,8 +298,7 @@ class SensorManager:
 
     @staticmethod
     def read_magnetometer(sensorId):
-        insertDebugLog(NOTICE, "Read magnetometer: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Read magnetometer: {}".format(sensorId), CDH, int(time.time()))
 
         if not SensorManager.isCorrectSensor(sensorId, MAG):
             raise Exception('Incorrect sensor specified')
@@ -373,8 +361,7 @@ class SensorManager:
 
     @staticmethod
     def read_temp_sensor(sensorId):
-        insertDebugLog(NOTICE, "Read temp sensor: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Read temp sensor: {}".format(sensorId), CDH, int(time.time()))
 
         if not SensorManager.isCorrectSensor(sensorId, TEMP):
             raise Exception('Incorrect sensor specified')
@@ -415,8 +402,7 @@ class SensorManager:
 
     @staticmethod
     def read_adc(experiment, sensorId):
-        insertDebugLog(NOTICE, "Read adc: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Read adc: {}".format(sensorId), CDH, int(time.time()))
 
         addr = SensorEntropy.addr(sensorId)
         adc_reg = SensorEntropy.reg(ADC)
@@ -457,7 +443,6 @@ class SensorManager:
 
     @staticmethod
     def read_payload(experiment, sensorId):
-        insertDebugLog(NOTICE, "Read PAYLOAD", PAYLOAD, int(time.time()))
 
         addr = SensorEntropy.addr(ADC)
         adc_reg = SensorEntropy.reg(ADC)
@@ -524,8 +509,7 @@ class SensorManager:
 
     @staticmethod
     def read_power_sensor(sensorId, getRaw=True):
-        insertDebugLog(NOTICE, "Read power sensor: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Read power sensor: {}".format(sensorId), CDH, int(time.time()))
 
         SensorManager.mux_select(sensorId)
         value = 0, 0, 0
@@ -553,8 +537,7 @@ class SensorManager:
 
     @staticmethod
     def read_adc_driver(channel):
-        insertDebugLog(NOTICE, "Read adc sensor",
-        PAYLOAD, int(time.time()))
+        #insertDebugLog(NOTICE, "Read adc sensor", PAYLOAD, int(time.time()))
 
         adc_file = ADC_PATH + '/in%d_input' % channel
 
@@ -572,7 +555,7 @@ class SensorManager:
 
     @staticmethod
     def read_switch_current(num, getRaw=True):
-        insertDebugLog(NOTICE, "Read adc current switch: {}".format(num), CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Read adc current switch: {}".format(num), CDH, int(time.time()))
 
         try:
             with open(SWITCH_CURRENT_PATH + "in_voltage%d_raw" % num) as f:
@@ -599,8 +582,7 @@ class SensorManager:
 
     @staticmethod
     def get_panel_data(panelId):
-        insertDebugLog(NOTICE, "Get panel data: {}".format(panelId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "Get panel data: {}".format(panelId), CDH, int(time.time()))
 
         if not panelId in SIDE_PANEL_ONE_WIRE_DICT:
             raise Exception('Incorrect sensor specified')
@@ -623,8 +605,7 @@ class SensorManager:
     @staticmethod
     def gpio_output(pinId, pinStatus):
         """ Outputs a logic value on a GPIO pin """
-        insertDebugLog(NOTICE, "GPIO output from: {}".format(pinId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "GPIO output from: {}".format(pinId), CDH, int(time.time()))
 
         pinId = SensorEntropy.get_gpio_pin(pinId)
         led = Pin(pinId,'OUTPUT')
@@ -644,8 +625,7 @@ class SensorManager:
         """
         TODO: Don't change pin to input, but read file instead
         """
-        insertDebugLog(NOTICE, "GPIO input from: {}".format(pinId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "GPIO input from: {}".format(pinId), CDH, int(time.time()))
 
         pinId = SensorEntropy.get_gpio_pin(pinId)
         pin = Pin(pinId,'INPUT')
@@ -655,8 +635,7 @@ class SensorManager:
 
     @staticmethod
     def mux_select(sensorId):
-        insertDebugLog(NOTICE, "MUX select: {}".format(sensorId),
-        CDH, int(time.time()))
+        #insertDebugLog(NOTICE, "MUX select: {}".format(sensorId), CDH, int(time.time()))
 
         newChannel = None
         if sensorId in TEMP_IDENTIFIER_DICT:
