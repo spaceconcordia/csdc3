@@ -1,7 +1,10 @@
 import sys
 sys.path.append('/root/csdc3/src/cron')
+sys.path.append('/root/csdc3/src/logs')
 from time import time
 from cron_manager import *
+from chomsky import selectTelemetryLog
+from sensor_constants import PAYLOAD_ID
 import subprocess
 import os
 
@@ -43,6 +46,7 @@ class SetTimeCommand(Command):
             os.system("hwclock -w -f /dev/rtc1")
             os.system("hwclock -w -f /dev/rtc2")
             output = subprocess.check_output("date", shell=True)
+            output = "[SUCCESS] SetTime command: " + output
 
         else:
             output = "[ABORT] SetTime command was not armed. Failed to execute"
@@ -109,8 +113,35 @@ class SchedulePayloadCommand(Command):
         print "[CANCEL] SetTime command"
         self.isArmed = False
 
+class GetLogCommand(Command):
+    def arm(self, *args):
+        output = "[ARM]"
+        data = selectTelemetryLog(PAYLOAD_ID, 5)
+        datalist = []
+        for d in data:
+            datalist.append(d[1] + ' ' + str(d[3]))
+
+        output += '\t'.join(datalist)
+        print output
+        return output
+
+    def execute(self):
+        output = "[FIRE]"
+        data = selectTelemetryLog(PAYLOAD_ID, 10)
+        datalist = []
+        for d in data:
+            datalist.append(d[1] + ' ' + str(d[3]))
+
+        output += '\t'.join(datalist)
+        print output
+        return output
+
+    def cancel(self):
+        raise NotImplementedError()
+
 COMMANDS = {'settime': SetTimeCommand(),
-            'schedpayload': SchedulePayloadCommand()}
+            'schedpayload': SchedulePayloadCommand(),
+            'getlog': GetLogCommand()}
 
 def main():
     command = None

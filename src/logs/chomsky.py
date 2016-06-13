@@ -30,13 +30,24 @@ def insertTelemetryLog(sensor_id, value, subsystem, timestamp):
         conn.close()
     writeTelemetryLogs(sensor_id, value, subsystem, timestamp)
 
-def selectTelemetryLog(sensor_id):
+def selectTelemetryLog(sensor_id, num_entries=1):
     telemetry_rows = []
     conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + TELEMETRY_DB)
     c = conn.cursor()
     for row in c.execute("SELECT * FROM tabolo WHERE "
         + SENSORID + "='" + sensor_id + "'"
-        + " ORDER BY " + TIMESTAMP + " DESC LIMIT 1;"):
+        + " ORDER BY " + TIMESTAMP + " DESC LIMIT %d;" % num_entries):
+        telemetry_rows.append(row)
+    conn.close()
+    return telemetry_rows
+
+def selectSubsystemLog(subsystem, num_entries=1):
+    telemetry_rows = []
+    conn = sqlite3.connect(DATA_LOGS_PATH + "/copy1/" + TELEMETRY_DB)
+    c = conn.cursor()
+    for row in c.execute("SELECT * FROM tabolo WHERE "
+        + SUBSYSTEM + "='" + subsystem + "'"
+        + " ORDER BY " + TIMESTAMP + " DESC LIMIT %d;" % num_entries):
         telemetry_rows.append(row)
     conn.close()
     return telemetry_rows
@@ -179,7 +190,7 @@ def writePayloadLogs(start_time, end_time):
 
 if __name__ == "__main__":
     # TelemetryLog SELECT & INSERT tests
-    power_tuple = selectTelemetryLog(POWER)
+    power_tuple = selectSubsystemLog(PAYLOAD, 10)
     print(power_tuple)
     """
     for i in range(50):
